@@ -149,6 +149,26 @@ class ScaleWiz(tk.Frame):
         self.lblfrm.grid(row=0, column=0, sticky=tk.NW)
         self.tstfrm.pack(padx=3)
 
+        self.outfrm = tk.LabelFrame(self.tstfrm, text="Elapsed,            Pump1,             Pump2")
+        scrollbar = tk.Scrollbar(self.outfrm)
+        self.dataout = tk.Text(self.outfrm, width=39, height=19, yscrollcommand=scrollbar.set, state='disabled')
+        scrollbar.config(command=self.dataout.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.dataout.pack()
+        self.outfrm.grid(row=1, column=0, sticky=tk.NW, pady=7)
+
+        self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls")
+        runbtn = ttk.Button(self.cmdfrm, text="Run", command =lambda:self.run_test(), width=15)
+        paubtn = ttk.Button(self.cmdfrm, text="Pause/Resume", command =lambda:self.pause_test(), width=15)
+        endbtn = ttk.Button(self.cmdfrm, text="End", command=lambda:self.end_test(), width=15)
+        runbtn.grid(row = 0, column=0, padx=5, sticky=tk.W)
+        paubtn.grid(row = 0, column=1, padx=20)
+        endbtn.grid(row = 0, column=2, padx=5, sticky=tk.E)
+        tk.Label(self.cmdfrm, text="Select data to plot:").grid(row=3, column=0, padx=5)
+        tk.Radiobutton(self.cmdfrm, text="PSI 1", variable=self.plotpump, value='PSI 1').grid(row = 3, column = 1, padx=5)
+        tk.Radiobutton(self.cmdfrm, text="PSI 2", variable=self.plotpump, value='PSI 2').grid(row = 3, column = 2, padx=5)
+        self.cmdfrm.grid(row=2, column=0, pady=0) #sticky nw
+
 # TODO: this is so messy, maybe move into a separate class/file
     def new_plot(self):
         self.pltwin = tk.Toplevel(self)
@@ -238,26 +258,9 @@ class ScaleWiz(tk.Frame):
             child.configure(state="disabled")
 
         # set up output file
-        self.outfile = "{0}_{1}ppm.csv".format(self.chem.get(), self.conc.get())
+        self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
         with open(os.path.join(self.savepath.get(), self.outfile),"w") as csvfile:
                 csv.writer(csvfile,delimiter=',').writerow(["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
-
-        outfrm = tk.LabelFrame(self.tstfrm, text="Elapsed,            Pump1,             Pump2")
-        scrollbar = tk.Scrollbar(outfrm)
-        self.dataout = tk.Text(outfrm, width=39, height=19, yscrollcommand=scrollbar.set, state='disabled')
-        scrollbar.config(command=self.dataout.yview)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.dataout.pack()
-        outfrm.grid(row=1, column=0, sticky=tk.NW, pady=7)
-        self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls")
-        runbtn = ttk.Button(self.cmdfrm, text="Run", command =lambda:self.run_test())
-        paubtn = ttk.Button(self.cmdfrm, text="Pause/Resume", command =lambda:self.pause_test())
-        endbtn = ttk.Button(self.cmdfrm, text="End", command=lambda:self.end_test())
-        runbtn.grid(row = 0, column=0, padx=5), paubtn.grid(row = 0, column=1, padx=36), endbtn.grid(row = 0, column=2, padx=(5))
-        tk.Label(self.cmdfrm, text="Select data to plot:").grid(row=1, column=0, padx=5)
-        tk.Radiobutton(self.cmdfrm, text="PSI 1", variable=self.plotpump, value='PSI 1').grid(row = 1, column = 1, padx=5)
-        tk.Radiobutton(self.cmdfrm, text="PSI 2", variable=self.plotpump, value='PSI 2').grid(row = 1, column = 2, padx=5)
-        self.cmdfrm.grid(row=2, column=0, pady=0, sticky=tk.NW)
 
         self.pltfrm = tk.LabelFrame(self.tstfrm, text="Plot")
         self.fig = plt.Figure(figsize=(9.5,5), dpi=100)
