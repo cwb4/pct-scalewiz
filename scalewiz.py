@@ -18,24 +18,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.ticker import MultipleLocator
-
 from concurrent.futures import ThreadPoolExecutor
-
-def findcoms():
-          #find the com ports
-        ports = ["COM" + str(i) for i in range(100)]
-        useports = []
-        for i in ports:
-            try:
-                if serial.Serial(i).is_open: useports.append(i)
-                serial.Serial(i).close
-            except serial.SerialException:
-                pass
-
-        if useports == []:
-            print("No COM ports found")
-            useports = ["??", "??"]
-        return useports
 
 class ScaleWiz(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -46,20 +29,44 @@ class ScaleWiz(tk.Frame):
         # test parameters
         self.port1 = tk.StringVar()
         self.port2 = tk.StringVar()
-        self.timelimit = tk.IntVar(90)
-        self.failpsi = tk.IntVar(1500)
+        self.timelimit = tk.IntVar()
+        self.timelimit.set(90)
+        self.failpsi = tk.IntVar()
+        self.failpsi.set(1500)
         self.chem = tk.StringVar()
         self.conc = tk.StringVar()
         self.paused = True
-        self.savepath = tk.StringVar(os.getcwd())
+        self.savepath = tk.StringVar()
+        self.savepath.set(os.getcwd())
         self.project = tk.StringVar() #what is this for?
-        # get the default COM ports and set them to their textvars
-        useports = findcoms()
-        self.port1.set(useports[0])
-        self.port2.set(useports[1])
-        self.plotpump = tk.StringVar('PSI 2')
+        self.plotpump = tk.StringVar()
+        self.plotpump.set('PSI 2')
         # build the GUI
         self.makestuff()
+
+    def findcoms(self):
+              #find the com ports
+            ports = ["COM" + str(i) for i in range(100)]
+            useports = []
+            for i in ports:
+                try:
+                    if serial.Serial(i).is_open: useports.append(i)
+                    serial.Serial(i).close
+                except serial.SerialException:
+                    pass
+            if useports == []:
+                print("No COM ports found")
+                useports = ["??", "??"]
+            try:
+                self.port1.set(useports[0])
+                self.port2.set(useports[1])
+                if self.port1.get() == "??" or self.port2.get() =="??":
+                    self.runbtn['state']=['disable']
+            except IndexError:
+                pass
+            except AttributeError:
+                pass
+            print("called")
 
     def animate(self, i):
        self.ax.clear()
@@ -109,7 +116,10 @@ class ScaleWiz(tk.Frame):
         # build the parameter frame
         self.tstfrm=tk.Frame(self)
         self.lblfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
-        ttk.Label(master=self.lblfrm, text="COM ports:").grid(row=0, sticky=tk.E)
+        self.comlbl = ttk.Label(master=self.lblfrm, text="COM ports:")
+        self.comlbl.grid(row=0, sticky=tk.E)
+        self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
+        self.findcoms()
         ttk.Label(master=self.lblfrm, text="Time limit (min):").grid(row=1, sticky=tk.E)
         ttk.Label(master=self.lblfrm, text="Failing pressure (psi):").grid(row=2, sticky=tk.E)
         ttk.Label(master=self.lblfrm, text="Chemical:").grid(row=4, sticky=tk.E)
@@ -134,14 +144,11 @@ class ScaleWiz(tk.Frame):
                                                             self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get()))
 
         # define the buttons
-        runbtn = ttk.Button(master=self.lblfrm, text="Start", command= lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(),
+        self.runbtn = ttk.Button(master=self.lblfrm, text="Start", command= lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(),
                                                                                               self.tl_ent.get(), self.fp_ent.get(),
                                                                                               self.ch_ent.get(), self.co_ent.get()))
-# TODO: attach this to a periodic update
-        if self.port1.get() == "??" or self.port2.get() =="??":
-            runbtn['state']=['disable']
         # grid the buttons
-        runbtn.grid(row=6, column=1, columnspan=2)
+        self.runbtn.grid(row=6, column=1, columnspan=2)
         # grid the labelframe into tstfrm
         self.lblfrm.grid(row=0, column=0, sticky=tk.NW)
         self.tstfrm.pack(padx=3)
