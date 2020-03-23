@@ -300,8 +300,6 @@ class ScaleWiz(tk.Frame):
         for child in self.cmdfrm.winfo_children():
             child.configure(state="disabled")
 
-        # some other stuff here like shutting off the pumps, clearing entries
-
     def run_test(self):
         if self.paused == True:
             self.pump1.write('ru'.encode())
@@ -329,7 +327,6 @@ class ScaleWiz(tk.Frame):
 
         if self.paused == False:
             self.end_test()
-
             for i in range(3):
                 Beep(750, 500)
                 time.sleep(0.5)
