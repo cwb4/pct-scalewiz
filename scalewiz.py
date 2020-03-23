@@ -66,7 +66,6 @@ class ScaleWiz(tk.Frame):
                 pass
             except AttributeError:
                 pass
-            print("called")
 
     def animate(self, i):
        self.ax.clear()
@@ -140,13 +139,10 @@ class ScaleWiz(tk.Frame):
 
         # set focus to chemical field, and bind start button command to conc field on enter key
         self.ch_ent.focus_set()
-        self.co_ent.bind("<Return>", lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(), self.tl_ent.get(),
-                                                            self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get()))
+        self.co_ent.bind("<Return>", lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(), self.tl_ent.get(), self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get()))
 
         # define the buttons
-        self.runbtn = ttk.Button(master=self.lblfrm, text="Start", command= lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(),
-                                                                                              self.tl_ent.get(), self.fp_ent.get(),
-                                                                                              self.ch_ent.get(), self.co_ent.get()))
+        self.runbtn = ttk.Button(master=self.lblfrm, text="Start", command= lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(), self.tl_ent.get(), self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get()))
         # grid the buttons
         self.runbtn.grid(row=6, column=1, columnspan=2)
         # grid the labelframe into tstfrm
@@ -218,7 +214,6 @@ class ScaleWiz(tk.Frame):
             except FileNotFoundError as f:
                 print(f)
                 pass
-
             x = data['Minutes']
             self.nax.plot(x,y, label=self.pltsrs[i])
 
@@ -226,7 +221,6 @@ class ScaleWiz(tk.Frame):
 #        toolbar.update()
 #        self.ncanvas.get_tk_widget().pack()
 #        self.npltfrm.pack(side=tk.RIGHT, padx=2)
-
 
     def init_test(self, pump1, pump2, timelimit, failpsi, chem, conc):
         self.paused=True
@@ -237,7 +231,8 @@ class ScaleWiz(tk.Frame):
         self.chem.set(chem)
         self.conc.set(conc)
         self.psi1, self.psi2, self.elapsed = 0,0,0
-        self.pump1, self.pump2 = serial.Serial(self.port1.get(), timeout=0.01), serial.Serial(self.port2.get(), timeout=0.01)
+        self.pump1 = serial.Serial(self.port1.get(), timeout=0.01)
+        self.pump2 = serial.Serial(self.port2.get(), timeout=0.01)
         # the timeout values are actually here to help parse the strings as an alternative to using TextIOWrapper
         for child in self.lblfrm.winfo_children():
             child.configure(state="disabled")
@@ -263,8 +258,6 @@ class ScaleWiz(tk.Frame):
         tk.Radiobutton(self.cmdfrm, text="PSI 1", variable=self.plotpump, value='PSI 1').grid(row = 1, column = 1, padx=5)
         tk.Radiobutton(self.cmdfrm, text="PSI 2", variable=self.plotpump, value='PSI 2').grid(row = 1, column = 2, padx=5)
         self.cmdfrm.grid(row=2, column=0, pady=0, sticky=tk.NW)
-
-        self.datapath=self.outfile
 
         self.pltfrm = tk.LabelFrame(self.tstfrm, text="Plot")
         self.fig = plt.Figure(figsize=(9.5,5), dpi=100)
@@ -316,7 +309,6 @@ class ScaleWiz(tk.Frame):
             self.paused = False
             time.sleep(3) # let the pumps warm up before we start recording data
             thread_pool_executor.submit(self.take_reading) # use the threadpool so our GUI doesn't block
-
 
     def take_reading(self): # loop to be handled by threadpool
         while ((self.psi1 < self.failpsi.get()) or (self.psi2 < self.failpsi.get())) and (self.elapsed < self.timelimit.get()*60) and (self.paused == False):
