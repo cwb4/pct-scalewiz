@@ -3,15 +3,15 @@
 
 
 """
-print("menubar was imported")
+
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 
 class MenuBar(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.pack() #does anything?
+        #self.pack() #does anything?
 
         self.menubar = tk.Menu(self.parent)
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
@@ -28,12 +28,12 @@ class MenuBar(tk.Frame):
         if out == "":
             pass
         else:
-            self.savepath.set(out)
-            p = self.savepath.get().split('/')
+            self.parent.main.savepath.set(out)
+            p = self.parent.main.savepath.get().split('/')
             pp = p[-2] + " - " + p[-1]
             self.filemenu.entryconfig(index=1, label=pp)
-            self.parent.project.set(pp)
-            self.parent.winfo_toplevel().title(self.parent.project.get())
+            self.parent.main.project.set(pp)
+            self.parent.winfo_toplevel().title(self.parent.main.project.get())
             # self.parent.root.title(self.parent.project.get())
     def new_plot(self):
         pass
