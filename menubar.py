@@ -3,6 +3,7 @@
 
 
 """
+print("menubar was imported")
 import tkinter as tk
 from tkinter import ttk
 

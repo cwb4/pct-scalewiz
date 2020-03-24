@@ -11,13 +11,14 @@ from tkinter import ttk
 from concurrent.futures import ThreadPoolExecutor
 
 from mainwindow import MainWindow
-
+from menubar import MenuBar
 
 class ScaleWiz(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
         self.main = MainWindow(self)
+        self.menu = MenuBar(Self)
         self.main.pack(fill="both", expand=True)
 
 
