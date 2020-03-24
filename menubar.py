@@ -11,17 +11,17 @@ class MenuBar(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.pack()
+        self.pack() #does anything?
 
-    self.menubar = tk.Menu(parent)
-    self.filemenu = tk.Menu(self.menubar, tearoff=0)
-    self.filemenu.add_command(label=self.savepath.get(), command=self.askdir)
-    self.pltmenu = tk.Menu(self.menubar, tearoff=0)
-    self.pltmenu.add_command(label="Add blanks to live plot")
-    self.pltmenu.add_command(label="Make new plot", command=self.new_plot)
-    self.menubar.add_cascade(label="File", menu=self.filemenu)
-    self.menubar.add_cascade(label="Plot", menu=self.pltmenu)
-    root.config(menu=self.menubar)
+        self.menubar = tk.Menu(self.parent)
+        self.filemenu = tk.Menu(self.menubar, tearoff=0)
+        self.filemenu.add_command(label=self.parent.main.savepath.get(), command=self.askdir)
+        self.pltmenu = tk.Menu(self.menubar, tearoff=0)
+        self.pltmenu.add_command(label="Add blanks to live plot")
+        self.pltmenu.add_command(label="Make new plot", command=self.new_plot)
+        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.menubar.add_cascade(label="Plot", menu=self.pltmenu)
+        self.parent.winfo_toplevel().config(menu=self.menubar)
 
     def askdir(self):
         out = filedialog.askdirectory(initialdir = "C:\"",title="Select data output directory:")
@@ -32,5 +32,8 @@ class MenuBar(tk.Frame):
             p = self.savepath.get().split('/')
             pp = p[-2] + " - " + p[-1]
             self.filemenu.entryconfig(index=1, label=pp)
-            self.project.set(pp)
-            root.title(self.project.get())
+            self.parent.project.set(pp)
+            self.parent.winfo_toplevel().title(self.parent.project.get())
+            # self.parent.root.title(self.parent.project.get())
+    def new_plot(self):
+        pass

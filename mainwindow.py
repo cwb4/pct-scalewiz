@@ -28,17 +28,19 @@ class MainWindow(tk.Frame):
         self.port1 = tk.StringVar()
         self.port2 = tk.StringVar()
         self.timelimit = tk.IntVar()
-        self.timelimit.set(90)
         self.failpsi = tk.IntVar()
-        self.failpsi.set(1500)
         self.chem = tk.StringVar()
         self.conc = tk.StringVar()
-        self.paused = True
         self.savepath = tk.StringVar()
         self.savepath.set(os.getcwd())
         self.project = tk.StringVar() #what is this for?
         self.plotpump = tk.StringVar()
+
+        self.timelimit.set(90)
+        self.failpsi.set(1500)
+        self.paused = True
         self.plotpump.set('PSI 2')
+        self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
 
         self.tstfrm=tk.Frame(self)
         self.lblfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
@@ -60,13 +62,16 @@ class MainWindow(tk.Frame):
         self.co_ent = ttk.Entry(master=self.lblfrm, width =30, justify=tk.CENTER, textvariable=self.conc)
 
         # grid all the entries
-        self.p1_ent.grid(row=0,column=1, sticky=tk.E, padx=(0,2)), self.p2_ent.grid(row=0,column=2, sticky=tk.W, padx=(4,0))
-        self.tl_ent.grid(row=1,column=1, columnspan=2, padx=13), self.fp_ent.grid(row=2,column=1, columnspan=2)
-        self.ch_ent.grid(row=4,column=1, columnspan=2), self.co_ent.grid(row=5,column=1, columnspan=2)
+        self.p1_ent.grid(row=0,column=1, sticky=tk.E, padx=(0,2))
+        self.p2_ent.grid(row=0,column=2, sticky=tk.W, padx=(4,0))
+        self.tl_ent.grid(row=1,column=1, columnspan=2, padx=13)
+        self.fp_ent.grid(row=2,column=1, columnspan=2)
+        self.ch_ent.grid(row=4,column=1, columnspan=2)
+        self.co_ent.grid(row=5,column=1, columnspan=2)
 
         # set focus to chemical field, and bind start button command to conc field on enter key
         self.ch_ent.focus_set()
-        self.co_ent.bind("<Return>", lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(), self.tl_ent.get(), self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get()))
+
 
         # define the buttons
         self.runbtn = ttk.Button(master=self.lblfrm, text="Start", command= lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(), self.tl_ent.get(), self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get()))
@@ -96,6 +101,22 @@ class MainWindow(tk.Frame):
         tk.Radiobutton(self.cmdfrm, text="PSI 2", variable=self.plotpump, value='PSI 2').grid(row = 3, column = 2, padx=5)
         self.cmdfrm.grid(row=2, column=0, pady=0) #sticky nw
 
+        plt.style.use('seaborn-colorblind')
+        plt.tight_layout()
+        self.pltfrm = tk.LabelFrame(self.tstfrm, text="Plot")
+        self.fig = plt.Figure(figsize=(9.5,5), dpi=100)
+        self.ax = self.fig.add_subplot(111)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
+        toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
+        toolbar.update()
+        self.canvas.get_tk_widget().pack()
+        self.pltfrm.grid(row=0, column=1, rowspan=3, sticky=tk.NE, padx=2)
+        self.ani = FuncAnimation(self.fig, self.animate, interval=1000)
+
+        # widget bindings
+        self.co_ent.bind("<Return>", lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(), self.tl_ent.get(),
+                                                            self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get()))
+
     def findcoms(self):
               #find the com ports
             ports = ["COM" + str(i) for i in range(100)]
@@ -120,7 +141,7 @@ class MainWindow(tk.Frame):
                 pass
 
     def init_test(self, pump1, pump2, timelimit, failpsi, chem, conc):
-        self.paused=True
+        self.paused=True # TODO: necessary?
         self.port1.set(pump1)
         self.port2.set(pump2)
         self.timelimit.set(timelimit)
@@ -135,21 +156,10 @@ class MainWindow(tk.Frame):
             child.configure(state="disabled")
 
         # set up output file
-        self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
         with open(os.path.join(self.savepath.get(), self.outfile),"w") as csvfile:
                 csv.writer(csvfile,delimiter=',').writerow(["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
 
-        plt.style.use('seaborn-colorblind')
-        plt.tight_layout()
-        self.pltfrm = tk.LabelFrame(self.tstfrm, text="Plot")
-        self.fig = plt.Figure(figsize=(9.5,5), dpi=100)
-        self.ax = self.fig.add_subplot(111)
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
-        toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
-        toolbar.update()
-        self.canvas.get_tk_widget().pack()
-        self.pltfrm.grid(row=0, column=1, rowspan=3, sticky=tk.NE, padx=2)
-        self.ani = FuncAnimation(self.fig, self.animate, interval=1000)
+
 
     def write_to_log(self, msg):
         self.dataout['state'] = 'normal'
@@ -212,3 +222,22 @@ class MainWindow(tk.Frame):
             for i in range(3):
                 Beep(750, 500)
                 time.sleep(0.5)
+
+    def animate(self, i):
+        try:
+            data = pd.read_csv(os.path.join(self.savepath.get(), self.outfile))
+        except FileNotFoundError as e:
+            data = pd.DataFrame(data={'Minutes':[0], 'PSI 1':[0], 'PSI 2':[0]})
+        self.ax.clear()
+        self.ax.set_xlabel("Time (min)")
+        self.ax.set_ylabel("Pressure (psi)")
+        self.ax.set_ylim(top=1500)
+        self.ax.yaxis.set_major_locator(MultipleLocator(100))
+        self.ax.set_xlim(left=0,right=90)
+
+        y = data[self.plotpump.get()]
+        x = data['Minutes']
+        self.ax.plot(x,y, label=("{0} {1} ppm".format(self.chem.get(), self.conc.get())))
+        self.ax.grid(color='grey', alpha=0.3)
+        self.ax.set_facecolor('w')
+        self.ax.legend(loc=0)

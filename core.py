@@ -18,11 +18,8 @@ class ScaleWiz(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
         self.main = MainWindow(self)
-        self.menu = MenuBar(Self)
+        self.menu = MenuBar(self)
         self.main.pack(fill="both", expand=True)
-
-
-
 
 if __name__ == "__main__":
     root = tk.Tk()
