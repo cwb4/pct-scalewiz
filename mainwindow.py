@@ -125,11 +125,14 @@ class MainWindow(tk.Frame):
 
     def findcoms(self):
               #find the com ports
-            ports = ["COM" + str(i) for i in range(100)]
+            print("Finding COM ports ...")
+            ports = ["COM" + str(i) for i in range(15)]
             useports = []
             for i in ports:
                 try:
-                    if serial.Serial(i).is_open: useports.append(i)
+                    if serial.Serial(i).is_open:
+                    print(f"Found an open port at {i}")
+                    useports.append(i)
                     serial.Serial(i).close
                 except serial.SerialException:
                     pass
@@ -141,6 +144,7 @@ class MainWindow(tk.Frame):
                 self.port2.set(useports[1])
                 if self.port1.get() == "??" or self.port2.get() =="??":
                     self.runbtn['state']=['disable']
+                else: self.runbtn['state']=['enable']
             except IndexError:
                 pass
             except AttributeError:
@@ -156,7 +160,9 @@ class MainWindow(tk.Frame):
         self.conc.set(conc)
         self.psi1, self.psi2, self.elapsed = 0,0,0
         self.pump1 = serial.Serial(self.port1.get(), timeout=0.01)
+        print(f"Opened a port at {self.port1.get()}")
         self.pump2 = serial.Serial(self.port2.get(), timeout=0.01)
+        print(f"Opened a port at {self.port2.get()}")
         # the timeout values are actually here to help parse the strings as an alternative to using TextIOWrapper
         for child in self.entfrm.winfo_children():
             child.configure(state="disabled")
@@ -166,8 +172,6 @@ class MainWindow(tk.Frame):
         # set up output file
         with open(os.path.join(self.savepath.get(), self.outfile),"w") as csvfile:
                 csv.writer(csvfile,delimiter=',').writerow(["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
-
-
 
     def write_to_log(self, msg):
         self.dataout['state'] = 'normal'
@@ -220,7 +224,6 @@ class MainWindow(tk.Frame):
             with open((os.path.join(self.savepath.get(), self.outfile)),"a", newline='') as csvfile:
                 csv.writer(csvfile,delimiter=',').writerow(thisdata)
             logmsg = ("{0:.2f} min, {1} psi, {2} psi".format(self.elapsed/60, str(self.psi1), str(self.psi2)))
-            print(logmsg)
             self.write_to_log(logmsg)
             time.sleep(0.9)
             self.elapsed += 1

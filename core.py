@@ -25,4 +25,19 @@ if __name__ == "__main__":
     root.resizable(0,0)
     thread_pool_executor = ThreadPoolExecutor(max_workers=1)
     ScaleWiz(root).pack(side="top", fill="both", expand=False)
+
+    def close_ports(): # attempts to close all open ports, just in case 
+        import serial
+        ports = ["COM" + str(i) for i in range(15)]
+        for i in ports:
+            try:
+                if serial.Serial(i).is_open:
+                    print(f"Closing {i}")
+                    serial.Serial(i).close
+            except serial.SerialException:
+                pass
+        print("Destroying root")
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", close_ports)
     root.mainloop()
