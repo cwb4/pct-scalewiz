@@ -26,7 +26,7 @@ if __name__ == "__main__":
     thread_pool_executor = ThreadPoolExecutor(max_workers=1)
     ScaleWiz(root).pack(side="top", fill="both", expand=False)
 
-    def close_ports(): # attempts to close all open ports, just in case 
+    def close_ports(): # attempts to close all open ports, just in case
         import serial
         ports = ["COM" + str(i) for i in range(15)]
         for i in ports:
