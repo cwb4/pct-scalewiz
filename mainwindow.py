@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """ The main window for accepting user inputs
 Todo:
-    *
+    * sort out if/when self.paused = True needs to be declared (see __init__ line 41)
+    * try calling scrollbar directly in build_window
+    * cleaner bindings for init_test calls in build_window
 
 """
 
@@ -32,14 +34,15 @@ class MainWindow(tk.Frame):
         self.conc = tk.StringVar()
         self.savepath = tk.StringVar() # output directory
         self.project = tk.StringVar() # used for window title
-        self.plotpump = tk.StringVar()
+        self.plotpsi = tk.StringVar()
 
         # set initial values
         self.timelimit.set(90)
         self.failpsi.set(1500)
         self.savepath.set(os.getcwd())
         self.paused = True # TODO: may not be necessary
-        self.plotpump.set('PSI 2')
+        self.plotpsi.set('PSI 2')
+        self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
         self.build_window()
 
     def build_window(self):
@@ -50,29 +53,41 @@ class MainWindow(tk.Frame):
         self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls") # managed by GRID
 
         # define the self.entfrm entries
-        self.p1_ent = ttk.Entry(master=self.entfrm, width =14, textvariable=self.port1, justify=tk.CENTER)
-        self.p2_ent = ttk.Entry(master=self.entfrm, width =14, textvariable=self.port2, justify=tk.CENTER)
-        self.tl_ent = ttk.Entry(master=self.entfrm, width =30, justify=tk.CENTER, textvariable=self.timelimit)
-        self.fp_ent = ttk.Entry(master=self.entfrm, width =30, justify=tk.CENTER, textvariable=self.failpsi)
-        self.ch_ent = ttk.Entry(master=self.entfrm, width =30, justify=tk.CENTER, textvariable=self.chem)
-        self.co_ent = ttk.Entry(master=self.entfrm, width =30, justify=tk.CENTER, textvariable=self.conc)
-        self.runbtn = ttk.Button(master=self.entfrm, text="Start", command= lambda: self.init_test(self.p1_ent.get(), self.p2_ent.get(), self.tl_ent.get(), self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get())) # TODO: this lambda can probably be moved into default positional args in self.init_test
+        self.p1 = ttk.Entry(master=self.entfrm,
+         width =14, textvariable=self.port1, justify=tk.CENTER)
+        self.p2 = ttk.Entry(master=self.entfrm,
+         width =14, textvariable=self.port2, justify=tk.CENTER)
+        self.tl = ttk.Entry(master=self.entfrm,
+         width =30, justify=tk.CENTER, textvariable=self.timelimit)
+        self.fp = ttk.Entry(master=self.entfrm,
+         width =30, justify=tk.CENTER, textvariable=self.failpsi)
+        self.ch = ttk.Entry(master=self.entfrm,
+         width =30, justify=tk.CENTER, textvariable=self.chem)
+        self.co = ttk.Entry(master=self.entfrm,
+         width =30, justify=tk.CENTER, textvariable=self.conc)
+        self.runbtn = ttk.Button(master=self.entfrm, text="Start",
+         command= lambda: self.init_test(self.p1.get(), self.p2.get(),
+         self.tl.get(), self.fp.get(), self.ch.get(), self.co.get()))
 
         # grid entry labels into self.entfrm
         self.comlbl = ttk.Label(master=self.entfrm, text="COM ports:")
         self.comlbl.grid(row=0, sticky=tk.E)
-        ttk.Label(master=self.entfrm, text="Time limit (min):").grid(row=1, sticky=tk.E)
-        ttk.Label(master=self.entfrm, text="Failing pressure (psi):").grid(row=2, sticky=tk.E)
-        ttk.Label(master=self.entfrm, text="Chemical:").grid(row=4, sticky=tk.E)
-        ttk.Label(master=self.entfrm, text="Concentration (ppm):").grid(row=5, sticky=tk.E)
+        ttk.Label(master=self.entfrm,
+         text="Time limit (min):").grid(row=1, sticky=tk.E)
+        ttk.Label(master=self.entfrm,
+         text="Failing pressure (psi):").grid(row=2, sticky=tk.E)
+        ttk.Label(master=self.entfrm,
+         text="Chemical:").grid(row=4, sticky=tk.E)
+        ttk.Label(master=self.entfrm,
+         text="Concentration (ppm):").grid(row=5, sticky=tk.E)
 
         # grid entries into self.entfrm
-        self.p1_ent.grid(row=0, column=1, sticky=tk.E,padx=(11,1))
-        self.p2_ent.grid(row=0, column=2, sticky=tk.W,padx=(5,0))
-        self.tl_ent.grid(row=1, column=1, columnspan=3, pady=1)
-        self.fp_ent.grid(row=2, column=1, columnspan=3, pady=1)
-        self.ch_ent.grid(row=4, column=1, columnspan=3, pady=1)
-        self.co_ent.grid(row=5, column=1, columnspan=3, pady=1)
+        self.p1.grid(row=0, column=1, sticky=tk.E,padx=(11,1))
+        self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5,0))
+        self.tl.grid(row=1, column=1, columnspan=3, pady=1)
+        self.fp.grid(row=2, column=1, columnspan=3, pady=1)
+        self.ch.grid(row=4, column=1, columnspan=3, pady=1)
+        self.co.grid(row=5, column=1, columnspan=3, pady=1)
         self.runbtn.grid(row=6, column=1, columnspan=2, pady=1)
         cols = self.entfrm.grid_size()
         for col in range(cols[0]):
@@ -80,21 +95,29 @@ class MainWindow(tk.Frame):
 
         #build self.outfrm PACK
         scrollbar = tk.Scrollbar(self.outfrm)
-        self.dataout = tk.Text(self.outfrm, width=39, height=12, yscrollcommand=scrollbar.set, state='disabled') # TODO: try calling tk.Scrollbar(self.outfrm) directly
+        self.dataout = tk.Text(self.outfrm,
+         width=39, height=12, yscrollcommand=scrollbar.set, state='disabled')
+         # TODO: try calling tk.Scrollbar(self.outfrm) directly
         scrollbar.config(command=self.dataout.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.dataout.pack(fill=tk.BOTH)
 
         # build self.cmdfrm 4x3 GRID
-        runbtn = ttk.Button(self.cmdfrm, text="Run", command =lambda:self.run_test(), width=15)
-        paubtn = ttk.Button(self.cmdfrm, text="Pause/Resume", command =lambda:self.pause_test(), width=15)
-        endbtn = ttk.Button(self.cmdfrm, text="End", command=lambda:self.end_test(), width=15)
+        runbtn = ttk.Button(self.cmdfrm,
+         text="Run", command =lambda:self.run_test(), width=15)
+        paubtn = ttk.Button(self.cmdfrm,
+         text="Pause/Resume", command =lambda:self.pause_test(), width=15)
+        endbtn = ttk.Button(self.cmdfrm,
+         text="End", command=lambda:self.end_test(), width=15)
         runbtn.grid(row = 0, column=0, padx=5, sticky=tk.W)
         paubtn.grid(row = 0, column=1, padx=15)
         endbtn.grid(row = 0, column=2, padx=5, sticky=tk.E)
-        tk.Label(self.cmdfrm, text="Select data to plot:").grid(row=3, column=0, padx=5)
-        tk.Radiobutton(self.cmdfrm, text="PSI 1", variable=self.plotpump, value='PSI 1').grid(row = 3, column = 1, padx=5)
-        tk.Radiobutton(self.cmdfrm, text="PSI 2", variable=self.plotpump, value='PSI 2').grid(row = 3, column = 2, padx=5)
+        tk.Label(self.cmdfrm,
+        text="Select data to plot:").grid(row=3, column=0, padx=5)
+        tk.Radiobutton(self.cmdfrm, text="PSI 1",
+         variable=self.plotpsi, value='PSI 1').grid(row = 3, column = 1, padx=5)
+        tk.Radiobutton(self.cmdfrm, text="PSI 2",
+         variable=self.plotpsi, value='PSI 2').grid(row = 3, column = 2, padx=5)
 
         self.pltfrm = tk.LabelFrame(self.tstfrm, text="Plot")
         self.fig = plt.Figure(figsize=(7.5,4), dpi=100)
@@ -115,12 +138,15 @@ class MainWindow(tk.Frame):
         self.cmdfrm.grid(row=2, column=0, sticky=tk.NSEW, pady=2)
 
         # widget bindings
-        self.co_ent.bind("<Return>", lambda _: self.init_test(self.p1_ent.get(), self.p2_ent.get(), self.tl_ent.get(), self.fp_ent.get(), self.ch_ent.get(), self.co_ent.get()))
+        self.co.bind("<Return>", lambda _: self.init_test(self.p1.get(),
+         self.p2.get(), self.tl.get(), self.fp.get(),
+         self.ch.get(), self.co.get()))
+         # TODO: there has to be a more concise way
         self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
 
         self.tstfrm.grid(padx=3)
         self.findcoms()
-        self.ch_ent.focus_set()
+        self.ch.focus_set()
 
     def findcoms(self):
               #find the com ports
@@ -159,8 +185,9 @@ class MainWindow(tk.Frame):
         self.conc.set(conc)
         self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
         # set up output file
-        with open(os.path.join(self.savepath.get(), self.outfile),"w") as csvfile:
-                csv.writer(csvfile,delimiter=',').writerow(["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
+        with open(os.path.join(self.savepath.get(), self.outfile),"w") as f:
+                csv.writer(f, delimiter=',').writerow(
+                ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
 
         self.psi1, self.psi2, self.elapsed = 0,0,0
         self.pump1 = serial.Serial(self.port1.get(), timeout=0.01)
@@ -172,8 +199,8 @@ class MainWindow(tk.Frame):
             child.configure(state="disabled")
         for child in self.cmdfrm.winfo_children():
             child.configure(state="normal")
-            
-    def write_to_log(self, msg):
+
+    def to_log(self, msg):
         self.dataout['state'] = 'normal'
         self.dataout.insert('end', str(msg) +"\n")
         self.dataout['state'] = 'disabled'
@@ -183,13 +210,13 @@ class MainWindow(tk.Frame):
         if self.paused == True:
             self.pump1.write('ru'.encode())
             self.pump2.write('ru'.encode())
-            self.write_to_log("Resuming test ...")
+            self.to_log("Resuming test ...")
             time.sleep(3) # let the pumps warm up before recording data
             self.parent.thread_pool_executor.submit(self.take_reading)
             self.paused = False
 
         elif self.paused == False:
-            self.write_to_log("Pausing test ...")
+            self.to_log("Pausing test ...")
             self.pump1.write('st'.encode())
             self.pump2.write('st'.encode())
             self.paused = True
@@ -198,7 +225,8 @@ class MainWindow(tk.Frame):
         self.paused = True
         self.pump1.write('st'.encode()), self.pump1.close()
         self.pump2.write('st'.encode()), self.pump2.close()
-        self.write_to_log("The test finished in {0:.2f} minutes ...".format(self.elapsed/60))
+        msg = "The test finished in {0:.2f} minutes ...".format(self.elapsed/60)
+        self.to_log(msg)
         for child in self.entfrm.winfo_children():
             child.configure(state="normal")
         for child in self.cmdfrm.winfo_children():
@@ -210,7 +238,7 @@ class MainWindow(tk.Frame):
             self.pump2.write('ru'.encode())
             self.paused = False
             time.sleep(3) # let the pumps warm up before we start recording data
-            self.parent.thread_pool_executor.submit(self.take_reading) # use the threadpool so our GUI doesn't block
+            self.parent.thread_pool_executor.submit(self.take_reading)
 
     def take_reading(self): # loop to be handled by threadpool
         while ((self.psi1 < self.failpsi.get()) or (self.psi2 < self.failpsi.get())) and (self.elapsed < self.timelimit.get()*60) and (self.paused == False):
@@ -221,10 +249,10 @@ class MainWindow(tk.Frame):
             self.psi1 = int(self.pump1.readline().decode().split(',')[1])
             self.psi2 = int(self.pump2.readline().decode().split(',')[1])
             thisdata=[rn, self.elapsed,'{0:.2f}'.format(self.elapsed/60), self.psi1, self.psi2]
-            with open((os.path.join(self.savepath.get(), self.outfile)),"a", newline='') as csvfile:
-                csv.writer(csvfile,delimiter=',').writerow(thisdata)
+            with open((os.path.join(self.savepath.get(), self.outfile)),"a", newline='') as f:
+                csv.writer(f,delimiter=',').writerow(thisdata)
             logmsg = ("{0:.2f} min, {1} psi, {2} psi".format(self.elapsed/60, str(self.psi1), str(self.psi2)))
-            self.write_to_log(logmsg)
+            self.to_log(logmsg)
             time.sleep(0.9)
             self.elapsed += 1
 
@@ -246,7 +274,7 @@ class MainWindow(tk.Frame):
         self.ax.yaxis.set_major_locator(MultipleLocator(100))
         self.ax.set_xlim(left=0,right=90)
 
-        y = data[self.plotpump.get()]
+        y = data[self.plotpsi.get()]
         x = data['Minutes']
         self.ax.plot(x,y, label=("{0} {1} ppm".format(self.chem.get(), self.conc.get())))
         self.ax.grid(color='grey', alpha=0.3)
