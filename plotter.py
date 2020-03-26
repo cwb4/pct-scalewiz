@@ -66,7 +66,6 @@ class PlotUtil(tk.Toplevel):
         self.ax.set_facecolor('w')
 
         for item in to_plot:
-            print(item)
             data = pd.read_csv(item[0])
             self.ax.plot(data['Minutes'], data[item[2]], label=item[1])
         self.ax.legend(loc=self.loc.get(), bbox_to_anchor=tuple(map(float, self.anchorent.get().split(','))))
