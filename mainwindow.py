@@ -194,7 +194,7 @@ class MainWindow(tk.Frame):
         print(f"Opened a port at {self.port1.get()}")
         self.pump2 = serial.Serial(self.port2.get(), timeout=0.01)
         print(f"Opened a port at {self.port2.get()}")
-        # the timeout values are actually here to help parse the strings as an alternative to using TextIOWrapper
+        # the timeout values are an alternative to using TextIOWrapper
         for child in self.entfrm.winfo_children():
             child.configure(state="disabled")
         for child in self.cmdfrm.winfo_children():
@@ -241,6 +241,7 @@ class MainWindow(tk.Frame):
             self.parent.thread_pool_executor.submit(self.take_reading)
 
     def take_reading(self): # loop to be handled by threadpool
+        # this is way too long of a line
         while ((self.psi1 < self.failpsi.get()) or (self.psi2 < self.failpsi.get())) and (self.elapsed < self.timelimit.get()*60) and (self.paused == False):
             rn = time.strftime("%I:%M:%S", time.localtime())
             self.pump1.write("cc".encode())
@@ -248,10 +249,13 @@ class MainWindow(tk.Frame):
             time.sleep(0.1)
             self.psi1 = int(self.pump1.readline().decode().split(',')[1])
             self.psi2 = int(self.pump2.readline().decode().split(',')[1])
-            thisdata=[rn, self.elapsed,'{0:.2f}'.format(self.elapsed/60), self.psi1, self.psi2]
-            with open((os.path.join(self.savepath.get(), self.outfile)),"a", newline='') as f:
+            thisdata=[rn, self.elapsed,'{0:.2f}'.format(self.elapsed/60),
+             self.psi1, self.psi2]
+            with open((os.path.join(self.savepath.get(), self.outfile)),"a",
+             newline='') as f:
                 csv.writer(f,delimiter=',').writerow(thisdata)
-            logmsg = ("{0:.2f} min, {1} psi, {2} psi".format(self.elapsed/60, str(self.psi1), str(self.psi2)))
+            logmsg = ("{0:.2f} min, {1} psi, {2} psi".format(self.elapsed/60,
+             str(self.psi1), str(self.psi2)))
             self.to_log(logmsg)
             time.sleep(0.9)
             self.elapsed += 1
@@ -276,7 +280,8 @@ class MainWindow(tk.Frame):
 
         y = data[self.plotpsi.get()]
         x = data['Minutes']
-        self.ax.plot(x,y, label=("{0} {1} ppm".format(self.chem.get(), self.conc.get())))
+        self.ax.plot(x,y,
+         label=("{0} {1} ppm".format(self.chem.get(), self.conc.get())))
         self.ax.grid(color='grey', alpha=0.3)
         self.ax.set_facecolor('w')
         self.ax.legend(loc=0)
