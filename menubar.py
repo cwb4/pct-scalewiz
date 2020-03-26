@@ -2,6 +2,7 @@
 """ The main window's menubar.
 Todo:
     * add command for sending custom msgs to pump
+    * add command for adding blanks
 
 """
 
@@ -21,7 +22,6 @@ class MenuBar(tk.Frame):
         self.filemenu.add_command(label=self.parent.main.savepath.get(),
          command=self.askdir)
         self.pltmenu = tk.Menu(self.menubar, tearoff=0)
-        # self.pltmenu.add_command(label="Add blanks to live plot") # TODO: add this feature
         self.pltmenu.add_command(label="Make new plot", command=self.new_plot)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
         self.menubar.add_cascade(label="Plot", menu=self.pltmenu)
