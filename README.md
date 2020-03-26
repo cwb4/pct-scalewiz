@@ -19,13 +19,16 @@ The appropriate hardware drivers may be downloaded from the
 
 requirements.txt incoming ...
 
+## Screenshots
+
+
 ## Roadmap
 The plotting utility is the most recently added feature.
 Planned features include
   * greater customization options for the plotting utility
   * simple utility to read/write generic messages to/from the pumps
   * configuration file support to remember useful information
-    such as last used project directory, plot style templates, etc. 
+    such as last used project directory, plot style templates, etc.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
