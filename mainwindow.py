@@ -200,7 +200,7 @@ class MainWindow(tk.Frame):
         self.paused = True
         self.pump1.write('st'.encode()), self.pump1.close()
         self.pump2.write('st'.encode()), self.pump2.close()
-        self.write_to_log("The test finished in {0:.3f} minutes ...".format(self.elapsed/60))
+        self.write_to_log("The test finished in {0:.2f} minutes ...".format(self.elapsed/60))
         for child in self.entfrm.winfo_children():
             child.configure(state="normal")
         for child in self.cmdfrm.winfo_children():
