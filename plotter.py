@@ -30,15 +30,21 @@ class PlotUtil(tk.Toplevel):
         self.entfrm.pack(side=tk.TOP)
 
         # to hold the settings entries
+        locs = ["best", "upper right", "upper left", "lower left",
+         "lower right", "right", "center left", "center right",
+         "lower center", "upper center", "center"]
+        self.loc = tk.StringVar()
+        self.loc.set(locs[0])
         self.setfrm = tk.Frame(self)
         self.anchorent = ttk.Entry(self.setfrm)
-        self.locent = ttk.Entry(self.setfrm)
+        self.locs = ttk.OptionMenu(self.setfrm, self.loc,  *locs)
         tk.Label(self.setfrm,
          text="loc:").grid(row=0, column=0, sticky=tk.W)
         tk.Label(self.setfrm,
          text="bbox_to_anchor:").grid(row=0, column=1, sticky=tk.W)
-        self.locent.grid(row=1, column=0, sticky=tk.W, padx=2)
+        self.locs.grid(row=1, column=0, sticky=tk.W, padx=2)
         self.anchorent.grid(row=1, column=1, sticky=tk.E, padx=2)
+        self.anchorent.insert(0, "1.13,0.525")
         self.pltbtn = ttk.Button(self.setfrm,
          text="Plot", width=30, command = self.make_plot)
         self.pltbtn.grid(row=2, columnspan=2, pady=1)
@@ -50,7 +56,7 @@ class PlotUtil(tk.Toplevel):
             if not child.pathent.get() == "":
                 to_plot.append((child.pathent.get(), child.titleent.get(),
                  child.plotpump.get()))
-        self.fig, self.ax = plt.subplots(figsize=(7.5,4), dpi=100)
+        self.fig, self.ax = plt.subplots(figsize=(8.5,5), dpi=100)
         self.ax.set_xlabel("Time (min)")
         self.ax.set_xlim(left=0,right=90)
         self.ax.set_ylabel("Pressure (psi)")
@@ -63,5 +69,5 @@ class PlotUtil(tk.Toplevel):
             print(item)
             data = pd.read_csv(item[0])
             self.ax.plot(data['Minutes'], data[item[2]], label=item[1])
-        self.ax.legend(loc=0)
+        self.ax.legend(loc=self.loc.get(), bbox_to_anchor=tuple(map(float, self.anchorent.get().split(','))))
         self.fig.show()

@@ -34,9 +34,11 @@ class SeriesEntry(tk.Frame):
         fil = filedialog.askopenfilename(initialdir = "C:\"",
             title="Select data output directory:",
             filetypes=[("CSV files", "*.csv")])
-        event.widget.delete(0,tk.END)
-        event.widget.insert(0,fil)
-        event.widget.after(50, event.widget.xview_moveto, 1)
+        if not fil == "":
+            event.widget.delete(0,tk.END)
+            event.widget.insert(0,fil)
+            event.widget.after(25, event.widget.xview_moveto, 1)
+            event.widget.after(25, lambda: self.titleent.focus_set())
         # NOTE: :  for some reason this only fires if postponed
         # https://stackoverflow.com/questions/29334544/
 
