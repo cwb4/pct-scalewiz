@@ -37,7 +37,7 @@ class PlotUtil(tk.Toplevel):
         self.loc.set(locs[0])
         self.setfrm = tk.Frame(self)
         self.anchorent = ttk.Entry(self.setfrm)
-        self.locs = ttk.OptionMenu(self.setfrm, self.loc,  *locs)
+        self.locs = ttk.OptionMenu(self.setfrm, self.loc, locs[0],  *locs)
         tk.Label(self.setfrm,
          text="loc:").grid(row=0, column=0, sticky=tk.W)
         tk.Label(self.setfrm,
@@ -66,8 +66,11 @@ class PlotUtil(tk.Toplevel):
         self.ax.set_facecolor('w')
 
         for item in to_plot:
-            print(item)
             data = pd.read_csv(item[0])
             self.ax.plot(data['Minutes'], data[item[2]], label=item[1])
-        self.ax.legend(loc=self.loc.get(), bbox_to_anchor=tuple(map(float, self.anchorent.get().split(','))))
+        if self.anchorent.get() == "":
+            bbox = None
+        else:
+            bbox = tuple(map(float, self.anchorent.get().split(',')))
+        self.ax.legend(loc=self.loc.get(), bbox_to_anchor=bbox)
         self.fig.show()
