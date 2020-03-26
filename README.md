@@ -1,5 +1,5 @@
 # pct-scalewiz
-##Premier Chemical Technologies, LLC  - Scale Block Wizard
+## Premier Chemical Technologies, LLC  - Scale Block Wizard
 A user interface designed to work with Teledyne SSI MX-class pumps.
 Features include:
   * simple, reliable workflow for setting up experiments and handling data output
