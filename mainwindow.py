@@ -40,8 +40,6 @@ class MainWindow(tk.Frame):
         self.savepath.set(os.getcwd())
         self.paused = True # TODO: may not be necessary
         self.plotpump.set('PSI 2')
-        self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
-
         self.build_window()
 
     def build_window(self):
@@ -159,6 +157,11 @@ class MainWindow(tk.Frame):
         self.failpsi.set(failpsi)
         self.chem.set(chem)
         self.conc.set(conc)
+        self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
+        # set up output file
+        with open(os.path.join(self.savepath.get(), self.outfile),"w") as csvfile:
+                csv.writer(csvfile,delimiter=',').writerow(["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
+
         self.psi1, self.psi2, self.elapsed = 0,0,0
         self.pump1 = serial.Serial(self.port1.get(), timeout=0.01)
         print(f"Opened a port at {self.port1.get()}")
@@ -169,11 +172,7 @@ class MainWindow(tk.Frame):
             child.configure(state="disabled")
         for child in self.cmdfrm.winfo_children():
             child.configure(state="normal")
-
-        # set up output file
-        with open(os.path.join(self.savepath.get(), self.outfile),"w") as csvfile:
-                csv.writer(csvfile,delimiter=',').writerow(["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
-
+            
     def write_to_log(self, msg):
         self.dataout['state'] = 'normal'
         self.dataout.insert('end', str(msg) +"\n")
