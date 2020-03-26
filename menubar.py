@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """ The main window's menubar.
-
+Todo:
+    * add command for sending custom msgs to pump
 
 """
 
 import tkinter as tk
 from tkinter import ttk, filedialog
-
 from plotter import PlotUtil
 
 class MenuBar(tk.Frame):

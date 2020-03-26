@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-""" The main window for accepting user inputs.
+""" The main window for accepting user inputs
 Todo:
-    * set frames to expand
-    * organize like a sane person
+
 
 """
 
@@ -70,8 +69,8 @@ class MainWindow(tk.Frame):
         ttk.Label(master=self.entfrm, text="Concentration (ppm):").grid(row=5, sticky=tk.E)
 
         # grid entries into self.entfrm
-        self.p1_ent.grid(row=0, column=1, sticky=tk.E,padx=(11,0))
-        self.p2_ent.grid(row=0, column=2, sticky=tk.W,padx=(6,0))
+        self.p1_ent.grid(row=0, column=1, sticky=tk.E,padx=(11,1))
+        self.p2_ent.grid(row=0, column=2, sticky=tk.W,padx=(5,0))
         self.tl_ent.grid(row=1, column=1, columnspan=3, pady=1)
         self.fp_ent.grid(row=2, column=1, columnspan=3, pady=1)
         self.ch_ent.grid(row=4, column=1, columnspan=3, pady=1)

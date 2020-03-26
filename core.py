@@ -7,9 +7,7 @@ Todo:
 
 """
 import tkinter as tk
-from tkinter import ttk
 from concurrent.futures import ThreadPoolExecutor
-
 from mainwindow import MainWindow
 from menubar import MenuBar
 
