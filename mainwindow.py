@@ -169,7 +169,7 @@ class MainWindow(tk.Frame):
         for child in self.entfrm.winfo_children():
             child.configure(state="disabled")
         for child in self.cmdfrm.winfo_children():
-            child.configure(state="enabled")
+            child.configure(state="normal")
 
         # set up output file
         with open(os.path.join(self.savepath.get(), self.outfile),"w") as csvfile:
