@@ -37,8 +37,8 @@ class SeriesEntry(tk.Frame):
         if not fil == "":
             event.widget.delete(0,tk.END)
             event.widget.insert(0,fil)
-            event.widget.after(25, event.widget.xview_moveto, 1)
-            event.widget.after(25, lambda: self.title.focus_set())
+            event.widget.after(50, event.widget.xview_moveto, 1)
+            event.widget.after(50, lambda: self.title.focus_set())
         # NOTE: :  for some reason this only fires if postponed
         # https://stackoverflow.com/questions/29334544/
 
