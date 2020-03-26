@@ -7,7 +7,7 @@ Todo:
 
 import tkinter as tk
 from tkinter import ttk, filedialog
-from plotter import PlotUtil
+from plotter import Plotter
 
 class MenuBar(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -39,4 +39,4 @@ class MenuBar(tk.Frame):
             self.parent.winfo_toplevel().title(self.parent.main.project.get())
             # self.parent.root.title(self.parent.project.get())
     def new_plot(self):
-        self.parent.plotter = PlotUtil(self)
+        self.parent.plotter = Plotter(self)
