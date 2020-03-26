@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-""" A
+""" A utility to generate plots.
 Todo:
-    *
+    * how to handle bbox stuff?
 
 """
 
