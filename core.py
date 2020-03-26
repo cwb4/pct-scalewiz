@@ -15,12 +15,12 @@ class ScaleWiz(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.main = MainWindow(self)
         self.menu = MenuBar(self)
+        self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("Scale Block Wizard")
     root.resizable(0,0)
-    thread_pool_executor = ThreadPoolExecutor(max_workers=1)
     ScaleWiz(root).pack(side="top", fill="both", expand=False)
 
     def close_ports(): # attempts to close all open ports, just in case

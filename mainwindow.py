@@ -186,7 +186,7 @@ class MainWindow(tk.Frame):
             self.pump2.write('ru'.encode())
             self.write_to_log("Resuming test ...")
             time.sleep(3) # let the pumps warm up before recording data
-            thread_pool_executor.submit(self.take_reading)
+            self.parent.thread_pool_executor.submit(self.take_reading)
             self.paused = False
 
         elif self.paused == False:
@@ -211,7 +211,7 @@ class MainWindow(tk.Frame):
             self.pump2.write('ru'.encode())
             self.paused = False
             time.sleep(3) # let the pumps warm up before we start recording data
-            thread_pool_executor.submit(self.take_reading) # use the threadpool so our GUI doesn't block
+            self.parent.thread_pool_executor.submit(self.take_reading) # use the threadpool so our GUI doesn't block
 
     def take_reading(self): # loop to be handled by threadpool
         while ((self.psi1 < self.failpsi.get()) or (self.psi2 < self.failpsi.get())) and (self.elapsed < self.timelimit.get()*60) and (self.paused == False):
