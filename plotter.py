@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ A
 Todo:
-    * enable plotting
+    *
 
 """
 
@@ -53,8 +53,8 @@ class PlotUtil(tk.Toplevel):
     def make_plot(self):
         to_plot = []
         for child in self.entfrm.winfo_children():
-            if not child.pathent.get() == "":
-                to_plot.append((child.pathent.get(), child.titleent.get(),
+            if not child.path.get() == "":
+                to_plot.append((child.path.get(), child.title.get(),
                  child.plotpump.get()))
         self.fig, self.ax = plt.subplots(figsize=(8.5,5), dpi=100)
         self.ax.set_xlabel("Time (min)")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ The main window for accepting user inputs
 Todo:
-
+    *
 
 """
 

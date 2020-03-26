@@ -2,8 +2,7 @@
 
 
 Todo:
-    * tie in the menubar
-    * rebuild the plotter util
+    *
 
 """
 import tkinter as tk
