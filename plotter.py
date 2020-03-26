@@ -68,9 +68,7 @@ class PlotUtil(tk.Toplevel):
         for item in to_plot:
             data = pd.read_csv(item[0])
             self.ax.plot(data['Minutes'], data[item[2]], label=item[1])
-        if self.anchorent.get() == "":
-            bbox = None
-        else:
-            bbox = tuple(map(float, self.anchorent.get().split(',')))
+        if self.anchorent.get() == "": bbox = None
+        else: bbox = tuple(map(float, self.anchorent.get().split(',')))
         self.ax.legend(loc=self.loc.get(), bbox_to_anchor=bbox)
         self.fig.show()
