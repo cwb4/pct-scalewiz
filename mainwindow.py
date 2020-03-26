@@ -98,13 +98,12 @@ class MainWindow(tk.Frame):
         tk.Radiobutton(self.cmdfrm, text="PSI 1", variable=self.plotpump, value='PSI 1').grid(row = 3, column = 1, padx=5)
         tk.Radiobutton(self.cmdfrm, text="PSI 2", variable=self.plotpump, value='PSI 2').grid(row = 3, column = 2, padx=5)
 
-        # TODO: this plt stuff can probably go elsewhere
-        plt.style.use('seaborn-colorblind')
-        plt.tight_layout()
-
         self.pltfrm = tk.LabelFrame(self.tstfrm, text="Plot")
         self.fig = plt.Figure(figsize=(7.5,4), dpi=100)
         self.ax = self.fig.add_subplot(111)
+        # TODO: this plt stuff can probably go elsewhere
+        plt.style.use('seaborn-colorblind')
+        plt.tight_layout()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()

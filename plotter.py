@@ -2,6 +2,7 @@
 """ A utility to generate plots.
 Todo:
     * how to handle bbox stuff?
+    * add menu bar to allow user to define plot area and color style
 
 """
 
@@ -56,7 +57,7 @@ class PlotUtil(tk.Toplevel):
             if not child.path.get() == "":
                 to_plot.append((child.path.get(), child.title.get(),
                  child.plotpump.get()))
-        self.fig, self.ax = plt.subplots(figsize=(8.5,5), dpi=100)
+        self.fig, self.ax = plt.subplots(figsize=(12.5,5), dpi=100)
         self.ax.set_xlabel("Time (min)")
         self.ax.set_xlim(left=0,right=90)
         self.ax.set_ylabel("Pressure (psi)")
@@ -64,6 +65,9 @@ class PlotUtil(tk.Toplevel):
         self.ax.yaxis.set_major_locator(MultipleLocator(100))
         self.ax.grid(color='grey', alpha=0.3)
         self.ax.set_facecolor('w')
+        # TODO: this plt stuff can probably go elsewhere
+        plt.style.use('seaborn-colorblind')
+        plt.tight_layout()
 
         for item in to_plot:
             data = pd.read_csv(item[0])
