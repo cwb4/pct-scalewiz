@@ -57,7 +57,7 @@ class Plotter(tk.Toplevel):
          text="bbox_to_anchor:").grid(row=0, column=1, sticky=tk.W)
         self.locs.grid(row=1, column=0, sticky=tk.W, padx=2)
         self.anchorent.grid(row=1, column=1, sticky=tk.E, padx=2)
-        self.anchorent.insert(0, "1.13,0.525")
+        # self.anchorent.insert(0, "1.13,0.525") 
         self.pltbtn = ttk.Button(self.setfrm,
          text="Plot", width=30, command = self.make_plot)
         self.pltbtn.grid(row=2, columnspan=2, pady=1)
