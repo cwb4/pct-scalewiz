@@ -18,15 +18,18 @@ One-file bundle (.exe) incoming ...
 The appropriate hardware drivers may be downloaded from the
  [manufacturer website](https://ssihplc.com/manuals/#driver-downloads).
 
-requirements.txt incoming ...
+The application imports from pandas, serial, winsound, and matplotlib, plus a
+few standard library modules.
+Requirements.txt incoming ... 
 
 ## Screenshots
 Screenshots incoming ...
 
 ## Roadmap
-The plotting utility is the most recently added feature.
+Basic Matplotlib styles support for the plotting utility is the most recently
+added feature.
 Planned features include
-  * greater customization options for the plotting utility
+  * greater customization options for the plotting utility (eg. defining figure size)
   * simple utility to read/write generic messages to/from the pumps
   * configuration file support to remember useful information
     such as last used project directory, plot style templates, etc.
