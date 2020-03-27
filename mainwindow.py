@@ -53,32 +53,32 @@ class MainWindow(tk.Frame):
         self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls") # managed by GRID
 
         # define the self.entfrm entries
-        self.p1 = ttk.Entry(master=self.entfrm,
+        self.p1 = ttk.Entry(self.entfrm,
          width =14, textvariable=self.port1, justify=tk.CENTER)
-        self.p2 = ttk.Entry(master=self.entfrm,
+        self.p2 = ttk.Entry(self.entfrm,
          width =14, textvariable=self.port2, justify=tk.CENTER)
-        self.tl = ttk.Entry(master=self.entfrm,
+        self.tl = ttk.Entry(self.entfrm,
          width =30, justify=tk.CENTER, textvariable=self.timelimit)
-        self.fp = ttk.Entry(master=self.entfrm,
+        self.fp = ttk.Entry(self.entfrm,
          width =30, justify=tk.CENTER, textvariable=self.failpsi)
-        self.ch = ttk.Entry(master=self.entfrm,
+        self.ch = ttk.Entry(self.entfrm,
          width =30, justify=tk.CENTER, textvariable=self.chem)
-        self.co = ttk.Entry(master=self.entfrm,
+        self.co = ttk.Entry(self.entfrm,
          width =30, justify=tk.CENTER, textvariable=self.conc)
-        self.runbtn = ttk.Button(master=self.entfrm, text="Start",
+        self.runbtn = ttk.Button(self.entfrm, text="Start",
          command= lambda: self.init_test(self.p1.get(), self.p2.get(),
          self.tl.get(), self.fp.get(), self.ch.get(), self.co.get()))
 
         # grid entry labels into self.entfrm
-        self.comlbl = ttk.Label(master=self.entfrm, text="COM ports:")
+        self.comlbl = ttk.Label(self.entfrm, text="COM ports:")
         self.comlbl.grid(row=0, sticky=tk.E)
-        ttk.Label(master=self.entfrm,
+        ttk.Label(self.entfrm,
          text="Time limit (min):").grid(row=1, sticky=tk.E)
-        ttk.Label(master=self.entfrm,
+        ttk.Label(self.entfrm,
          text="Failing pressure (psi):").grid(row=2, sticky=tk.E)
-        ttk.Label(master=self.entfrm,
+        ttk.Label(self.entfrm,
          text="Chemical:").grid(row=4, sticky=tk.E)
-        ttk.Label(master=self.entfrm,
+        ttk.Label(self.entfrm,
          text="Concentration (ppm):").grid(row=5, sticky=tk.E)
 
         # grid entries into self.entfrm
