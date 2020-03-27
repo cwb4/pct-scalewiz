@@ -17,7 +17,8 @@ from winsound import Beep # beeping when the test ends
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.ticker import MultipleLocator
 
 class MainWindow(tk.Frame):
@@ -34,13 +35,16 @@ class MainWindow(tk.Frame):
         self.conc = tk.StringVar()
         self.savepath = tk.StringVar() # output directory
         self.project = tk.StringVar() # used for window title
-        self.plotpsi = tk.StringVar()
+        self.plotpsi = tk.StringVar() # for which pump's data to plot
+        self.plotstyle = tk.StringVar()
 
-        # set initial values
+        # set initial
+        self.paused = True
         self.timelimit.set(90)
         self.failpsi.set(1500)
         self.savepath.set(os.getcwd())
         self.plotpsi.set('PSI 2')
+        self.plotstyle.set('seaborn')
         self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
         self.build_window()
 
@@ -65,7 +69,7 @@ class MainWindow(tk.Frame):
          width=30, justify=tk.CENTER, textvariable=self.chem)
         self.co = ttk.Entry(self.entfrm,
          width=30, justify=tk.CENTER, textvariable=self.conc)
-        self.runbtn = ttk.Button(self.entfrm, text="Start",
+        self.strtbtn = ttk.Button(self.entfrm, text="Start",
          command= lambda: self.init_test(self.p1.get(), self.p2.get(),
          self.tl.get(), self.fp.get(), self.ch.get(), self.co.get()))
 
@@ -88,12 +92,12 @@ class MainWindow(tk.Frame):
         self.fp.grid(row=2, column=1, columnspan=3, pady=1)
         self.ch.grid(row=3, column=1, columnspan=3, pady=1)
         self.co.grid(row=4, column=1, columnspan=3, pady=1)
-        self.runbtn.grid(row=5, column=1, columnspan=2, pady=1)
+        self.strtbtn.grid(row=5, column=1, columnspan=2, pady=1)
         cols = self.entfrm.grid_size()
         for col in range(cols[0]):
             self.entfrm.grid_columnconfigure(col, weight=1)
 
-         #build self.outfrm PACK
+        #build self.outfrm PACK
         scrollbar = tk.Scrollbar(self.outfrm)
         self.dataout = tk.Text(self.outfrm,
          width=39, height=12, yscrollcommand=scrollbar.set, state='disabled')
@@ -103,15 +107,15 @@ class MainWindow(tk.Frame):
         self.dataout.pack(fill=tk.BOTH)
 
         # build self.cmdfrm 4x3 GRID
-        runbtn = ttk.Button(self.cmdfrm,
-         text="Run", command =lambda:self.run_test(), width=15)
-        paubtn = ttk.Button(self.cmdfrm,
+        self.runbtn = ttk.Button(self.cmdfrm,
+         text="Run", command=lambda:self.run_test(), width=15)
+        self.paubtn = ttk.Button(self.cmdfrm,
          text="Pause/Resume", command =lambda:self.pause_test(), width=15)
-        endbtn = ttk.Button(self.cmdfrm,
+        self.endbtn = ttk.Button(self.cmdfrm,
          text="End", command=lambda:self.end_test(), width=15)
-        runbtn.grid(row = 0, column=0, padx=5, sticky=tk.W)
-        paubtn.grid(row = 0, column=1, padx=15)
-        endbtn.grid(row = 0, column=2, padx=5, sticky=tk.E)
+        self.runbtn.grid(row = 0, column=0, padx=5, sticky=tk.W)
+        self.paubtn.grid(row = 0, column=1, padx=15)
+        self.endbtn.grid(row = 0, column=2, padx=5, sticky=tk.E)
         tk.Label(self.cmdfrm,
          text="Select data to plot:").grid(row=3, column=0, padx=5)
         tk.Radiobutton(self.cmdfrm, text="PSI 1",
@@ -119,12 +123,13 @@ class MainWindow(tk.Frame):
         tk.Radiobutton(self.cmdfrm, text="PSI 2",
          variable=self.plotpsi, value='PSI 2').grid(row = 3, column = 2, padx=5)
 
-        self.pltfrm = tk.LabelFrame(self.tstfrm, text="Plot")
+        if self.paused:
+            for child in self.cmdfrm.winfo_children():
+                child.configure(state="disabled")
+
+        self.pltfrm = tk.LabelFrame(self.tstfrm, text=self.plotstyle.get())
         self.fig = plt.Figure(figsize=(7.5,4), dpi=100)
         self.ax = self.fig.add_subplot(111)
-        # TODO: this plt stuff can probably go elsewhere
-        plt.style.use('seaborn-colorblind')
-        plt.tight_layout()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()
@@ -168,8 +173,8 @@ class MainWindow(tk.Frame):
                 self.port1.set(useports[0])
                 self.port2.set(useports[1])
                 if self.port1.get() == "??" or self.port2.get() =="??":
-                    self.runbtn['state']=['disable']
-                else: self.runbtn['state']=['enable']
+                    self.strtbtn['state']=['disable']
+                else: self.strtbtn['state']=['enable']
             except IndexError:
                 pass
             except AttributeError:
@@ -184,7 +189,7 @@ class MainWindow(tk.Frame):
         self.chem.set(chem)
         self.conc.set(conc)
         self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
-        self.psi1, self.psi2, self.elapsed = 0,0,
+        self.psi1, self.psi2, self.elapsed = 0,0,0
         # the timeout values are an alternative to using TextIOWrapper
         self.pump1 = serial.Serial(self.port1.get(), timeout=0.01)
         print(f"Opened a port at {self.port1.get()}")
@@ -192,6 +197,8 @@ class MainWindow(tk.Frame):
         print(f"Opened a port at {self.port2.get()}")
 
         # set up output file
+        print("Creating output file at",
+         os.path.join(self.savepath.get(), self.outfile))
         with open(os.path.join(self.savepath.get(), self.outfile),"w") as f:
                 csv.writer(f, delimiter=',').writerow(
                 ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
@@ -275,6 +282,12 @@ class MainWindow(tk.Frame):
             data = pd.read_csv(os.path.join(self.savepath.get(), self.outfile))
         except FileNotFoundError as e:
             data = pd.DataFrame(data={'Minutes':[0], 'PSI 1':[0], 'PSI 2':[0]})
+
+        # TODO: this plt stuff can probably go elsewhere
+        plt.style.use(self.plotstyle.get())
+        self.pltfrm.config(text=self.plotstyle.get())
+        print("The plot style is", self.plotstyle.get())
+        plt.tight_layout()
         self.ax.clear()
         self.ax.set_xlabel("Time (min)")
         self.ax.set_ylabel("Pressure (psi)")
