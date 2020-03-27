@@ -1,5 +1,7 @@
 # Premier Chemical Technologies, LLC  - Scale Block Wizard
 A graphical user interface designed to work with Teledyne SSI MX-class pumps.
+The intended usage is for running dynamic tube-blocking tests for calcium
+carbonate scale inhibitor chemical performance testing.
 Features include:
   * simple, reliable workflow for setting up experiments and
    handling data output
@@ -20,7 +22,7 @@ The appropriate hardware drivers may be downloaded from the
 
 The application imports from pandas, serial, winsound, and matplotlib, plus a
 few standard library modules.
-Requirements.txt incoming ... 
+Requirements.txt incoming ...
 
 ## Screenshots
 Screenshots incoming ...
@@ -29,7 +31,8 @@ Screenshots incoming ...
 Basic Matplotlib styles support for the plotting utility is the most recently
 added feature.
 Planned features include
-  * greater customization options for the plotting utility (eg. defining figure size)
+  * greater customization options for the plotting utility
+   (eg. defining figure size)
   * simple utility to read/write generic messages to/from the pumps
   * configuration file support to remember useful information
     such as last used project directory, plot style templates, etc.
