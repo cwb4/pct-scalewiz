@@ -1,4 +1,5 @@
-# A graphical user interface designed to work with Teledyne SSI MX-class pumps.
+# Premier Chemical Technologies, LLC  - Scale Block Wizard
+A graphical user interface designed to work with Teledyne SSI MX-class pumps.
 Features include:
   * simple, reliable workflow for setting up experiments and
    handling data output
