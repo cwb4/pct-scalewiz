@@ -53,19 +53,19 @@ class MainWindow(tk.Frame):
         self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls")
 
         # define the self.entfrm entries
-        self.p1=ttk.Entry(self.entfrm,
+        self.p1 = ttk.Entry(self.entfrm,
          width=14, textvariable=self.port1, justify=tk.CENTER)
-        self.p2=ttk.Entry(self.entfrm,
+        self.p2 = ttk.Entry(self.entfrm,
          width=14, textvariable=self.port2, justify=tk.CENTER)
-        self.tl=ttk.Entry(self.entfrm,
+        self.tl = ttk.Entry(self.entfrm,
          width=30, justify=tk.CENTER, textvariable=self.timelimit)
-        self.fp=ttk.Entry(self.entfrm,
+        self.fp = ttk.Entry(self.entfrm,
          width=30, justify=tk.CENTER, textvariable=self.failpsi)
-        self.ch=ttk.Entry(self.entfrm,
+        self.ch = ttk.Entry(self.entfrm,
          width=30, justify=tk.CENTER, textvariable=self.chem)
-        self.co=ttk.Entry(self.entfrm,
+        self.co = ttk.Entry(self.entfrm,
          width=30, justify=tk.CENTER, textvariable=self.conc)
-        self.runbtn=ttk.Button(self.entfrm, text="Start",
+        self.runbtn = ttk.Button(self.entfrm, text="Start",
          command= lambda: self.init_test(self.p1.get(), self.p2.get(),
          self.tl.get(), self.fp.get(), self.ch.get(), self.co.get()))
 
@@ -77,23 +77,23 @@ class MainWindow(tk.Frame):
         ttk.Label(self.entfrm,
          text="Failing pressure (psi):").grid(row=2, sticky=tk.E)
         ttk.Label(self.entfrm,
-         text="Chemical:").grid(row=4, sticky=tk.E)
+         text="Chemical:").grid(row=3, sticky=tk.E)
         ttk.Label(self.entfrm,
-         text="Concentration (ppm):").grid(row=5, sticky=tk.E)
+         text="Concentration (ppm):").grid(row=4, sticky=tk.E)
 
         # grid entries into self.entfrm
         self.p1.grid(row=0, column=1, sticky=tk.E,padx=(11,1))
         self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5,0))
         self.tl.grid(row=1, column=1, columnspan=3, pady=1)
         self.fp.grid(row=2, column=1, columnspan=3, pady=1)
-        self.ch.grid(row=4, column=1, columnspan=3, pady=1)
-        self.co.grid(row=5, column=1, columnspan=3, pady=1)
-        self.runbtn.grid(row=6, column=1, columnspan=2, pady=1)
+        self.ch.grid(row=3, column=1, columnspan=3, pady=1)
+        self.co.grid(row=4, column=1, columnspan=3, pady=1)
+        self.runbtn.grid(row=5, column=1, columnspan=2, pady=1)
         cols = self.entfrm.grid_size()
         for col in range(cols[0]):
             self.entfrm.grid_columnconfigure(col, weight=1)
 
-        #build self.outfrm PACK
+         #build self.outfrm PACK
         scrollbar = tk.Scrollbar(self.outfrm)
         self.dataout = tk.Text(self.outfrm,
          width=39, height=12, yscrollcommand=scrollbar.set, state='disabled')
@@ -113,7 +113,7 @@ class MainWindow(tk.Frame):
         paubtn.grid(row = 0, column=1, padx=15)
         endbtn.grid(row = 0, column=2, padx=5, sticky=tk.E)
         tk.Label(self.cmdfrm,
-        text="Select data to plot:").grid(row=3, column=0, padx=5)
+         text="Select data to plot:").grid(row=3, column=0, padx=5)
         tk.Radiobutton(self.cmdfrm, text="PSI 1",
          variable=self.plotpsi, value='PSI 1').grid(row = 3, column = 1, padx=5)
         tk.Radiobutton(self.cmdfrm, text="PSI 2",
@@ -176,7 +176,7 @@ class MainWindow(tk.Frame):
                 pass
 
     def init_test(self, pump1, pump2, timelimit, failpsi, chem, conc):
-        self.paused = True # TODO: necessary?
+        self.paused = True
         self.port1.set(pump1)
         self.port2.set(pump2)
         self.timelimit.set(timelimit)
@@ -184,17 +184,17 @@ class MainWindow(tk.Frame):
         self.chem.set(chem)
         self.conc.set(conc)
         self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
-        # set up output file
-        with open(os.path.join(self.savepath.get(), self.outfile),"w") as f:
-                csv.writer(f, delimiter=',').writerow(
-                ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
-
-        self.psi1, self.psi2, self.elapsed = 0,0,0
+        self.psi1, self.psi2, self.elapsed = 0,0,
+        # the timeout values are an alternative to using TextIOWrapper
         self.pump1 = serial.Serial(self.port1.get(), timeout=0.01)
         print(f"Opened a port at {self.port1.get()}")
         self.pump2 = serial.Serial(self.port2.get(), timeout=0.01)
         print(f"Opened a port at {self.port2.get()}")
-        # the timeout values are an alternative to using TextIOWrapper
+
+        # set up output file
+        with open(os.path.join(self.savepath.get(), self.outfile),"w") as f:
+                csv.writer(f, delimiter=',').writerow(
+                ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
         for child in self.entfrm.winfo_children():
             child.configure(state="disabled")
         for child in self.cmdfrm.winfo_children():
