@@ -47,25 +47,26 @@ class MainWindow(tk.Frame):
 
     def build_window(self):
         # build the main frame
-        self.tstfrm=tk.Frame(self.parent) #put everything here, pack at the end
-        self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters") # managed by 7x3 GRID
-        self.outfrm = tk.LabelFrame(self.tstfrm, text="Elapsed,            Pump1,             Pump2") # managed by PACK
-        self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls") # managed by GRID
+        self.tstfrm = tk.Frame(self.parent) #put everything here, pack at the end
+        self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
+        self.outfrm = tk.LabelFrame(self.tstfrm,
+         text="Elapsed,            Pump1,             Pump2")
+        self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls")
 
         # define the self.entfrm entries
-        self.p1 = ttk.Entry(self.entfrm,
-         width =14, textvariable=self.port1, justify=tk.CENTER)
-        self.p2 = ttk.Entry(self.entfrm,
-         width =14, textvariable=self.port2, justify=tk.CENTER)
-        self.tl = ttk.Entry(self.entfrm,
-         width =30, justify=tk.CENTER, textvariable=self.timelimit)
-        self.fp = ttk.Entry(self.entfrm,
-         width =30, justify=tk.CENTER, textvariable=self.failpsi)
-        self.ch = ttk.Entry(self.entfrm,
-         width =30, justify=tk.CENTER, textvariable=self.chem)
-        self.co = ttk.Entry(self.entfrm,
-         width =30, justify=tk.CENTER, textvariable=self.conc)
-        self.runbtn = ttk.Button(self.entfrm, text="Start",
+        self.p1=ttk.Entry(self.entfrm,
+         width=14, textvariable=self.port1, justify=tk.CENTER)
+        self.p2=ttk.Entry(self.entfrm,
+         width=14, textvariable=self.port2, justify=tk.CENTER)
+        self.tl=ttk.Entry(self.entfrm,
+         width=30, justify=tk.CENTER, textvariable=self.timelimit)
+        self.fp=ttk.Entry(self.entfrm,
+         width=30, justify=tk.CENTER, textvariable=self.failpsi)
+        self.ch=ttk.Entry(self.entfrm,
+         width=30, justify=tk.CENTER, textvariable=self.chem)
+        self.co=ttk.Entry(self.entfrm,
+         width=30, justify=tk.CENTER, textvariable=self.conc)
+        self.runbtn=ttk.Button(self.entfrm, text="Start",
          command= lambda: self.init_test(self.p1.get(), self.p2.get(),
          self.tl.get(), self.fp.get(), self.ch.get(), self.co.get()))
 
@@ -242,7 +243,11 @@ class MainWindow(tk.Frame):
 
     def take_reading(self): # loop to be handled by threadpool
         # this is way too long of a line
-        while ((self.psi1 < self.failpsi.get()) or (self.psi2 < self.failpsi.get())) and (self.elapsed < self.timelimit.get()*60) and (self.paused == False):
+        while (
+         (self.psi1 < self.failpsi.get() or self.psi2 < self.failpsi.get())
+         and self.elapsed < self.timelimit.get()*60
+         and self.paused == False
+         ):
             rn = time.strftime("%I:%M:%S", time.localtime())
             self.pump1.write("cc".encode())
             self.pump2.write("cc".encode())
