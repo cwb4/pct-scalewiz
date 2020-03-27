@@ -17,11 +17,28 @@ class Plotter(tk.Toplevel):
     def __init__(self, parent, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.winfo_toplevel().title("Plotting Utility")
+        self.plotstyle = tk.StringVar()
+        self.loc = tk.StringVar()
         self.resizable(0,0)
         self.build()
 
     def build(self):
+        locslst = ["best", "upper right", "upper left", "lower left",
+         "lower right", "right", "center left", "center right",
+         "lower center", "upper center", "center"]
+        styles =["seaborn", "seaborn-colorblind", "tableau-colorblind10",
+         "seaborn-dark-palette", "seaborn-muted", "seaborn-paper",
+         "seaborn-notebook", "fivethirtyeight"]
+        self.pmenu =tk.Menu(self)
+        self.pltmenu = tk.Menu(self, tearoff=1)
+        for style in styles:
+            self.pltmenu.add_command(label=style,
+             command=lambda style=style :self.plotstyle.set(style))
+        self.pmenu.add_cascade(label="Set plot style", menu=self.pltmenu)
+
+        self.winfo_toplevel().config(menu=self.pmenu)
+        self.winfo_toplevel().title("Plotting Utility")
+
         # NOTE: this is a dirty way of doing it... but it works
         tk.Label(self, text=("File path:                           "+
             "Series title:")).pack(anchor=tk.W)
@@ -31,14 +48,9 @@ class Plotter(tk.Toplevel):
         self.entfrm.pack(side=tk.TOP)
 
         # to hold the settings entries
-        locs = ["best", "upper right", "upper left", "lower left",
-         "lower right", "right", "center left", "center right",
-         "lower center", "upper center", "center"]
-        self.loc = tk.StringVar()
-        self.loc.set(locs[0])
         self.setfrm = tk.Frame(self)
         self.anchorent = ttk.Entry(self.setfrm)
-        self.locs = ttk.OptionMenu(self.setfrm, self.loc, locs[0],  *locs)
+        self.locs = ttk.OptionMenu(self.setfrm, self.loc, locslst[1],  *locslst)
         tk.Label(self.setfrm,
          text="loc:").grid(row=0, column=0, sticky=tk.W)
         tk.Label(self.setfrm,
@@ -66,7 +78,7 @@ class Plotter(tk.Toplevel):
         self.ax.grid(color='grey', alpha=0.3)
         self.ax.set_facecolor('w')
         # TODO: this plt stuff can probably go elsewhere
-        plt.style.use('seaborn-colorblind')
+        plt.style.use(self.plotstyle.get())
         plt.tight_layout()
 
         for item in to_plot:
