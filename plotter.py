@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ A utility to generate plots.
 Todo:
-    * add menu bar to allow user to define plot area
+    * add menu bar or similar to allow user to define plot area
 
 """
 
@@ -28,6 +28,7 @@ class Plotter(tk.Toplevel):
         styles =["seaborn", "seaborn-colorblind", "tableau-colorblind10",
          "seaborn-dark-palette", "seaborn-muted", "seaborn-paper",
          "seaborn-notebook", "fivethirtyeight"]
+        self.plotstyle.set(styles[1])
         self.pmenu =tk.Menu(self)
         self.pltmenu = tk.Menu(self, tearoff=1)
         for style in styles:

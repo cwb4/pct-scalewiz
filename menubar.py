@@ -2,7 +2,7 @@
 """ The main window's menubar.
 Todo:
     * add command for sending custom msgs to pump
-    * add command for adding blanks
+    * add command for adding blanks to the plot
 
 """
 

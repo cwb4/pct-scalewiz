@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """ The main window for accepting user inputs
 Todo:
-    * sort out if/when self.paused = True needs to be declared (see __init__ line 41)
     * try calling scrollbar directly in build_window
     * cleaner bindings for init_test calls in build_window
+    * declare the plot/fig/ax stuff the same as in Plotter
 
 """
 
@@ -130,6 +130,8 @@ class MainWindow(tk.Frame):
         self.pltfrm = tk.LabelFrame(self.tstfrm, text=self.plotstyle.get())
         self.fig = plt.Figure(figsize=(7.5,4), dpi=100)
         self.ax = self.fig.add_subplot(111)
+        plt.subplots_adjust(top=0.97)
+        plt.tight_layout()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()
@@ -285,8 +287,8 @@ class MainWindow(tk.Frame):
 
         # TODO: this plt stuff can probably go elsewhere
         plt.style.use(self.plotstyle.get())
+
         self.pltfrm.config(text=self.plotstyle.get())
-        plt.tight_layout()
         self.ax.clear()
         self.ax.set_xlabel("Time (min)")
         self.ax.set_ylabel("Pressure (psi)")
