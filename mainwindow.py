@@ -44,7 +44,7 @@ class MainWindow(tk.Frame):
         self.failpsi.set(1500)
         self.savepath.set(os.getcwd())
         self.plotpsi.set('PSI 2')
-        self.plotstyle.set('seaborn')
+        self.plotstyle.set('seaborn-colorblind')
         self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
         self.build_window()
 
@@ -286,7 +286,6 @@ class MainWindow(tk.Frame):
         # TODO: this plt stuff can probably go elsewhere
         plt.style.use(self.plotstyle.get())
         self.pltfrm.config(text=self.plotstyle.get())
-        print("The plot style is", self.plotstyle.get())
         plt.tight_layout()
         self.ax.clear()
         self.ax.set_xlabel("Time (min)")
