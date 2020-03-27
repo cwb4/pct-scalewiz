@@ -17,20 +17,20 @@ class MenuBar(tk.Frame):
         self.build()
 
     def build(self):
-        self.menubar = tk.Menu(self.parent)
-        self.filemenu = tk.Menu(self.menubar, tearoff=0)
+        self.menubar = tk.Menu(self)
+        self.filemenu = tk.Menu(self, tearoff=0)
         self.filemenu.add_command(label=self.parent.main.savepath.get(),
          command=self.askdir)
-        self.pltmenu = tk.Menu(self.menubar, tearoff=0)
-        self.pltstylmenu = tk.Menu(self.pltmenu, tearoff=1)
+        self.pltmenu = tk.Menu(self, tearoff=0)
+        self.pltstylmenu = tk.Menu(self, tearoff=1)
         self.pltmenu.add_command(label="Make new plot", command=self.new_plot)
         self.pltmenu.add_cascade(label="Set plot style", menu=self.pltstylmenu)
         #
         styles =["seaborn", "seaborn-colorblind", "tableau-colorblind10",
          "seaborn-dark-palette", "seaborn-muted", "seaborn-paper",
-         "seaborn-notebook", ]
+         "seaborn-notebook", "fivethirtyeight"]
         for style in styles:
-            self.pltstylmenu.add_command(label=style, command=lambda:self.parent.main.plotstyle.set(style))
+            self.pltstylmenu.add_command(label=style, command=lambda style=style :self.parent.main.plotstyle.set(style))
         self.menubar.add_cascade(label="File", menu=self.filemenu)
         self.menubar.add_cascade(label="Plot", menu=self.pltmenu)
         self.parent.winfo_toplevel().config(menu=self.menubar)
