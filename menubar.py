@@ -30,7 +30,8 @@ class MenuBar(tk.Frame):
          "seaborn-dark-palette", "seaborn-muted", "seaborn-paper",
          "seaborn-notebook", "fivethirtyeight"]
         for style in styles:
-            self.pltstylmenu.add_command(label=style, command=lambda style=style :self.parent.main.plotstyle.set(style))
+            self.pltstylmenu.add_command(label=style,
+             command=lambda style=style :self.parent.main.plotstyle.set(style))
         self.menubar.add_cascade(label="File", menu=self.filemenu)
         self.menubar.add_cascade(label="Plot", menu=self.pltmenu)
         self.parent.winfo_toplevel().config(menu=self.menubar)
