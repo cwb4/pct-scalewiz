@@ -40,7 +40,6 @@ class MainWindow(tk.Frame):
         self.timelimit.set(90)
         self.failpsi.set(1500)
         self.savepath.set(os.getcwd())
-        self.paused = True # TODO: may not be necessary
         self.plotpsi.set('PSI 2')
         self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
         self.build_window()
@@ -177,7 +176,7 @@ class MainWindow(tk.Frame):
                 pass
 
     def init_test(self, pump1, pump2, timelimit, failpsi, chem, conc):
-        self.paused=True # TODO: necessary?
+        self.paused = True # TODO: necessary?
         self.port1.set(pump1)
         self.port2.set(pump2)
         self.timelimit.set(timelimit)
