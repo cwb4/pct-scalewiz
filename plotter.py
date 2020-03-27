@@ -34,6 +34,7 @@ class Plotter(tk.Toplevel):
             self.pltmenu.add_command(label=style,
              command=lambda style=style :self.plotstyle.set(style))
         self.pmenu.add_cascade(label="Set plot style", menu=self.pltmenu)
+        self.pmenu.add_command(label="Set figure dimensions", command=None)
 
         self.winfo_toplevel().config(menu=self.pmenu)
         self.winfo_toplevel().title("Plotting Utility")
@@ -68,6 +69,7 @@ class Plotter(tk.Toplevel):
             if not child.path.get() == "":
                 to_plot.append((child.path.get(), child.title.get(),
                  child.plotpump.get()))
+
         self.fig, self.ax = plt.subplots(figsize=(12.5,5), dpi=100)
         self.ax.set_xlabel("Time (min)")
         self.ax.set_xlim(left=0,right=90)
