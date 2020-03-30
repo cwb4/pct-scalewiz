@@ -128,10 +128,9 @@ class MainWindow(tk.Frame):
                 child.configure(state="disabled")
 
         self.pltfrm = tk.LabelFrame(self.tstfrm, text=self.plotstyle.get())
-        self.fig = plt.Figure(figsize=(7.5,4), dpi=100)
-        self.ax = self.fig.add_subplot(111)
-        plt.subplots_adjust(top=0.97)
-        plt.tight_layout()
+        self.fig, self.ax = plt.subplots(figsize=(7.5,4), dpi=100)
+        plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
+        #plt.tight_layout()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()
