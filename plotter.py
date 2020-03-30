@@ -79,6 +79,7 @@ class Plotter(tk.Toplevel):
         self.ax.yaxis.set_major_locator(MultipleLocator(100))
         self.ax.grid(color='grey', alpha=0.3)
         self.ax.set_facecolor('w')
+        self.fig.canvas.set_window_title("")
         # TODO: this plt stuff can probably go elsewhere
         plt.style.use(self.plotstyle.get())
         plt.tight_layout()
