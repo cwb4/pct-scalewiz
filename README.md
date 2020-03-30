@@ -27,7 +27,7 @@ Requirements.txt incoming ...
 
 ## Screenshots
 ### Plotting utility
-![](images/plotting_utility.png)
+![](images/plotting_utility.PNG)
 
 ## Roadmap
 Basic Matplotlib styles support for the plotting utility is the most recently
