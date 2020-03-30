@@ -6,7 +6,7 @@ Features include:
   * simple, reliable workflow for setting up experiments and
    handling data output
   * straightforward pump controls
-  * real-time pressure data visualization
+  * real-time pressure data visualization with multiple style options
   * easy to use plotting utility for producing publication-quality images
 
 ## Installation
@@ -20,12 +20,14 @@ One-file bundle (.exe) incoming ...
 The appropriate hardware drivers may be downloaded from the
  [manufacturer website](https://ssihplc.com/manuals/#driver-downloads).
 
+Should run off of most Anaconda installations.
 The application imports from pandas, serial, winsound, and matplotlib, plus a
 few standard library modules.
 Requirements.txt incoming ...
 
 ## Screenshots
-Screenshots incoming ...
+### Plotting utility
+![](images/plotting_utility.png)
 
 ## Roadmap
 Basic Matplotlib styles support for the plotting utility is the most recently
