@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ A utility to generate plots.
 Todo:
-    * add menu bar or similar to allow user to define plot area
+    * predefine a colormap of 10 unique colors for increased visibility
 
 """
 
