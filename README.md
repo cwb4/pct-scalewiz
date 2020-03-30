@@ -4,7 +4,8 @@ The intended usage is for running dynamic tube-blocking tests for calcium
 carbonate scale inhibitor chemical performance testing.
 Features include:
   * simple, reliable workflow for setting up experiments and
-   handling data output
+   handling data output to .csv files
+  * no hardware hassle - COM ports are automatically detected and managed
   * straightforward pump controls
   * real-time pressure data visualization with multiple style options
   * easy to use plotting utility for producing publication-quality images
@@ -35,8 +36,9 @@ Requirements.txt incoming ...
 Basic Matplotlib styles support for the plotting utility is the most recently
 added feature.
 Planned features include
+  * support for data export to other file formats (.xlsx)
   * greater customization options for the plotting utility
-   (eg. defining figure size)
+    such as allowing the user to define figure size and adding support for more matplotlib styles
   * simple utility to read/write generic messages to/from the pumps
   * configuration file support to remember useful information
     such as last used project directory, plot style templates, etc.
