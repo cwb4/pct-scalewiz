@@ -4,6 +4,7 @@ Todo:
     * remove "(ppm)" for conc, let user define (combobox seems too much)
     * try calling scrollbar directly in build_window
     * cleaner bindings for init_test calls in build_window
+    * change taking reading method to calculate elapsed from OS time
 """
 
 import tkinter as tk
