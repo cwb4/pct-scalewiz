@@ -29,7 +29,7 @@ Requirements.txt incoming ...
 ### Main Main window
 ![](images/main_window.PNG)
 ### Plotting utility
-![](images/plotting_utility.png)
+![](images/plotting_utility.PNG)
 
 ## Roadmap
 Basic Matplotlib styles support for the plotting utility is the most recently
