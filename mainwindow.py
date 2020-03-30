@@ -126,7 +126,7 @@ class MainWindow(tk.Frame):
             for child in self.cmdfrm.winfo_children():
                 child.configure(state="disabled")
 
-        self.pltfrm = tk.LabelFrame(self.tstfrm, text=self.plotstyle.get())
+        self.pltfrm = tk.LabelFrame(self.tstfrm, text=("Style: " +self.plotstyle.get()))
         self.fig, self.ax = plt.subplots(figsize=(7.5,4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
         #plt.tight_layout()
@@ -287,7 +287,7 @@ class MainWindow(tk.Frame):
         plt.rcParams.update(plt.rcParamsDefault) # refresh the style
         # https://stackoverflow.com/questions/42895216
         plt.style.use(self.plotstyle.get())
-        self.pltfrm.config(text=self.plotstyle.get())
+        self.pltfrm.config(text=("Style: " + self.plotstyle.get()))
         self.ax.clear()
         self.ax.set_xlabel("Time (min)")
         self.ax.set_ylabel("Pressure (psi)")
