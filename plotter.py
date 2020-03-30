@@ -25,10 +25,10 @@ class Plotter(tk.Toplevel):
         locslst = ["best", "upper right", "upper left", "lower left",
          "lower right", "right", "center left", "center right",
          "lower center", "upper center", "center"]
-        styles =["seaborn", "seaborn-colorblind", "tableau-colorblind10",
-         "seaborn-dark-palette", "seaborn-muted", "seaborn-paper",
-         "seaborn-notebook", "fivethirtyeight"]
-        self.plotstyle.set(styles[1])
+        styles = ["bmh", "fivethirtyeight", "seaborn", "seaborn-colorblind",
+         "seaborn-dark-palette", "seaborn-muted", "seaborn-notebook",
+         "seaborn-paper", "seaborn-pastel", "tableau-colorblind10"]
+        self.plotstyle.set('seaborn-colorblind')
         self.pmenu =tk.Menu(self)
         self.pltmenu = tk.Menu(self, tearoff=1)
         for style in styles:

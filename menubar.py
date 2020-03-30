@@ -26,9 +26,9 @@ class MenuBar(tk.Frame):
         self.pltmenu.add_command(label="Make new plot", command=self.new_plot)
         self.pltmenu.add_cascade(label="Set plot style", menu=self.pltstylmenu)
         #
-        styles =["seaborn", "seaborn-colorblind", "tableau-colorblind10",
-         "seaborn-dark-palette", "seaborn-muted", "seaborn-paper",
-         "seaborn-notebook", "fivethirtyeight"]
+        styles = ["bmh", "fivethirtyeight", "seaborn", "seaborn-colorblind",
+         "seaborn-dark-palette", "seaborn-muted", "seaborn-notebook",
+         "seaborn-paper", "seaborn-pastel", "tableau-colorblind10"]
         for style in styles:
             self.pltstylmenu.add_command(label=style,
              command=lambda style=style :self.parent.main.plotstyle.set(style))
