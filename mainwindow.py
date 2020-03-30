@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """ The main window for accepting user inputs
 Todo:
-    * remove "(ppm)" for conc, let user define (combobox seems too much)
     * try calling scrollbar directly in build_window
     * cleaner bindings for init_test calls in build_window
     * change taking reading method to calculate elapsed from OS time
@@ -45,7 +44,7 @@ class MainWindow(tk.Frame):
         self.savepath.set(os.getcwd())
         self.plotpsi.set('PSI 2')
         self.plotstyle.set('seaborn-colorblind')
-        self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
+        self.outfile = f"{self.chem.get()}_{self.conc.get()}.csv"
         self.build_window()
 
     def build_window(self):
@@ -83,11 +82,11 @@ class MainWindow(tk.Frame):
         ttk.Label(self.entfrm,
          text="Chemical:").grid(row=3, sticky=tk.E)
         ttk.Label(self.entfrm,
-         text="Concentration (ppm):").grid(row=4, sticky=tk.E)
+         text="Concentration:").grid(row=4, sticky=tk.E)
 
         # grid entries into self.entfrm
         self.p1.grid(row=0, column=1, sticky=tk.E,padx=(11,1))
-        self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5,0))
+        self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5,1))
         self.tl.grid(row=1, column=1, columnspan=3, pady=1)
         self.fp.grid(row=2, column=1, columnspan=3, pady=1)
         self.ch.grid(row=3, column=1, columnspan=3, pady=1)
@@ -189,7 +188,7 @@ class MainWindow(tk.Frame):
         self.failpsi.set(failpsi)
         self.chem.set(chem)
         self.conc.set(conc)
-        self.outfile = f"{self.chem.get()}_{self.conc.get()}ppm.csv"
+        self.outfile = f"{self.chem.get()}_{self.conc.get()}.csv"
         self.psi1, self.psi2, self.elapsed = 0,0,0
         # the timeout values are an alternative to using TextIOWrapper
         self.pump1 = serial.Serial(self.port1.get(), timeout=0.01)
@@ -299,7 +298,7 @@ class MainWindow(tk.Frame):
         y = data[self.plotpsi.get()]
         x = data['Minutes']
         self.ax.plot(x,y,
-         label=("{0} {1} ppm".format(self.chem.get(), self.conc.get())))
+         label=("{0} {1}".format(self.chem.get(), self.conc.get())))
         self.ax.grid(color='grey', alpha=0.3)
         self.ax.set_facecolor('w')
         self.ax.legend(loc=0)
