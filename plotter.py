@@ -35,7 +35,7 @@ class Plotter(tk.Toplevel):
             self.pltmenu.add_command(label=style,
              command=lambda style=style :self.plotstyle.set(style))
         self.pmenu.add_cascade(label="Set plot style", menu=self.pltmenu)
-        self.pmenu.add_command(label="Set figure dimensions", command=None)
+        # self.pmenu.add_command(label="Set figure dimensions", command=None)
 
         self.winfo_toplevel().config(menu=self.pmenu)
         self.winfo_toplevel().title("Plotting Utility")
