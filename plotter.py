@@ -53,7 +53,7 @@ class Plotter(tk.Toplevel):
         self.anchorent = ttk.Entry(self.setfrm)
         self.locs = ttk.OptionMenu(self.setfrm, self.loc, locslst[1],  *locslst)
         tk.Label(self.setfrm,
-         text="loc:").grid(row=0, column=0, sticky=tk.W)
+         text="Legend location:").grid(row=0, column=0, sticky=tk.W)
         tk.Label(self.setfrm,
          text="bbox_to_anchor:").grid(row=0, column=1, sticky=tk.W)
         self.locs.grid(row=1, column=0, sticky=tk.W, padx=2)
