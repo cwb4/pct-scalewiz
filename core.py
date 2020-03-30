@@ -35,6 +35,6 @@ if __name__ == "__main__":
                 pass
         print("Destroying root")
         root.destroy()
-
+        exit()
     root.protocol("WM_DELETE_WINDOW", close_ports)
     root.mainloop()
