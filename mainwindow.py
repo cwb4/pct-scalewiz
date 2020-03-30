@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """ The main window for accepting user inputs
 Todo:
+    * remove "(ppm)" for conc, let user define (combobox seems too much)
     * try calling scrollbar directly in build_window
     * cleaner bindings for init_test calls in build_window
-    * declare the plot/fig/ax stuff the same as in Plotter
-
 """
 
 import tkinter as tk
@@ -285,8 +284,9 @@ class MainWindow(tk.Frame):
             data = pd.DataFrame(data={'Minutes':[0], 'PSI 1':[0], 'PSI 2':[0]})
 
         # TODO: this plt stuff can probably go elsewhere
+        plt.rcParams.update(plt.rcParamsDefault) # refresh the style
+        # https://stackoverflow.com/questions/42895216
         plt.style.use(self.plotstyle.get())
-
         self.pltfrm.config(text=self.plotstyle.get())
         self.ax.clear()
         self.ax.set_xlabel("Time (min)")
