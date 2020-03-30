@@ -26,6 +26,8 @@ few standard library modules.
 Requirements.txt incoming ...
 
 ## Screenshots
+### Main Main window
+![](images/main_window.PNG)
 ### Plotting utility
 ![](images/plotting_utility.png)
 
