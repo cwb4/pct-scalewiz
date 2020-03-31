@@ -49,7 +49,7 @@ class MainWindow(tk.Frame):
 
     def build_window(self):
         # build the main frame
-        self.tstfrm = tk.Frame(self.parent) #put everything here, pack at the end
+        self.tstfrm = tk.Frame(self.parent)
         self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
         self.outfrm = tk.LabelFrame(self.tstfrm,
          text="Elapsed,            Pump1,             Pump2")
