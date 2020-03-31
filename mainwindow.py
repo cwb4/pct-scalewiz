@@ -126,7 +126,8 @@ class MainWindow(tk.Frame):
             for child in self.cmdfrm.winfo_children():
                 child.configure(state="disabled")
 
-        self.pltfrm = tk.LabelFrame(self.tstfrm, text=("Style: " +self.plotstyle.get()))
+        self.pltfrm = tk.LabelFrame(self.tstfrm,
+         text=("Style: " + self.plotstyle.get()))
         self.fig, self.ax = plt.subplots(figsize=(7.5,4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
         #plt.tight_layout()
