@@ -49,20 +49,6 @@ class Plotter(tk.Toplevel):
         self.build()
 
     def build(self):
-        self.plotstyle.set('seaborn-colorblind')
-        self.pmenu = tk.Menu(self)
-        self.pltmenu = tk.Menu(master=self, tearoff=1)
-
-        for style in Plotter.styles:
-            self.pltmenu.add_command(
-                label=style,
-                command=lambda style=style: self.plotstyle.set(style)
-                )
-
-        self.pmenu.add_cascade(label="Set plot style", menu=self.pltmenu)
-        # self.pmenu.add_command(label="Set figure dimensions", command=None)
-
-        self.winfo_toplevel().config(menu=self.pmenu)
         self.winfo_toplevel().title("Plotting Utility")
 
         # NOTE: this is a dirty way of doing it... but it works
@@ -88,17 +74,29 @@ class Plotter(tk.Toplevel):
             self.loc,
             Plotter.locslst[1],
             *Plotter.locslst)
+
+        self.styles = ttk.OptionMenu(
+            self.setfrm,
+            self.plotstyle,
+            Plotter.styles[3],
+            *Plotter.styles)
+
+        tk.Label(
+            master=self.setfrm,
+            text="Plot style:"
+            ).grid(row=0, column=0, sticky=None)
         tk.Label(
             master=self.setfrm,
             text="Legend location:"
-            ).grid(row=0, column=0, sticky=tk.W)
+            ).grid(row=0, column=1, sticky=None)
         tk.Label(
             master=self.setfrm,
             text="bbox_to_anchor:"
-            ).grid(row=0, column=1, sticky=tk.W)
+            ).grid(row=0, column=2, sticky=None)
 
-        self.locs.grid(row=1, column=0, sticky=tk.W, padx=2)
-        self.anchorent.grid(row=1, column=1, sticky=tk.E, padx=2)
+        self.styles.grid(row=1, column=0, sticky=tk.W, padx=2)
+        self.locs.grid(row=1, column=1, sticky=tk.W, padx=2)
+        self.anchorent.grid(row=1, column=2, sticky=tk.E, padx=2)
         # self.anchorent.insert(0, "1.13,0.525")
 
         self.pltbtn = ttk.Button(
@@ -107,18 +105,18 @@ class Plotter(tk.Toplevel):
             width=30,
             command=self.make_plot
             )
-        self.pltbtn.grid(row=2, columnspan=2, pady=1)
+        self.pltbtn.grid(row=2, columnspan=3, pady=1)
         self.setfrm.pack(side=tk.BOTTOM)
 
     def make_plot(self):
         to_plot = []
         for child in self.entfrm.winfo_children():
             if not child.path.get() == "":
-                to_plot.append(
+                to_plot.append((
                     child.path.get(),
                     child.title.get(),
                     child.plotpump.get()
-                    )
+                    ))
 
         self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
         self.ax.set_xlabel("Time (min)")
