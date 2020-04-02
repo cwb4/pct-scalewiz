@@ -220,19 +220,19 @@ class MainWindow(tk.Frame):
 
     def findcoms(self):
               #find the com ports
-            print("Finding COM ports ...")
+            self.to_log("Finding COM ports ...")
             ports = ["COM" + str(i) for i in range(15)]
             useports = []
             for i in ports:
                 try:
                     if serial.Serial(i).is_open:
-                        print(f"Found an open port at {i}")
+                        self.to_log(f"Found an open port at {i}")
                         useports.append(i)
                         serial.Serial(i).close
                 except serial.SerialException:
                     pass
             if useports == []:
-                print("No COM ports found")
+                self.to_log("No COM ports found")
                 useports = ["??", "??"]
             try:
                 self.port1.set(useports[0])
