@@ -20,6 +20,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.ticker import MultipleLocator
 
+
 class MainWindow(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
@@ -56,37 +57,77 @@ class MainWindow(tk.Frame):
         self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls")
 
         # define the self.entfrm entries
-        self.p1 = ttk.Entry(self.entfrm,
-         width=14, textvariable=self.port1, justify=tk.CENTER)
-        self.p2 = ttk.Entry(self.entfrm,
-         width=14, textvariable=self.port2, justify=tk.CENTER)
-        self.tl = ttk.Entry(self.entfrm,
-         width=30, justify=tk.CENTER, textvariable=self.timelimit)
-        self.fp = ttk.Entry(self.entfrm,
-         width=30, justify=tk.CENTER, textvariable=self.failpsi)
-        self.ch = ttk.Entry(self.entfrm,
-         width=30, justify=tk.CENTER, textvariable=self.chem)
-        self.co = ttk.Entry(self.entfrm,
-         width=30, justify=tk.CENTER, textvariable=self.conc)
-        self.strtbtn = ttk.Button(self.entfrm, text="Start",
-         command= lambda: self.init_test(self.p1.get(), self.p2.get(),
-         self.tl.get(), self.fp.get(), self.ch.get(), self.co.get()))
+        self.p1 = ttk.Entry(
+            master=self.entfrm,
+            width=14,
+            textvariable=self.port1,
+            justify=tk.CENTER
+            )
+        self.p2 = ttk.Entry(
+            MASTER=self.entfrm,
+            width=14,
+            textvariable=self.port2,
+            justify=tk.CENTER
+            )
+        self.tl = ttk.Entry(
+            master=self.entfrm,
+            width=30,
+            justify=tk.CENTER,
+            textvariable=self.timelimit
+            )
+        self.fp = ttk.Entry(
+            master=self.entfrm,
+            width=30,
+            justify=tk.CENTER,
+            textvariable=self.failpsi
+            )
+        self.ch = ttk.Entry(
+            master=self.entfrm,
+            width=30,
+            justify=tk.CENTER,
+            textvariable=self.chem
+            )
+        self.co = ttk.Entry(
+            master=self.entfrm,
+            width=30,
+            justify=tk.CENTER,
+            textvariable=self.conc
+            )
+        self.strtbtn = ttk.Button(
+            master=self.entfrm,
+            text="Start",
+            command=lambda: self.init_test(
+                self.p1.get(),
+                self.p2.get(),
+                self.tl.get(),
+                self.fp.get(),
+                self.ch.get(),
+                self.co.get()
+                )
 
         # grid entry labels into self.entfrm
-        self.comlbl = ttk.Label(self.entfrm, text="COM ports:")
+        self.comlbl = ttk.Label(master=self.entfrm, text="COM ports:")
         self.comlbl.grid(row=0, sticky=tk.E)
-        ttk.Label(self.entfrm,
-         text="Time limit (min):").grid(row=1, sticky=tk.E)
-        ttk.Label(self.entfrm,
-         text="Failing pressure (psi):").grid(row=2, sticky=tk.E)
-        ttk.Label(self.entfrm,
-         text="Chemical:").grid(row=3, sticky=tk.E)
-        ttk.Label(self.entfrm,
-         text="Concentration:").grid(row=4, sticky=tk.E)
+        ttk.Label(
+            master=self.entfrm,
+            text="Time limit (min):"
+            ).grid(row=1, sticky=tk.E)
+        ttk.Label(
+            master=self.entfrm,
+            text="Failing pressure (psi):"
+            ).grid(row=2, sticky=tk.E)
+        ttk.Label(
+            master=self.entfrm,
+            text="Chemical:"
+            ).grid(row=3, sticky=tk.E)
+        ttk.Label(
+            master=self.entfrm,
+            text="Concentration:"
+            ).grid(row=4, sticky=tk.E)
 
         # grid entries into self.entfrm
-        self.p1.grid(row=0, column=1, sticky=tk.E,padx=(11,1))
-        self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5,1))
+        self.p1.grid(row=0, column=1, sticky=tk.E,padx=(11, 1))
+        self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5, 1))
         self.tl.grid(row=1, column=1, columnspan=3, pady=1)
         self.fp.grid(row=2, column=1, columnspan=3, pady=1)
         self.ch.grid(row=3, column=1, columnspan=3, pady=1)
@@ -98,39 +139,70 @@ class MainWindow(tk.Frame):
 
         #build self.outfrm PACK
         scrollbar = tk.Scrollbar(self.outfrm)
-        self.dataout = tk.Text(self.outfrm,
-         width=39, height=12, yscrollcommand=scrollbar.set, state='disabled')
-         # TODO: try calling tk.Scrollbar(self.outfrm) directly
+        self.dataout = tk.Text(
+            master=self.outfrm,
+            width=39,
+            height=12,
+            yscrollcommand=scrollbar.set,
+            state='disabled'
+            )
+        # TODO: try calling tk.Scrollbar(self.outfrm) directly
         scrollbar.config(command=self.dataout.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.dataout.pack(fill=tk.BOTH)
 
         # build self.cmdfrm 4x3 GRID
-        self.runbtn = ttk.Button(self.cmdfrm,
-         text="Run", command=lambda:self.run_test(), width=15)
-        self.paubtn = ttk.Button(self.cmdfrm,
-         text="Pause/Resume", command =lambda:self.pause_test(), width=15)
-        self.endbtn = ttk.Button(self.cmdfrm,
-         text="End", command=lambda:self.end_test(), width=15)
-        self.runbtn.grid(row = 0, column=0, padx=5, sticky=tk.W)
-        self.paubtn.grid(row = 0, column=1, padx=15)
-        self.endbtn.grid(row = 0, column=2, padx=5, sticky=tk.E)
-        tk.Label(self.cmdfrm,
-         text="Select data to plot:").grid(row=3, column=0, padx=5)
-        tk.Radiobutton(self.cmdfrm, text="PSI 1",
-         variable=self.plotpsi, value='PSI 1').grid(row = 3, column = 1, padx=5)
-        tk.Radiobutton(self.cmdfrm, text="PSI 2",
-         variable=self.plotpsi, value='PSI 2').grid(row = 3, column = 2, padx=5)
+        self.runbtn = ttk.Button(
+            master=self.cmdfrm,
+            text="Run",
+            command=lambda: self.run_test(),
+            width=15
+            )
+        self.paubtn = ttk.Button(
+            master=self.cmdfrm,
+            text="Pause/Resume",
+            command=lambda: self.pause_test(),
+            width=15
+            )
+        self.endbtn = ttk.Button(
+            master=self.cmdfrm,
+            text="End",
+            command=lambda: self.end_test(),
+            width=15
+            )
+        self.runbtn.grid(row=0, column=0, padx=5, sticky=tk.W)
+        self.paubtn.grid(row=0, column=1, padx=15)
+        self.endbtn.grid(row=0, column=2, padx=5, sticky=tk.E)
+        tk.Label(
+            master=self.cmdfrm,
+            text="Select data to plot:"
+            ).grid(row=3, column=0, padx=5)
+        tk.Radiobutton(
+            master=self.cmdfrm,
+            text="PSI 1",
+            variable=self.plotpsi,
+            value='PSI 1'
+            ).grid(row = 3, column = 1, padx=5)
+        tk.Radiobutton(
+            master=self.cmdfrm,
+            text="PSI 2",
+            variable=self.plotpsi,
+            value='PSI 2'
+            ).grid(row = 3, column = 2, padx=5)
 
         if self.paused:
             for child in self.cmdfrm.winfo_children():
                 child.configure(state="disabled")
 
-        self.pltfrm = tk.LabelFrame(self.tstfrm,
-         text=("Style: " + self.plotstyle.get()))
-        self.fig, self.ax = plt.subplots(figsize=(7.5,4), dpi=100)
+        self.pltfrm = tk.LabelFrame(
+            master=self.tstfrm,
+            text=("Style: " + self.plotstyle.get())
+            )
+
+        self.fig, self.ax = plt.subplots(figsize=(7.5, 4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
         #plt.tight_layout()
+        # TODO: explicitly clarify some of these args
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()
@@ -144,9 +216,17 @@ class MainWindow(tk.Frame):
         self.cmdfrm.grid(row=2, column=0, sticky=tk.NSEW, pady=2)
 
         # widget bindings
-        self.co.bind("<Return>", lambda _: self.init_test(self.p1.get(),
-         self.p2.get(), self.tl.get(), self.fp.get(),
-         self.ch.get(), self.co.get()))
+        self.co.bind(
+                "<Return>",
+                lambda: self.init_test(
+                    self.p1.get(),
+                    self.p2.get(),
+                    self.tl.get(),
+                    self.fp.get(),
+                    self.ch.get(),
+                    self.co.get()
+                    )
+                )
          # TODO: there has to be a more concise way
         self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
 
@@ -173,9 +253,10 @@ class MainWindow(tk.Frame):
             try:
                 self.port1.set(useports[0])
                 self.port2.set(useports[1])
-                if self.port1.get() == "??" or self.port2.get() =="??":
+                if self.port1.get() == "??" or self.port2.get() == "??":
                     self.strtbtn['state']=['disable']
-                else: self.strtbtn['state']=['enable']
+                else:
+                    self.strtbtn['state']=['enable']
             except IndexError:
                 pass
             except AttributeError:
@@ -190,7 +271,7 @@ class MainWindow(tk.Frame):
         self.chem.set(chem)
         self.conc.set(conc)
         self.outfile = f"{self.chem.get()}_{self.conc.get()}.csv"
-        self.psi1, self.psi2, self.elapsed = 0,0,0
+        self.psi1, self.psi2, self.elapsed = 0, 0, 0
         # the timeout values are an alternative to using TextIOWrapper
         self.pump1 = serial.Serial(self.port1.get(), timeout=0.01)
         print(f"Opened a port at {self.port1.get()}")
