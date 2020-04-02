@@ -53,7 +53,7 @@ class Plotter(tk.Toplevel):
         self.pmenu = tk.Menu(self)
         self.pltmenu = tk.Menu(master=self, tearoff=1)
 
-        for style in styles:
+        for style in Plotter.styles:
             self.pltmenu.add_command(
                 label=style,
                 command=lambda style=style: self.plotstyle.set(style)
@@ -82,7 +82,11 @@ class Plotter(tk.Toplevel):
         # to hold the settings entries
         self.setfrm = tk.Frame(self)
         self.anchorent = ttk.Entry(self.setfrm)
-        self.locs = ttk.OptionMenu(self.setfrm, self.loc, locslst[1], *locslst)
+        self.locs = ttk.OptionMenu(
+            self.setfrm,
+            self.loc,
+            Plotter.locslst[1],
+            *Plotter.locslst)
         tk.Label(
             master=self.setfrm,
             text="Legend location:"

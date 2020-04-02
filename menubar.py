@@ -39,7 +39,7 @@ class MenuBar(tk.Frame):
             )
         self.pltmenu = tk.Menu(master=self, tearoff=0)
         self.pltstylmenu = tk.Menu(master=self, tearoff=1)
-        for style in styles:
+        for style in MenuBar.styles:
             self.pltstylmenu.add_command(
                 label=style,
                 command=lambda s=style: (self.parent.main.plotstyle.set(s))
