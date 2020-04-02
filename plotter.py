@@ -70,7 +70,8 @@ class Plotter(tk.Toplevel):
             master=self,
             text=(
                 "File path:                           " +
-                "Series title:"
+                "Series title:                        " +
+                "  Pressure to plot:"
                 )
             ).pack(anchor=tk.W)
 
