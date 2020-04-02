@@ -64,7 +64,7 @@ class MainWindow(tk.Frame):
             justify=tk.CENTER
             )
         self.p2 = ttk.Entry(
-            MASTER=self.entfrm,
+            master=self.entfrm,
             width=14,
             textvariable=self.port2,
             justify=tk.CENTER
@@ -96,14 +96,8 @@ class MainWindow(tk.Frame):
         self.strtbtn = ttk.Button(
             master=self.entfrm,
             text="Start",
-            command=lambda: self.init_test(
-                self.p1.get(),
-                self.p2.get(),
-                self.tl.get(),
-                self.fp.get(),
-                self.ch.get(),
-                self.co.get()
-                )
+            command=self.init_test
+            )
 
         # grid entry labels into self.entfrm
         self.comlbl = ttk.Label(master=self.entfrm, text="COM ports:")
@@ -216,17 +210,7 @@ class MainWindow(tk.Frame):
         self.cmdfrm.grid(row=2, column=0, sticky=tk.NSEW, pady=2)
 
         # widget bindings
-        self.co.bind(
-                "<Return>",
-                lambda: self.init_test(
-                    self.p1.get(),
-                    self.p2.get(),
-                    self.tl.get(),
-                    self.fp.get(),
-                    self.ch.get(),
-                    self.co.get()
-                    )
-                )
+        self.co.bind("<Return>", self.init_test)
          # TODO: there has to be a more concise way
         self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
 
@@ -262,14 +246,15 @@ class MainWindow(tk.Frame):
             except AttributeError:
                 pass
 
-    def init_test(self, pump1, pump2, timelimit, failpsi, chem, conc):
+    def init_test(self):
         self.paused = True
-        self.port1.set(pump1)
-        self.port2.set(pump2)
-        self.timelimit.set(timelimit)
-        self.failpsi.set(failpsi)
-        self.chem.set(chem)
-        self.conc.set(conc)
+        self.port1.set(self.p1.get())
+        self.port2.set(self.p2.get())
+        self.timelimit.set(self.tl.get())
+        self.failpsi.set(self.fp.get())
+        self.chem.set(self.ch.get())
+        self.conc.set(self.co.get())
+
         self.outfile = f"{self.chem.get()}_{self.conc.get()}.csv"
         self.psi1, self.psi2, self.elapsed = 0, 0, 0
         # the timeout values are an alternative to using TextIOWrapper
