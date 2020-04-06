@@ -353,7 +353,7 @@ class MainWindow(tk.Frame):
         self.ax.set_ylabel("Pressure (psi)")
         self.ax.set_ylim(top=1500)
         self.ax.yaxis.set_major_locator(MultipleLocator(100))
-        self.ax.set_xlim(left=0,right=90)
+        self.ax.set_xlim(left=0,right=self.timelimit.get())
 
         y = data[self.plotpsi.get()]
         x = data['Minutes']
