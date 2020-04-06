@@ -22,7 +22,7 @@ class MainWindow(tk.Frame):
         # define test parameters
         self.port1 = tk.StringVar() # COM port for pump1
         self.port2 = tk.StringVar() # COM port for pump2
-        self.timelimit = tk.IntVar()
+        self.timelimit = tk.DoubleVar()
         self.failpsi = tk.IntVar()
         self.chem = tk.StringVar()
         self.conc = tk.StringVar()
