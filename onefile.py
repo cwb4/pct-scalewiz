@@ -351,7 +351,7 @@ class MainWindow(tk.Frame):
         self.ax.clear()
         self.ax.set_xlabel("Time (min)")
         self.ax.set_ylabel("Pressure (psi)")
-        self.ax.set_ylim(top=1500)
+        self.ax.set_ylim(top=self.failpsi.get())
         self.ax.yaxis.set_major_locator(MultipleLocator(100))
         self.ax.set_xlim(left=0,right=self.timelimit.get())
 
