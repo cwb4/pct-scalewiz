@@ -11,20 +11,21 @@ Features include:
   * easy to use plotting utility for producing publication-quality images
 
 ## Installation
-Download the source code and run core.py.
+Dependencies may be installed using the requirements.txt file included.
 ```bash
-python core.py
+pip install -r requirements.txt
 ```
-One-file bundle (.exe) incoming ...
+
+Then download and run Scale_Block_Wizard.py
+```bash
+python Scale_Block_Wizard.py
+```
+Alternatively, Windows x64 systems may just download and run
+Scale_Block_Wizard.exe
 
 ### Requirements
 The appropriate hardware drivers may be downloaded from the
  [manufacturer website](https://ssihplc.com/manuals/#driver-downloads).
-
-Should run off of most Anaconda installations.
-The application imports from pandas, serial, winsound, and matplotlib, plus a
-few standard library modules.
-Requirements.txt incoming ...
 
 ## Screenshots
 ### Main window
