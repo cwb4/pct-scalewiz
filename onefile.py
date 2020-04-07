@@ -529,6 +529,8 @@ class Plotter(tk.Toplevel):
                     ))
 
         self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
+        plt.rcParams.update(plt.rcParamsDefault) # refresh the style
+        plt.style.use(self.plotstyle.get())
         self.ax.set_xlabel("Time (min)")
         self.ax.set_xlim(left=0, right=90)
         self.ax.set_ylabel("Pressure (psi)")
@@ -538,7 +540,6 @@ class Plotter(tk.Toplevel):
         self.ax.set_facecolor('w')
         self.fig.canvas.set_window_title("")
         # TODO: this plt stuff can probably go elsewhere
-        plt.style.use(self.plotstyle.get())
         plt.tight_layout()
 
         for item in to_plot:
