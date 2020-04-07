@@ -225,7 +225,8 @@ class MainWindow(tk.Frame):
                 except serial.SerialException:
                     pass
             if useports == []:
-                self.to_log("No COM ports found")
+                self.to_log("No COM ports found ...")
+                self.to_log("Click the 'COM ports:' label above to try again.")
                 useports = ["??", "??"]
             try:
                 self.port1.set(useports[0])
@@ -453,7 +454,7 @@ class Plotter(tk.Toplevel):
     def __init__(self, parent, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.plotstyle = tk.StringVar()
+        self.plotterstyle = tk.StringVar()
         self.loc = tk.StringVar()
         self.resizable(0, 0)
         self.build()
@@ -487,7 +488,7 @@ class Plotter(tk.Toplevel):
 
         self.styles = ttk.OptionMenu(
             self.setfrm,
-            self.plotstyle,
+            self.plotterstyle,
             Plotter.styles[3],
             *Plotter.styles)
 
@@ -528,31 +529,31 @@ class Plotter(tk.Toplevel):
                     child.plotpump.get()
                     ))
 
-        self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
-        plt.rcParams.update(plt.rcParamsDefault) # refresh the style
-        plt.style.use(self.plotstyle.get())
-        self.ax.set_xlabel("Time (min)")
-        self.ax.set_xlim(left=0, right=90)
-        self.ax.set_ylabel("Pressure (psi)")
-        self.ax.set_ylim(top=1500)
-        self.ax.yaxis.set_major_locator(MultipleLocator(100))
-        self.ax.grid(color='grey', alpha=0.3)
-        self.ax.set_facecolor('w')
-        self.fig.canvas.set_window_title("")
-        # TODO: this plt stuff can probably go elsewhere
-        plt.tight_layout()
+        with plt.style.context(self.plotterstyle.get()):
+            self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
+            plt.rcParams.update(plt.rcParamsDefault) # refresh the style
+            self.ax.set_xlabel("Time (min)")
+            self.ax.set_xlim(left=0, right=90)
+            self.ax.set_ylabel("Pressure (psi)")
+            self.ax.set_ylim(top=1500)
+            self.ax.yaxis.set_major_locator(MultipleLocator(100))
+            self.ax.grid(color='grey', alpha=0.3)
+            self.ax.set_facecolor('w')
+            self.fig.canvas.set_window_title("")
+            # TODO: this plt stuff can probably go elsewhere
+            plt.tight_layout()
 
-        for item in to_plot:
-            data = pd.read_csv(item[0])
-            self.ax.plot(data['Minutes'], data[item[2]], label=item[1])
+            for item in to_plot:
+                data = pd.read_csv(item[0])
+                self.ax.plot(data['Minutes'], data[item[2]], label=item[1])
 
-        if self.anchorent.get() == "":
-            bbox = None
-        else:
-            bbox = tuple(map(float, self.anchorent.get().split(',')))
+            if self.anchorent.get() == "":
+                bbox = None
+            else:
+                bbox = tuple(map(float, self.anchorent.get().split(',')))
 
-        self.ax.legend(loc=self.loc.get(), bbox_to_anchor=bbox)
-        self.fig.show()
+            self.ax.legend(loc=self.loc.get(), bbox_to_anchor=bbox)
+            self.fig.show()
 
 class SeriesEntry(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
