@@ -14,6 +14,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.ticker import MultipleLocator
+import pickle
 
 class MainWindow(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -146,37 +147,30 @@ class MainWindow(tk.Frame):
             command=lambda: self.run_test(),
             width=15
             )
-        self.paubtn = ttk.Button(
-            master=self.cmdfrm,
-            text="Pause/Resume",
-            command=lambda: self.pause_test(),
-            width=15
-            )
         self.endbtn = ttk.Button(
             master=self.cmdfrm,
             text="End",
             command=lambda: self.end_test(),
             width=15
             )
-        self.runbtn.grid(row=0, column=0, padx=5, sticky=tk.W)
-        self.paubtn.grid(row=0, column=1, padx=15)
-        self.endbtn.grid(row=0, column=2, padx=5, sticky=tk.E)
+        self.runbtn.grid(row=1, column=1, padx=5, pady=2, sticky=tk.W)
+        self.endbtn.grid(row=1, column=2, padx=5, pady=2, sticky=tk.E)
         tk.Label(
             master=self.cmdfrm,
             text="Select data to plot:"
-            ).grid(row=3, column=0, padx=5)
+            ).grid(row=0, column=0, padx=5)
         tk.Radiobutton(
             master=self.cmdfrm,
             text="PSI 1",
             variable=self.plotpsi,
             value='PSI 1'
-            ).grid(row = 3, column = 1, padx=5)
+            ).grid(row = 0, column = 1, padx=5)
         tk.Radiobutton(
             master=self.cmdfrm,
             text="PSI 2",
             variable=self.plotpsi,
             value='PSI 2'
-            ).grid(row = 3, column = 2, padx=5)
+            ).grid(row = 0, column = 2, padx=5)
 
         if self.paused:
             for child in self.cmdfrm.winfo_children():
@@ -275,21 +269,6 @@ class MainWindow(tk.Frame):
         self.dataout['state'] = 'disabled'
         self.dataout.see('end')
 
-    def pause_test(self):
-        if self.paused == True:
-            self.pump1.write('ru'.encode())
-            self.pump2.write('ru'.encode())
-            self.to_log("Resuming test ...")
-            time.sleep(3) # let the pumps warm up before recording data
-            self.parent.thread_pool_executor.submit(self.take_reading)
-            self.paused = False
-
-        elif self.paused == False:
-            self.to_log("Pausing test ...")
-            self.pump1.write('st'.encode())
-            self.pump2.write('st'.encode())
-            self.paused = True
-
     def end_test(self):
         self.paused = True
         self.pump1.write('st'.encode()), self.pump1.close()
@@ -310,7 +289,6 @@ class MainWindow(tk.Frame):
             self.parent.thread_pool_executor.submit(self.take_reading)
 
     def take_reading(self): # loop to be handled by threadpool
-        # this is way too long of a line
         starttime = datetime.now()
         while (
          (self.psi1 < self.failpsi.get() or self.psi2 < self.failpsi.get())
@@ -349,22 +327,22 @@ class MainWindow(tk.Frame):
         # TODO: this plt stuff can probably go elsewhere
         plt.rcParams.update(plt.rcParamsDefault) # refresh the style
         # https://stackoverflow.com/questions/42895216
-        plt.style.use(self.plotstyle.get())
-        self.pltfrm.config(text=("Style: " + self.plotstyle.get()))
-        self.ax.clear()
-        self.ax.set_xlabel("Time (min)")
-        self.ax.set_ylabel("Pressure (psi)")
-        self.ax.set_ylim(top=self.failpsi.get())
-        self.ax.yaxis.set_major_locator(MultipleLocator(100))
-        self.ax.set_xlim(left=0,right=self.timelimit.get())
+        with plt.style.context(self.plotstyle.get()):
+            self.pltfrm.config(text=("Style: " + self.plotstyle.get()))
+            self.ax.clear()
+            self.ax.set_xlabel("Time (min)")
+            self.ax.set_ylabel("Pressure (psi)")
+            self.ax.set_ylim(top=self.failpsi.get())
+            self.ax.yaxis.set_major_locator(MultipleLocator(100))
+            self.ax.set_xlim(left=0,right=self.timelimit.get())
 
-        y = data[self.plotpsi.get()]
-        x = data['Minutes']
-        self.ax.plot(x,y,
-         label=("{0} {1}".format(self.chem.get(), self.conc.get())))
-        self.ax.grid(color='grey', alpha=0.3)
-        self.ax.set_facecolor('w')
-        self.ax.legend(loc=0)
+            y = data[self.plotpsi.get()]
+            x = data['Minutes']
+            self.ax.plot(x,y,
+             label=("{0} {1}".format(self.chem.get(), self.conc.get())))
+            self.ax.grid(color='grey', alpha=0.3)
+            self.ax.set_facecolor('w')
+            self.ax.legend(loc=0)
 
 class MenuBar(tk.Frame):
     styles = [
@@ -464,6 +442,19 @@ class Plotter(tk.Toplevel):
     def build(self):
         self.winfo_toplevel().title("Plotting Utility")
 
+        self.pltbar = tk.Menu(self)
+        self.pltmnu = tk.Menu(self, tearoff=0)
+        self.pltmnu.add_command(
+            label="Save plot settings",
+            command = lambda: self.pickle_plot(self.prep_plot())
+            )
+        self.pltmnu.add_command(
+            label="Load from plot settings",
+            command = self.unpickle_plot
+            )
+        self.pltbar.add_cascade(label="Plot", menu=self.pltmnu)
+        self.winfo_toplevel().config(menu=self.pltbar)
+
         # NOTE: this is a dirty way of doing it... but it works
         tk.Label(
             master=self,
@@ -516,12 +507,12 @@ class Plotter(tk.Toplevel):
             master=self.setfrm,
             text="Plot",
             width=30,
-            command=self.make_plot
+            command= lambda: self.make_plot(self.prep_plot())
             )
         self.pltbtn.grid(row=2, columnspan=3, pady=1)
         self.setfrm.pack(side=tk.BOTTOM)
 
-    def make_plot(self):
+    def prep_plot(self):
         to_plot = []
         for child in self.entfrm.winfo_children():
             if not child.path.get() == "":
@@ -530,10 +521,13 @@ class Plotter(tk.Toplevel):
                     child.title.get(),
                     child.plotpump.get()
                     ))
+        return(to_plot)
 
+    def make_plot(self, to_plot):
+        plt.rcParams.update(plt.rcParamsDefault)
         with plt.style.context(self.plotterstyle.get()):
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
-            plt.rcParams.update(plt.rcParamsDefault) # refresh the style
+             # refresh the style
             self.ax.set_xlabel("Time (min)")
             self.ax.set_xlim(left=0, right=90)
             self.ax.set_ylabel("Pressure (psi)")
@@ -556,6 +550,27 @@ class Plotter(tk.Toplevel):
 
             self.ax.legend(loc=self.loc.get(), bbox_to_anchor=bbox)
             self.fig.show()
+
+    def pickle_plot(self, to_plot):
+        path = self.parent.parent.main.savepath.get()
+        with open(os.path.join(path, 'plot.plt'), 'wb') as p:
+            pickle.dump(to_plot, p)
+
+    def unpickle_plot(self):
+        fil = filedialog.askopenfilename(
+            initialdir="C:\"",
+            title="Select data to plot:",
+            filetypes=[("Plot settings", "*.plt")]
+            )
+        with open(fil, 'rb') as p:
+            to_plot = pickle.load(p)
+
+        x = list(enumerate(to_plot))
+        print(x)
+        print(x[0])
+        print(x[0][1])
+        print(x[0][1][1])
+
 
 class SeriesEntry(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
