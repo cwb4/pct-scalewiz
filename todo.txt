@@ -1,0 +1,4 @@
+* need to remove the remains of the pause function from MainWindow
+  self.paused has no use anymore
+* rebuild executable
+* find way to load plotter setting from the pickle_plot
