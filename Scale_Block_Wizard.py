@@ -332,7 +332,7 @@ class MainWindow(tk.Frame):
              str(self.psi1), str(self.psi2)))
             self.to_log(logmsg)
             time.sleep(0.9)
-            self.elapsed = (starttime - datetime.now()).seconds
+            self.elapsed = (datetime.now() -  starttime).seconds
 
         if self.paused == False:
             self.end_test()
