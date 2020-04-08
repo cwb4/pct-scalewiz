@@ -5,7 +5,8 @@ from concurrent.futures import ThreadPoolExecutor
 import os, sys # handling file paths
 import serial # talking to the pumps
 import csv # logging the data
-import time # logging data / talking to the pumps
+import time # sleeping
+from datetime import datetime # logging the data
 from winsound import Beep # beeping when the test ends
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -310,6 +311,7 @@ class MainWindow(tk.Frame):
 
     def take_reading(self): # loop to be handled by threadpool
         # this is way too long of a line
+        starttime = datetime.now()
         while (
          (self.psi1 < self.failpsi.get() or self.psi2 < self.failpsi.get())
          and self.elapsed < self.timelimit.get()*60
@@ -330,7 +332,7 @@ class MainWindow(tk.Frame):
              str(self.psi1), str(self.psi2)))
             self.to_log(logmsg)
             time.sleep(0.9)
-            self.elapsed += 1
+            self.elapsed = (starttime - datetime.now()).seconds
 
         if self.paused == False:
             self.end_test()
