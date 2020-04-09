@@ -13,15 +13,15 @@ Features include:
 ## Installation
 Dependencies may be installed using the requirements.txt file included.
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-Then download and run Scale_Block_Wizard.py
+Then download the source code and run core.py
 ```bash
-python Scale_Block_Wizard.py
+python core.py
 ```
-Alternatively, Windows x64 systems may just download and run
-Scale_Block_Wizard.exe
+<!-- Alternatively, Windows x64 systems may just download and run
+Scale_Block_Wizard.exe -->
 
 ### Requirements
 The appropriate hardware drivers may be downloaded from the
