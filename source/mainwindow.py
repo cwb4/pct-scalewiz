@@ -14,6 +14,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.ticker import MultipleLocator
 
+from menubar import MenuBar
+
 class MainWindow(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
@@ -42,6 +44,7 @@ class MainWindow(tk.Frame):
         self.build_window()
 
     def build_window(self):
+        self.menu = MenuBar(self)
         # build the main frame
         self.tstfrm = tk.Frame(self.parent)
         self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
