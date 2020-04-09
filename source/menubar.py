@@ -24,7 +24,7 @@ class MenuBar(tk.Frame):
         self.menubar = tk.Menu(self)
         self.filemenu = tk.Menu(self, tearoff=0)
         self.filemenu.add_command(
-            label=self.parent.main.savepath.get(),
+            label=self.parent.savepath.get(),
             command=self.askdir
             )
         self.pltmenu = tk.Menu(master=self, tearoff=0)
@@ -32,7 +32,7 @@ class MenuBar(tk.Frame):
         for style in MenuBar.styles:
             self.pltstylmenu.add_command(
                 label=style,
-                command=lambda s=style: (self.parent.main.plotstyle.set(s))
+                command=lambda s=style: (self.parent.plotstyle.set(s))
                 )
 
         self.pltmenu.add_command(label="Make new plot", command=self.new_plot)
@@ -50,12 +50,12 @@ class MenuBar(tk.Frame):
         if out == "":
             pass
         else:
-            self.parent.main.savepath.set(out)
-            p = self.parent.main.savepath.get().split('/')
+            self.parent.savepath.set(out)
+            p = self.parent.savepath.get().split('/')
             pp = p[-2] + " - " + p[-1]
             self.filemenu.entryconfig(index=1, label=pp)
-            self.parent.main.project.set(pp)
-            self.parent.winfo_toplevel().title(self.parent.main.project.get())
+            self.parent.project.set(pp)
+            self.parent.winfo_toplevel().title(self.parent.project.get())
             # self.parent.root.title(self.parent.project.get())
 
     def new_plot(self):
