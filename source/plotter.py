@@ -158,7 +158,7 @@ class Plotter(tk.Toplevel):
 
     def pickle_plot(self, to_plot):
         path = self.parent.parent.savepath.get()
-        with open(os.path.join(path, f'{self.parent.project.get()}.plt'), 'wb') as p:
+        with open(os.path.join(path, f'{self.parent.parent.project.get()}.plt'), 'wb') as p:
             pickle.dump(to_plot, p)
 
     def unpickle_plot(self):
