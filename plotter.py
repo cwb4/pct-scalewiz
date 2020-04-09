@@ -10,7 +10,7 @@ from seriesentry import SeriesEntry
 
 
 class Plotter(tk.Toplevel):
-    locslst = [
+    LocsLst = [
         "best",
         "upper right",
         "upper left",
@@ -23,7 +23,7 @@ class Plotter(tk.Toplevel):
         "upper center",
         "center"
         ]
-    styles = [
+    Styles = [
         "bmh",
         "fivethirtyeight",
         "seaborn",
@@ -81,14 +81,14 @@ class Plotter(tk.Toplevel):
         self.locs = ttk.OptionMenu(
             self.setfrm,
             self.loc,
-            Plotter.locslst[1],
-            *Plotter.locslst)
+            Plotter.LocsLst[1],
+            *Plotter.LocsLst)
 
-        self.styles = ttk.OptionMenu(
+        self.stylemenu = ttk.OptionMenu(
             self.setfrm,
             self.plotterstyle,
-            Plotter.styles[3],
-            *Plotter.styles)
+            Plotter.Styles[3],
+            *Plotter.Styles)
 
         tk.Label(
             master=self.setfrm,
@@ -103,7 +103,7 @@ class Plotter(tk.Toplevel):
             text="bbox_to_anchor:"
             ).grid(row=0, column=2, sticky=None)
 
-        self.styles.grid(row=1, column=0, sticky=tk.W, padx=2)
+        self.stylemenu.grid(row=1, column=0, sticky=tk.W, padx=2)
         self.locs.grid(row=1, column=1, sticky=tk.W, padx=2)
         self.anchorent.grid(row=1, column=2, sticky=tk.E, padx=2)
         # self.anchorent.insert(0, "1.13,0.525")
