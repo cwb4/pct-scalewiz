@@ -21,7 +21,7 @@ Then download the source code and run core.py
 python core.py
 ```
 Alternatively, Windows x64 systems may just download and run
-the [executable](https://github.com/teauxfu/pct-scalewiz/releases/download/v1.0/Scale.Block.Wizard.exe).
+the latest [executable](https://github.com/teauxfu/pct-scalewiz/releases).
 
 ### Requirements
 The appropriate hardware drivers may be downloaded from the
