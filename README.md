@@ -20,8 +20,8 @@ Then download the source code and run core.py
 ```bash
 python core.py
 ```
-<!-- Alternatively, Windows x64 systems may just download and run
-Scale_Block_Wizard.exe -->
+Alternatively, Windows x64 systems may just download and run
+the [executable](https://github.com/teauxfu/pct-scalewiz/releases/download/v1.0/Scale.Block.Wizard.exe).
 
 ### Requirements
 The appropriate hardware drivers may be downloaded from the
@@ -34,15 +34,11 @@ The appropriate hardware drivers may be downloaded from the
 ![](images/plotting_utility.PNG)
 
 ## Roadmap
-Basic Matplotlib styles support for the plotting utility is the most recently
-added feature.
+Expanded functionality for the plotting utility is the most recently
+added feature. The user may select from a small range of Matplotlib styles and formatting options such as legend location.
+Additionally, the current user inputs in the plotter window can be saved to a ".plt" file. This allows for easy modification of previously created plots.  
 Planned features include
-  * support for data export to other file formats (.xlsx)
-  * greater customization options for the plotting utility
-    such as allowing the user to define figure size and adding support for more matplotlib styles
   * simple utility to read/write generic messages to/from the pumps
-  * configuration file support to remember useful information
-    such as last used project directory, plot style templates, etc.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
