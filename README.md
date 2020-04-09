@@ -36,7 +36,7 @@ The appropriate hardware drivers may be downloaded from the
 ## Roadmap
 Expanded functionality for the plotting utility is the most recently
 added feature. The user may select from a small range of Matplotlib styles and formatting options such as legend location.
-Additionally, the current user inputs in the plotter window can be saved to a ".plt" file. This allows for easy modification of previously created plots.  
+Additionally, the user inputs in the plotter window can be saved to or loaded from a ".plt" file (a pickled list). This allows for easy modification of previously created plots.  
 Planned features include
   * simple utility to read/write generic messages to/from the pumps
 
