@@ -113,8 +113,8 @@ class MainWindow(tk.Frame):
             ).grid(row=4, sticky=tk.E)
 
         # grid entries into self.entfrm
-        self.p1.grid(row=0, column=1, sticky=tk.E,padx=(11, 1))
-        self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5, 1))
+        self.p1.grid(row=0, column=1, sticky=tk.E,padx=(9, 1))
+        self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5, 3))
         self.tl.grid(row=1, column=1, columnspan=3, pady=1)
         self.fp.grid(row=2, column=1, columnspan=3, pady=1)
         self.ch.grid(row=3, column=1, columnspan=3, pady=1)
