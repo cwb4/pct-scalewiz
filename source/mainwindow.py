@@ -1,18 +1,19 @@
-import tkinter as tk
-from tkinter import ttk, filedialog
-from concurrent.futures import ThreadPoolExecutor
-import os, sys # handling file paths
-import serial # talking to the pumps
 import csv # logging the data
-import time # sleeping
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime # logging the data
-from winsound import Beep # beeping when the test ends
-import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.ticker import MultipleLocator
+import pandas as pd # reading data from csv # TODO: can probably just use csv
+import os # handling file paths
+import serial # talking to the pumps
+import sys # handling file paths
+import tkinter as tk # GUI
+from tkinter import ttk, filedialog # GUI
+import time # sleeping
+from winsound import Beep # beeping when the test ends
 
 from menubar import MenuBar
 
