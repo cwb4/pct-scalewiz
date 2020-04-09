@@ -2,9 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+import os
 from matplotlib.ticker import MultipleLocator
 import pickle
 
