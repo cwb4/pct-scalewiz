@@ -167,6 +167,8 @@ class Plotter(tk.Toplevel):
             title="Select data to plot:",
             filetypes=[("Plot settings", "*.plt")]
             )
+        self.lift()
+
         with open(fil, 'rb') as p:
             to_plot = pickle.load(p)
 
@@ -176,3 +178,4 @@ class Plotter(tk.Toplevel):
             item[1].path.insert(0, item[0][0])
             item[1].title.delete(0, tk.END)
             item[1].title.insert(0, item[0][1])
+        self.make_plot(self.prep_plot())
