@@ -1,6 +1,8 @@
-import tkinter as tk
-from tkinter import filedialog
+import tkinter as tk # GUI
+from tkinter import filedialog 
+
 from plotter import Plotter
+
 
 class MenuBar(tk.Frame):
     styles = [

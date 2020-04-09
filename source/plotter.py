@@ -1,10 +1,10 @@
-import tkinter as tk
-from tkinter import ttk, filedialog
-import pandas as pd
-import matplotlib.pyplot as plt
-import os
+import matplotlib.pyplot as plt # plotting the data
 from matplotlib.ticker import MultipleLocator
-import pickle
+import os # handling file paths
+import pandas as pd # reading the data
+import pickle # storing plotter settings
+import tkinter as tk # GUI
+from tkinter import ttk, filedialog
 
 from seriesentry import SeriesEntry
 

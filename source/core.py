@@ -1,20 +1,7 @@
-
-import tkinter as tk
-from tkinter import ttk, filedialog
-from concurrent.futures import ThreadPoolExecutor
-import os, sys # handling file paths
+from concurrent.futures import ThreadPoolExecutor # handling the test loop
 import serial # talking to the pumps
-import csv # logging the data
-import time # sleeping
-from datetime import datetime # logging the data
-from winsound import Beep # beeping when the test ends
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
-from matplotlib.ticker import MultipleLocator
-import pickle
+import sys # to sys.exit() on window close
+import tkinter as tk # GUI
 
 from mainwindow import MainWindow
 

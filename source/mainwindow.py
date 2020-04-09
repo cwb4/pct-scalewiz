@@ -1,7 +1,6 @@
 import csv # logging the data
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime # logging the data
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # plotting the data
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
@@ -11,11 +10,12 @@ import os # handling file paths
 import serial # talking to the pumps
 import sys # handling file paths
 import tkinter as tk # GUI
-from tkinter import ttk, filedialog # GUI
+from tkinter import ttk, filedialog
 import time # sleeping
 from winsound import Beep # beeping when the test ends
 
 from menubar import MenuBar
+
 
 class MainWindow(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
