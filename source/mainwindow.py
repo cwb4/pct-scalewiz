@@ -5,7 +5,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.ticker import MultipleLocator
-import pandas as pd # reading data from csv # TODO: can probably just use csv
+from pandas import DataFrame, read_csv # reading data from csv # TODO: can probably just use csv
 import os # handling file paths
 import serial # talking to the pumps
 import sys # handling file paths
@@ -322,9 +322,9 @@ class MainWindow(tk.Frame):
 
     def animate(self, i):
         try:
-            data = pd.read_csv(os.path.join(self.savepath.get(), self.outfile))
+            data = read_csv(os.path.join(self.savepath.get(), self.outfile))
         except FileNotFoundError as e:
-            data = pd.DataFrame(data={'Minutes':[0], 'PSI 1':[0], 'PSI 2':[0]})
+            data = DataFrame(data={'Minutes':[0], 'PSI 1':[0], 'PSI 2':[0]})
 
         # TODO: this plt stuff can probably go elsewhere
         plt.rcParams.update(plt.rcParamsDefault) # refresh the style

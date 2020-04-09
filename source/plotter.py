@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt # plotting the data
 from matplotlib.ticker import MultipleLocator
 import os # handling file paths
-import pandas as pd # reading the data
+from pandas import read_csv # reading the data
 import pickle # storing plotter settings
 import tkinter as tk # GUI
 from tkinter import ttk, filedialog
@@ -145,7 +145,7 @@ class Plotter(tk.Toplevel):
             plt.tight_layout()
 
             for item in to_plot:
-                data = pd.read_csv(item[0])
+                data = read_csv(item[0])
                 self.ax.plot(data['Minutes'], data[item[2]], label=item[1])
 
             if self.anchorent.get() == "":
