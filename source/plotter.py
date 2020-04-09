@@ -173,10 +173,10 @@ class Plotter(tk.Toplevel):
         for item in plotting:
             item[1].path.delete(0, tk.END)
             item[1].path.insert(0, item[0][0])
-            self.after(100, item[1].path.xview_moveto, 1)
+            self.after(200, item[1].path.xview_moveto, 1)
             item[1].title.delete(0, tk.END)
             item[1].title.insert(0, item[0][1])
-            self.after(100, item[1].title.xview_moveto, 1)
+            self.after(200, item[1].title.xview_moveto, 1)
 
         self.lift()
         self.make_plot(self.prep_plot())
