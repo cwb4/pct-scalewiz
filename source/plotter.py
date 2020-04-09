@@ -48,16 +48,14 @@ class Plotter(tk.Toplevel):
         self.winfo_toplevel().title("Plotting Utility")
 
         self.pltbar = tk.Menu(self)
-        self.pltmnu = tk.Menu(self, tearoff=0)
-        self.pltmnu.add_command(
+        self.pltbar.add_command(
             label="Save plot settings",
             command = lambda: self.pickle_plot(self.prep_plot())
             )
-        self.pltmnu.add_command(
+        self.pltbar.add_command(
             label="Load from plot settings",
             command = self.unpickle_plot
             )
-        self.pltbar.add_cascade(label="Plot", menu=self.pltmnu)
         self.winfo_toplevel().config(menu=self.pltbar)
 
         # NOTE: this is a dirty way of doing it... but it works
