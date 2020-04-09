@@ -9,6 +9,7 @@ __pycache__/
 # Personal use
 build.bat
 run.bat
+*.plt
 
 # Distribution / packaging
 .Python
