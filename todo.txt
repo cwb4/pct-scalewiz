@@ -1,2 +1,3 @@
 * need to remove the remains of the pause function from MainWindow
   self.paused has no use anymore
+* try to sub the use of pandas for csv functionality -- one less import
