@@ -120,8 +120,7 @@ class Plotter(tk.Toplevel):
     def prep_plot(self):
         to_plot = []
         for child in self.entfrm.winfo_children():
-            if not child.path.get() == "":
-                to_plot.append((
+            to_plot.append((
                     child.path.get(),
                     child.title.get(),
                     child.plotpump.get()
@@ -129,10 +128,12 @@ class Plotter(tk.Toplevel):
         return(to_plot)
 
     def make_plot(self, to_plot):
+        # filter out the blank entries
+        to_plot = [x for x in to_plot if not x[0] == ""]
+        # reset the stylesheet
         plt.rcParams.update(plt.rcParamsDefault)
         with plt.style.context(self.plotterstyle.get()):
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
-             # refresh the style
             self.ax.set_xlabel("Time (min)")
             self.ax.set_xlim(left=0, right=90)
             self.ax.set_ylabel("Pressure (psi)")
@@ -141,7 +142,6 @@ class Plotter(tk.Toplevel):
             self.ax.grid(color='grey', alpha=0.3)
             self.ax.set_facecolor('w')
             self.fig.canvas.set_window_title("")
-            # TODO: this plt stuff can probably go elsewhere
             plt.tight_layout()
 
             for item in to_plot:
@@ -157,8 +157,8 @@ class Plotter(tk.Toplevel):
             self.fig.show()
 
     def pickle_plot(self, to_plot):
-        path = self.parent.parent.main.savepath.get()
-        with open(os.path.join(path, 'plot.plt'), 'wb') as p:
+        path = self.parent.parent.savepath.get()
+        with open(os.path.join(path, f'{self.parent.project.get()}.plt'), 'wb') as p:
             pickle.dump(to_plot, p)
 
     def unpickle_plot(self):
@@ -170,8 +170,9 @@ class Plotter(tk.Toplevel):
         with open(fil, 'rb') as p:
             to_plot = pickle.load(p)
 
-        x = list(enumerate(to_plot))
-        print(x)
-        print(x[0])
-        print(x[0][1])
-        print(x[0][1][1])
+        plotting = list(zip(to_plot, self.entfrm.winfo_children()))
+        for item in plotting:
+            item[1].path.delete(0, tk.END)
+            item[1].path.insert(0, item[0][0])
+            item[1].title.delete(0, tk.END)
+            item[1].title.insert(0, item[0][1])
