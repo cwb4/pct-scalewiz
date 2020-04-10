@@ -223,7 +223,7 @@ class MainWindow(tk.Frame):
                     pass
             if useports == []:
                 self.to_log("No COM ports found ...")
-                self.to_log("Click the 'COM ports:' label above to try again.")
+                self.to_log("Click 'COM ports:' to try again.")
                 useports = ["??", "??"]
             try:
                 self.port1.set(useports[0])
