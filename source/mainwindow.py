@@ -239,7 +239,6 @@ class MainWindow(tk.Frame):
             pass
 
     def init_test(self):
-        self.paused = True
         self.port1.set(self.p1.get())
         self.port2.set(self.p2.get())
         self.timelimit.set(self.tl.get())
