@@ -18,7 +18,7 @@ class ScaleWiz(tk.Frame):
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
 def close_ports():  # attempts to close all open ports, just in case
-"""Tries to close any open COM ports. """
+    """Tries to close any open COM ports."""
     ports = ["COM" + str(i) for i in range(15)]
     for i in ports:
         try:
