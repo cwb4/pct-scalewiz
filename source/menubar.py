@@ -1,3 +1,5 @@
+"""The MenuBar for the MainWindow"""
+
 import tkinter as tk  # GUI
 from tkinter import filedialog
 
@@ -45,6 +47,11 @@ class MenuBar(tk.Frame):
         self.parent.winfo_toplevel().config(menu=self.menubar)
 
     def askdir(self):
+        """Creates a prompt to ask user for a project folder,
+         then sets that as the window title.
+         The project variable is a string used to make output file paths later
+         """
+
         out = filedialog.askdirectory(
             initialdir="C:\"",
             title="Select data output directory:"
@@ -59,7 +66,7 @@ class MenuBar(tk.Frame):
             self.filemenu.entryconfig(index=1, label=pp)
             self.parent.project.set(pp)
             self.parent.winfo_toplevel().title(self.parent.project.get())
-            # self.parent.root.title(self.parent.project.get())
 
     def new_plot(self):
+        """Spawns a new Plotter window"""
         self.parent.plotter = Plotter(self)

@@ -1,3 +1,6 @@
+"""A custom tkinter widget for collecting user input
+"""
+
 import tkinter as tk
 from tkinter import ttk, filedialog
 
@@ -10,6 +13,7 @@ class SeriesEntry(tk.Frame):
         self.build()
 
     def build(self):
+        """Make the widgets"""
         self.path = ttk.Entry(self, width=20)
         self.path.bind("<Button-1>", self.askfil)
         self.path.grid(row=0, column=0, padx=2, pady=1)
@@ -38,6 +42,10 @@ class SeriesEntry(tk.Frame):
             ).grid(row=0, column=4, padx=2, pady=2)
 
     def askfil(self, event):
+        """Create a prompt asking the user for a csv file. If the path isn't
+        blank, put it in the clicked widget, then move focus to the next entry
+        """
+
         fil = filedialog.askopenfilename(
             initialdir="C:\"",
             title="Select data output directory:",
@@ -53,5 +61,7 @@ class SeriesEntry(tk.Frame):
         # https://stackoverflow.com/questions/29334544/
 
     def clear_ents(self):
+        """Clears the widget's entry fields"""
+
         self.path.delete(0, tk.END)
         self.title.delete(0, tk.END)

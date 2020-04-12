@@ -1,3 +1,9 @@
+"""The main window of the application.
+  - imports then creates an instance of MenuBar
+  - has some tkinter widgets for user input / data visualization
+"""
+
+
 import csv  # logging the data
 from datetime import datetime  # logging the data
 import matplotlib.pyplot as plt  # plotting the data
@@ -45,6 +51,7 @@ class MainWindow(tk.Frame):
         self.build_window()
 
     def build_window(self):
+        """Make all the tkinter widgets"""
         self.menu = MenuBar(self)
         # build the main frame
         self.tstfrm = tk.Frame(self.parent)
@@ -175,10 +182,12 @@ class MainWindow(tk.Frame):
             value='PSI 2'
             ).grid(row=0, column=2, padx=5)
 
+        # disable the controls to prevent starting test w/o parameters
         if self.paused:
             for child in self.cmdfrm.winfo_children():
                 child.configure(state="disabled")
 
+        # set up the plot area
         self.pltfrm = tk.LabelFrame(
             master=self.tstfrm,
             text=("Style: " + self.plotstyle.get())
@@ -186,7 +195,6 @@ class MainWindow(tk.Frame):
 
         self.fig, self.ax = plt.subplots(figsize=(7.5, 4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
-        # plt.tight_layout()
         # TODO: explicitly clarify some of these args
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
@@ -202,7 +210,6 @@ class MainWindow(tk.Frame):
 
         # widget bindings
         self.co.bind("<Return>", self.init_test)
-        # TODO: there has to be a more concise way
         self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
 
         self.tstfrm.grid(padx=3)
@@ -210,6 +217,7 @@ class MainWindow(tk.Frame):
         self.ch.focus_set()
 
     def findcoms(self):
+        """Looks for COM ports and disables the controls if two aren't found"""
         self.to_log("Finding COM ports...")
         ports = ["COM" + str(i) for i in range(15)]
         useports = []
@@ -239,6 +247,7 @@ class MainWindow(tk.Frame):
             pass
 
     def init_test(self):
+        """Collects all the user data from the GUI widgets"""
         self.port1.set(self.p1.get())
         self.port2.set(self.p2.get())
         self.timelimit.set(self.tl.get())
@@ -275,12 +284,15 @@ class MainWindow(tk.Frame):
             child.configure(state="normal")
 
     def to_log(self, msg):
+        """Logs a message to the Text widget in MainWindow's outfrm"""
         self.dataout['state'] = 'normal'
         self.dataout.insert('end', f"{msg}" + "\n")
         self.dataout['state'] = 'disabled'
         self.dataout.see('end')
 
     def end_test(self):
+        """Stops the pumps and closes their COM ports, then swaps the button
+        states for the entfrm and cmdfrm widgets"""
         self.paused = True
         self.pump1.write('st'.encode())
         self.pump1.close()
@@ -294,6 +306,7 @@ class MainWindow(tk.Frame):
             child.configure(state="disabled")
 
     def run_test(self):
+        """Submits a test loop to the thread_pool_executor"""
         if self.paused:
             self.pump1.write('ru'.encode())
             self.pump2.write('ru'.encode())
@@ -302,7 +315,8 @@ class MainWindow(tk.Frame):
             time.sleep(3)
             self.parent.thread_pool_executor.submit(self.take_reading)
 
-    def take_reading(self):  # loop to be handled by threadpool
+    def take_reading(self):
+        """loop to be handled by the thread_pool_executor"""
         starttime = datetime.now()
         while (
          (self.psi1 < self.failpsi.get() or self.psi2 < self.failpsi.get())
@@ -339,6 +353,7 @@ class MainWindow(tk.Frame):
                 time.sleep(0.5)
 
     def animate(self, i):
+        """The animation function for the current test's data"""
         try:
             data = read_csv(os.path.join(self.savepath.get(), self.outfile))
         except FileNotFoundError as e:

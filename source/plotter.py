@@ -1,3 +1,5 @@
+"""The window used for plotting, spawned by MenuBar"""
+
 import matplotlib.pyplot as plt  # plotting the data
 from matplotlib.ticker import MultipleLocator
 import os  # handling file paths
@@ -10,7 +12,7 @@ from seriesentry import SeriesEntry
 
 
 class Plotter(tk.Toplevel):
-    LocsLst = [
+    LocsLst = [  # list of legend locations - used in a widget
         "best",
         "upper right",
         "upper left",
@@ -23,7 +25,7 @@ class Plotter(tk.Toplevel):
         "upper center",
         "center"
         ]
-    Styles = [
+    Styles = [  # list of matplotlib styles - used in a widget
         "bmh",
         "fivethirtyeight",
         "seaborn",
@@ -45,6 +47,7 @@ class Plotter(tk.Toplevel):
         self.build()
 
     def build(self):
+        """Makes the widgets"""
         self.winfo_toplevel().title("Plotting Utility")
 
         self.pltbar = tk.Menu(self)
@@ -116,6 +119,10 @@ class Plotter(tk.Toplevel):
         self.setfrm.pack(side=tk.BOTTOM)
 
     def prep_plot(self):
+        """Returns a 3-tuple of strings from the SeriesEntry widgets;
+        the csv path, the label for the legend,
+        and which column of the data to plot"""
+
         to_plot = []
         for child in self.entfrm.winfo_children():
             to_plot.append((
@@ -126,6 +133,8 @@ class Plotter(tk.Toplevel):
         return(to_plot)
 
     def make_plot(self, to_plot):
+        """Makes a new plot from a list of string 3-tuples (see prep_plot)"""
+
         # filter out the blank entries
         to_plot = [x for x in to_plot if not x[0] == ""]
         # reset the stylesheet
@@ -155,6 +164,8 @@ class Plotter(tk.Toplevel):
             self.fig.show()
 
     def pickle_plot(self, to_plot):
+        """Pickles a list to a file in the project directory"""
+
         path = self.parent.parent.savepath.get()
         path = os.path.join(path, f"{path}.plt")
         self.parent.parent.to_log(path)
@@ -162,6 +173,9 @@ class Plotter(tk.Toplevel):
             pickle.dump(to_plot, p)
 
     def unpickle_plot(self):
+        """Unpickles/unpacks a list of string 3-tuples and puts those values
+        into SeriesEntry widgets"""
+
         fil = filedialog.askopenfilename(
             initialdir="C:\"",
             title="Select data to plot:",
@@ -182,5 +196,4 @@ class Plotter(tk.Toplevel):
 
         # raise the settings window relative to the main window
         self.lift()
-
         self.make_plot(self.prep_plot())
