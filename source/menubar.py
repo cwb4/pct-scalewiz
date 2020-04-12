@@ -40,7 +40,7 @@ class MenuBar(tk.Frame):
 
         self.pltmenu.add_command(label="Make new plot", command=self.new_plot)
         self.pltmenu.add_cascade(label="Set plot style", menu=self.pltstylmenu)
-        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.menubar.add_cascade(label="Set project folder", menu=self.filemenu)
         self.menubar.add_cascade(label="Plot", menu=self.pltmenu)
         self.parent.winfo_toplevel().config(menu=self.menubar)
 
