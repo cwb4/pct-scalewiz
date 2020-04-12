@@ -1,3 +1,8 @@
+"""This is the entry point for the program.
+  - imports then creates an instance of MainWindow
+  - has a thread_pool_executor attribute for a blocking loop made in MainWindow
+"""
+
 from concurrent.futures import ThreadPoolExecutor  # handling the test loop
 import serial  # talking to the pumps
 import sys  # to sys.exit() on window close
@@ -13,6 +18,7 @@ class ScaleWiz(tk.Frame):
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
 def close_ports():  # attempts to close all open ports, just in case
+"""Tries to close any open COM ports. """
     ports = ["COM" + str(i) for i in range(15)]
     for i in ports:
         try:
