@@ -1,5 +1,5 @@
-import tkinter as tk # GUI
-from tkinter import filedialog 
+import tkinter as tk  # GUI
+from tkinter import filedialog
 
 from plotter import Plotter
 

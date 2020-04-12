@@ -1,18 +1,18 @@
-import csv # logging the data
-from datetime import datetime # logging the data
-import matplotlib.pyplot as plt # plotting the data
+import csv  # logging the data
+from datetime import datetime  # logging the data
+import matplotlib.pyplot as plt  # plotting the data
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.ticker import MultipleLocator
-from pandas import DataFrame, read_csv # reading data from csv # TODO: can probably just use csv
-import os # handling file paths
-import serial # talking to the pumps
-import sys # handling file paths
-import tkinter as tk # GUI
-from tkinter import ttk, filedialog
-import time # sleeping
-from winsound import Beep # beeping when the test ends
+from pandas import DataFrame, read_csv  # reading data from csv
+import os  # handling file paths
+import serial  # talking to the pumps
+import sys  # handling file paths
+import tkinter as tk  # GUI
+from tkinter import ttk
+import time  # sleeping
+from winsound import Beep  # beeping when the test ends
 
 from menubar import MenuBar
 
@@ -23,15 +23,15 @@ class MainWindow(tk.Frame):
         self.parent = parent
 
         # define test parameters
-        self.port1 = tk.StringVar() # COM port for pump1
-        self.port2 = tk.StringVar() # COM port for pump2
+        self.port1 = tk.StringVar()  # COM port for pump1
+        self.port2 = tk.StringVar()  # COM port for pump2
         self.timelimit = tk.DoubleVar()
         self.failpsi = tk.IntVar()
         self.chem = tk.StringVar()
         self.conc = tk.StringVar()
-        self.savepath = tk.StringVar() # output directory
-        self.project = tk.StringVar() # used for window title
-        self.plotpsi = tk.StringVar() # for which pump's data to plot
+        self.savepath = tk.StringVar()  # output directory
+        self.project = tk.StringVar()  # used for window title
+        self.plotpsi = tk.StringVar()  # for which pump's data to plot
         self.plotstyle = tk.StringVar()
 
         # set initial
@@ -49,8 +49,9 @@ class MainWindow(tk.Frame):
         # build the main frame
         self.tstfrm = tk.Frame(self.parent)
         self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
+        # this spacing is to avoid using multiple labels
         self.outfrm = tk.LabelFrame(self.tstfrm,
-         text="Elapsed,            Pump1,             Pump2")
+            text="Elapsed,            Pump1,             Pump2")
         self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls")
 
         # define the self.entfrm entries
@@ -117,8 +118,8 @@ class MainWindow(tk.Frame):
             ).grid(row=4, sticky=tk.E)
 
         # grid entries into self.entfrm
-        self.p1.grid(row=0, column=1, sticky=tk.E,padx=(9, 1))
-        self.p2.grid(row=0, column=2, sticky=tk.W,padx=(5, 3))
+        self.p1.grid(row=0, column=1, sticky=tk.E, padx=(9, 1))
+        self.p2.grid(row=0, column=2, sticky=tk.W, padx=(5, 3))
         self.tl.grid(row=1, column=1, columnspan=3, pady=1)
         self.fp.grid(row=2, column=1, columnspan=3, pady=1)
         self.ch.grid(row=3, column=1, columnspan=3, pady=1)
@@ -128,7 +129,7 @@ class MainWindow(tk.Frame):
         for col in range(cols[0]):
             self.entfrm.grid_columnconfigure(col, weight=1)
 
-        #build self.outfrm PACK
+        # build self.outfrm PACK
         scrollbar = tk.Scrollbar(self.outfrm)
         self.dataout = tk.Text(
             master=self.outfrm,
@@ -166,13 +167,13 @@ class MainWindow(tk.Frame):
             text="PSI 1",
             variable=self.plotpsi,
             value='PSI 1'
-            ).grid(row = 0, column = 1, padx=5)
+            ).grid(row=0, column=1, padx=5)
         tk.Radiobutton(
             master=self.cmdfrm,
             text="PSI 2",
             variable=self.plotpsi,
             value='PSI 2'
-            ).grid(row = 0, column = 2, padx=5)
+            ).grid(row=0, column=2, padx=5)
 
         if self.paused:
             for child in self.cmdfrm.winfo_children():
@@ -185,7 +186,7 @@ class MainWindow(tk.Frame):
 
         self.fig, self.ax = plt.subplots(figsize=(7.5, 4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
-        #plt.tight_layout()
+        # plt.tight_layout()
         # TODO: explicitly clarify some of these args
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
@@ -201,7 +202,7 @@ class MainWindow(tk.Frame):
 
         # widget bindings
         self.co.bind("<Return>", self.init_test)
-         # TODO: there has to be a more concise way
+        # TODO: there has to be a more concise way
         self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
 
         self.tstfrm.grid(padx=3)
@@ -209,33 +210,33 @@ class MainWindow(tk.Frame):
         self.ch.focus_set()
 
     def findcoms(self):
-              #find the com ports
-            self.to_log("Finding COM ports ...")
-            ports = ["COM" + str(i) for i in range(15)]
-            useports = []
-            for i in ports:
-                try:
-                    if serial.Serial(i).is_open:
-                        self.to_log(f"Found an open port at {i}")
-                        useports.append(i)
-                        serial.Serial(i).close
-                except serial.SerialException:
-                    pass
-            if useports == []:
-                self.to_log("No COM ports found ...")
-                self.to_log("Click 'COM ports:' to try again.")
-                useports = ["??", "??"]
+        self.to_log("Finding COM ports...")
+        ports = ["COM" + str(i) for i in range(15)]
+        useports = []
+        for i in ports:
             try:
-                self.port1.set(useports[0])
-                self.port2.set(useports[1])
-                if self.port1.get() == "??" or self.port2.get() == "??":
-                    self.strtbtn['state']=['disable']
-                else:
-                    self.strtbtn['state']=['enable']
-            except IndexError:
+                if serial.Serial(i).is_open:
+                    self.to_log(f"Found an open port at {i}")
+                    useports.append(i)
+                    serial.Serial(i).close
+            except serial.SerialException:
                 pass
-            except AttributeError:
-                pass
+        if useports == []:
+            self.to_log("No COM ports found...")
+            self.to_log("Click 'COM ports:' to try again.")
+            useports = ["??", "??"]
+        try:
+            self.port1.set(useports[0])
+            self.port2.set(useports[1])
+            if self.port1.get() == "??" or self.port2.get() == "??":
+                self.strtbtn['state'] = ['disable']
+            else:
+                self.strtbtn['state'] = ['enable']
+
+        except IndexError:
+            pass
+        except AttributeError:
+            pass
 
     def init_test(self):
         self.paused = True
@@ -255,27 +256,38 @@ class MainWindow(tk.Frame):
         print(f"Opened a port at {self.port2.get()}")
 
         # set up output file
-        print("Creating output file at",
-         os.path.join(self.savepath.get(), self.outfile))
-        with open(os.path.join(self.savepath.get(), self.outfile),"w") as f:
-                csv.writer(f, delimiter=',').writerow(
-                ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"])
+        self.outputfile = os.path.join(self.savepath.get(), self.outfile)
+        print(f"Creating output file at {outputfile}")
+        with open(os.path.join(self.savepath.get(), self.outfile), "w") as f:
+            csv.writer(f, delimiter=',').writerow(
+                                                    [
+                                                     "Timestamp",
+                                                     "Seconds",
+                                                     "Minutes",
+                                                     "PSI 1",
+                                                     "PSI 2"
+                                                     ]
+                                                  )
+        # disable the entries for test parameters
         for child in self.entfrm.winfo_children():
             child.configure(state="disabled")
+        # enable the commands for starting/stopping the test
         for child in self.cmdfrm.winfo_children():
             child.configure(state="normal")
 
     def to_log(self, msg):
         self.dataout['state'] = 'normal'
-        self.dataout.insert('end', str(msg) +"\n")
+        self.dataout.insert('end', f"{msg}" + "\n")
         self.dataout['state'] = 'disabled'
         self.dataout.see('end')
 
     def end_test(self):
         self.paused = True
-        self.pump1.write('st'.encode()), self.pump1.close()
-        self.pump2.write('st'.encode()), self.pump2.close()
-        msg = "The test finished in {0:.2f} minutes ...".format(self.elapsed/60)
+        self.pump1.write('st'.encode())
+        self.pump1.close()
+        self.pump2.write('st'.encode())
+        self.pump2.close()
+        msg = "The test finished in {0:.2f} minutes".format(self.elapsed/60)
         self.to_log(msg)
         for child in self.entfrm.winfo_children():
             child.configure(state="normal")
@@ -283,19 +295,20 @@ class MainWindow(tk.Frame):
             child.configure(state="disabled")
 
     def run_test(self):
-        if self.paused == True:
+        if self.paused:
             self.pump1.write('ru'.encode())
             self.pump2.write('ru'.encode())
             self.paused = False
-            time.sleep(3) # let the pumps warm up before we start recording data
+            # let the pumps warm up before we start recording data
+            time.sleep(3)
             self.parent.thread_pool_executor.submit(self.take_reading)
 
-    def take_reading(self): # loop to be handled by threadpool
+    def take_reading(self):  # loop to be handled by threadpool
         starttime = datetime.now()
         while (
          (self.psi1 < self.failpsi.get() or self.psi2 < self.failpsi.get())
          and self.elapsed < self.timelimit.get()*60
-         and self.paused == False
+         and not self.paused
          ):
             rn = time.strftime("%I:%M:%S", time.localtime())
             self.pump1.write("cc".encode())
@@ -303,18 +316,23 @@ class MainWindow(tk.Frame):
             time.sleep(0.1)
             self.psi1 = int(self.pump1.readline().decode().split(',')[1])
             self.psi2 = int(self.pump2.readline().decode().split(',')[1])
-            thisdata=[rn, self.elapsed,'{0:.2f}'.format(self.elapsed/60),
-             self.psi1, self.psi2]
-            with open((os.path.join(self.savepath.get(), self.outfile)),"a",
-             newline='') as f:
-                csv.writer(f,delimiter=',').writerow(thisdata)
-            logmsg = ("{0:.2f} min, {1} psi, {2} psi".format(self.elapsed/60,
-             str(self.psi1), str(self.psi2)))
+            thisdata = [
+                        rn,
+                        self.elapsed,  # as seconds
+                        '{0:.2f}'.format(self.elapsed/60),  # as minutes
+                        self.psi1,
+                        self.psi2
+                        ]
+
+            with open((self.outputfile), "a", newline='') as f:
+                csv.writer(f, delimiter=',').writerow(thisdata)
+            nums = ((self.elapsed/60), self.psi1, self.psi2)
+            logmsg = ("{0:.2f} min, {1} psi, {2} psi".format(nums))
             self.to_log(logmsg)
             time.sleep(0.9)
-            self.elapsed = (datetime.now() -  starttime).seconds
+            self.elapsed = (datetime.now() - starttime).seconds
 
-        if self.paused == False:
+        if not self.paused:
             self.end_test()
             for i in range(3):
                 Beep(750, 500)
@@ -322,12 +340,12 @@ class MainWindow(tk.Frame):
 
     def animate(self, i):
         try:
-            data = read_csv(os.path.join(self.savepath.get(), self.outfile))
+            data = read_csv(self.outputfile)
         except FileNotFoundError as e:
-            data = DataFrame(data={'Minutes':[0], 'PSI 1':[0], 'PSI 2':[0]})
+            data = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
 
         # TODO: this plt stuff can probably go elsewhere
-        plt.rcParams.update(plt.rcParamsDefault) # refresh the style
+        plt.rcParams.update(plt.rcParamsDefault)  # refresh the style
         # https://stackoverflow.com/questions/42895216
         with plt.style.context(self.plotstyle.get()):
             self.pltfrm.config(text=("Style: " + self.plotstyle.get()))
@@ -336,12 +354,12 @@ class MainWindow(tk.Frame):
             self.ax.set_ylabel("Pressure (psi)")
             self.ax.set_ylim(top=self.failpsi.get())
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
-            self.ax.set_xlim(left=0,right=self.timelimit.get())
+            self.ax.set_xlim(left=0, right=self.timelimit.get())
 
             y = data[self.plotpsi.get()]
             x = data['Minutes']
-            self.ax.plot(x,y,
-             label=("{0} {1}".format(self.chem.get(), self.conc.get())))
+            self.ax.plot(x, y, label=(f"{self.chem.get()}_{self.conc.get()}"))
+
             self.ax.grid(color='grey', alpha=0.3)
             self.ax.set_facecolor('w')
             self.ax.legend(loc=0)

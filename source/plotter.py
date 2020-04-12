@@ -1,9 +1,9 @@
-import matplotlib.pyplot as plt # plotting the data
+import matplotlib.pyplot as plt  # plotting the data
 from matplotlib.ticker import MultipleLocator
-import os # handling file paths
-from pandas import read_csv # reading the data
-import pickle # storing plotter settings
-import tkinter as tk # GUI
+import os  # handling file paths
+from pandas import read_csv  # reading the data
+import pickle  # storing plotter settings
+import tkinter as tk  # GUI
 from tkinter import ttk, filedialog
 
 from seriesentry import SeriesEntry
@@ -50,11 +50,11 @@ class Plotter(tk.Toplevel):
         self.pltbar = tk.Menu(self)
         self.pltbar.add_command(
             label="Save plot settings",
-            command = lambda: self.pickle_plot(self.prep_plot())
+            command=lambda: self.pickle_plot(self.prep_plot())
             )
         self.pltbar.add_command(
             label="Load from plot settings",
-            command = self.unpickle_plot
+            command=self.unpickle_plot
             )
         self.winfo_toplevel().config(menu=self.pltbar)
 
@@ -110,7 +110,7 @@ class Plotter(tk.Toplevel):
             master=self.setfrm,
             text="Plot",
             width=30,
-            command= lambda: self.make_plot(self.prep_plot())
+            command=lambda: self.make_plot(self.prep_plot())
             )
         self.pltbtn.grid(row=2, columnspan=3, pady=1)
         self.setfrm.pack(side=tk.BOTTOM)
@@ -156,7 +156,7 @@ class Plotter(tk.Toplevel):
 
     def pickle_plot(self, to_plot):
         path = self.parent.parent.savepath.get()
-        with open(os.path.join(path, f'{self.parent.parent.project.get()}.plt'), 'wb') as p:
+        with open(os.path.join(path, f'{path}.plt'), 'wb') as p:
             pickle.dump(to_plot, p)
 
     def unpickle_plot(self):
@@ -166,9 +166,9 @@ class Plotter(tk.Toplevel):
             filetypes=[("Plot settings", "*.plt")]
             )
 
+        # this puts the pickled to_plot list back into its original entries
         with open(fil, 'rb') as p:
             to_plot = pickle.load(p)
-
         plotting = list(zip(to_plot, self.entfrm.winfo_children()))
         for item in plotting:
             item[1].path.delete(0, tk.END)
@@ -178,6 +178,7 @@ class Plotter(tk.Toplevel):
             item[1].title.insert(0, item[0][1])
             self.after(200, item[1].title.xview_moveto, 1)
 
+        # raise the settings window relative to the main window
         self.lift()
+
         self.make_plot(self.prep_plot())
-        # self.parent.parent.lower()
