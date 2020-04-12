@@ -255,8 +255,8 @@ class MainWindow(tk.Frame):
         print(f"Opened a port at {self.port2.get()}")
 
         # set up output file
-        self.outputfile = os.path.join(self.savepath.get(), self.outfile)
-        print(f"Creating output file at {outputfile}")
+        outputpath = os.path.join(self.savepath.get(), self.outfile)
+        print(f"Creating output file at {outputpath}")
         with open(os.path.join(self.savepath.get(), self.outfile), "w") as f:
             csv.writer(f, delimiter=',').writerow(
                                                     [
@@ -323,7 +323,8 @@ class MainWindow(tk.Frame):
                         self.psi2
                         ]
 
-            with open((self.outputfile), "a", newline='') as f:
+            outputpath = os.path.join(self.savepath.get(), self.outfile)
+            with open((outputpath), "a", newline='') as f:
                 csv.writer(f, delimiter=',').writerow(thisdata)
             nums = ((self.elapsed/60), self.psi1, self.psi2)
             logmsg = ("{0:.2f} min, {1} psi, {2} psi".format(nums))
@@ -339,7 +340,7 @@ class MainWindow(tk.Frame):
 
     def animate(self, i):
         try:
-            data = read_csv(self.outputfile)
+            data = read_csv(os.path.join(self.savepath.get(), self.outfile))
         except FileNotFoundError as e:
             data = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
 
