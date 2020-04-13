@@ -73,7 +73,7 @@ class Plotter(tk.Toplevel):
             )  # to hold all the SeriesEntries
         for _ in range(10):
             SeriesEntry(self.entfrm).grid(padx=2)
-        self.entfrm.grid(row=0)
+        self.entfrm.grid(row=0, padx=2)
 
         # to hold the settings entries
         self.setfrm = tk.LabelFrame(master=self, text="Plot parameters")
@@ -87,19 +87,33 @@ class Plotter(tk.Toplevel):
             Plotter.Styles[3],
             *Plotter.Styles
             )
-        self.stylemenu.grid(row=0, column=1, sticky=tk.W, padx=5)
+        self.stylemenu.grid(row=0, column=1, sticky=tk.W, padx=(5, 10), pady=2)
+
+        tk.Label(
+            master=self.setfrm,
+            text="x limit:"
+            ).grid(row=0, column=2, sticky=tk.E, padx=5, pady=(10,2))
+        self.xlim = ttk.Entry(self.setfrm, width=14)
+        self.xlim.grid(row=0, column=3, sticky=tk.W, padx=5, pady=(5,2))
 
         tk.Label(
             master=self.setfrm,
             text="Legend location:"
             ).grid(row=1, column=0, sticky=tk.E, padx=5, pady=2)
-        self.locs = ttk.OptionMenu(
+        self.locsmenu = ttk.OptionMenu(
             self.setfrm,
             self.loc,
             Plotter.LocsLst[1],
             *Plotter.LocsLst
             )
-        self.locs.grid(row=1, column=1, sticky=tk.W, padx=5, pady=2)
+        self.locsmenu.grid(row=1, column=1, sticky=tk.W, padx=(5, 10), pady=2)
+
+        tk.Label(
+            master=self.setfrm,
+            text="y limit:"
+            ).grid(row=1, column=2, sticky=tk.E, padx=5, pady=2)
+        self.ylim = ttk.Entry(self.setfrm, width=14)
+        self.ylim.grid(row=1, column=3, sticky=tk.W, padx=5, pady=2)
 
         tk.Label(
             master=self.setfrm,
@@ -108,29 +122,15 @@ class Plotter(tk.Toplevel):
         self.anchorent = ttk.Entry(self.setfrm, width=14)
         self.anchorent.grid(row=2, column=1, sticky=tk.W, padx=5, pady=2)
 
-        tk.Label(
-            master=self.setfrm,
-            text="x limit:"
-            ).grid(row=3, column=0, sticky=tk.E, padx=5, pady=2)
-        self.xlim = ttk.Entry(self.setfrm, width=14)
-        self.xlim.grid(row=3, column=1, sticky=tk.W, padx=5, pady=2)
-
-        tk.Label(
-            master=self.setfrm,
-            text="y limit:"
-            ).grid(row=4, column=0, sticky=tk.E, padx=5, pady=2)
-        self.ylim = ttk.Entry(self.setfrm, width=14)
-        self.ylim.grid(row=4, column=1, sticky=tk.W, padx=5, pady=2)
-
         self.pltbtn = ttk.Button(
             master=self.setfrm,
             text="Plot",
             width=30,
             command=lambda: self.make_plot(self.prep_plot())
             )
-        self.pltbtn.grid(row=5, columnspan=2, pady=2)
+        self.pltbtn.grid(row=3, columnspan=4, pady=2)
 
-        self.setfrm.grid(row=1)
+        self.setfrm.grid(row=1, pady=2)
 
     def prep_plot(self) -> [(str, str, str),]:
         """Returns a list of 3-tuples of strings from the SeriesEntry widgets;
