@@ -14,11 +14,11 @@ from matplotlib.ticker import MultipleLocator
 from pandas import DataFrame, read_csv  # reading data from csv
 import os  # handling file paths
 import serial  # talking to the pumps
+from serial import SerialException
 import sys  # handling file paths
 import tkinter as tk  # GUI
 from tkinter import ttk
-import time  # sleeping
-from winsound import Beep  # beeping when the test ends
+
 
 from experiment import Experiment
 from menubar import MenuBar
@@ -27,10 +27,12 @@ from menubar import MenuBar
 class MainWindow(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
+        self.parent = parent
         self.plotpsi = tk.StringVar()
-        self.plotstyle = tk.StringVar()
         self.plotpsi.set('PSI 2')
-        self.plotstyle.set('seaborn-colorblind')
+        self.project = os.getcwd()
+        self.plotstyle = ('seaborn-colorblind')
+
         self.build_window()
         self.findcoms()
 
@@ -38,7 +40,7 @@ class MainWindow(tk.Frame):
         """Make all the tkinter widgets"""
         self.menu = MenuBar(self)
         # build the main frame
-        self.tstfrm = tk.Frame(self)
+        self.tstfrm = tk.Frame(self.parent)
         self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
         # this spacing is to avoid using multiple labels
         self.outfrm = tk.LabelFrame(self.tstfrm,
@@ -46,33 +48,33 @@ class MainWindow(tk.Frame):
         self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls")
 
         # define the self.entfrm entries
-        self.p1 = ttk.Entry(
+        self.port1 = ttk.Entry(
             master=self.entfrm,
             width=14,
             justify=tk.CENTER
             )
-        self.p2 = ttk.Entry(
+        self.port2 = ttk.Entry(
             master=self.entfrm,
             width=14,
             justify=tk.CENTER
             )
-        self.tl = ttk.Entry(
+        self.timelim = ttk.Entry(
             master=self.entfrm,
             width=30,
             justify=tk.CENTER,
             )
-        self.fp = ttk.Entry(
+        self.failpsi = ttk.Entry(
             master=self.entfrm,
             width=30,
             justify=tk.CENTER,
             )
-        self.ch = ttk.Entry(
+        self.chem = ttk.Entry(
             master=self.entfrm,
             width=30,
             justify=tk.CENTER,
             )
-        self.ch.focus_set()  # move the cursor here for convenience
-        self.co = ttk.Entry(
+        self.chem.focus_set()  # move the cursor here for convenience
+        self.conc = ttk.Entry(
             master=self.entfrm,
             width=30,
             justify=tk.CENTER,
@@ -84,8 +86,8 @@ class MainWindow(tk.Frame):
             )
 
         # default values for convenience (maybe store in config file instead)
-        self.tl.insert(0, '90')
-        self.fp.insert(0, '1500')
+        self.timelim.insert(0, '90')
+        self.failpsi.insert(0, '1500')
 
         # grid entry labels into self.entfrm
         self.comlbl = ttk.Label(master=self.entfrm, text="COM ports:")
@@ -108,16 +110,16 @@ class MainWindow(tk.Frame):
             ).grid(row=4, sticky=tk.E)
 
         # widget bindings for user convenience
-        self.co.bind("<Return>", self.init_test)
+        self.conc.bind("<Return>", self.init_test)
         self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
 
         # grid entries into self.entfrm
-        self.p1.grid(row=0, column=1, sticky=tk.E, padx=(9, 1))
-        self.p2.grid(row=0, column=2, sticky=tk.W, padx=(5, 3))
-        self.tl.grid(row=1, column=1, columnspan=3, pady=1)
-        self.fp.grid(row=2, column=1, columnspan=3, pady=1)
-        self.ch.grid(row=3, column=1, columnspan=3, pady=1)
-        self.co.grid(row=4, column=1, columnspan=3, pady=1)
+        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(9, 1))
+        self.port2.grid(row=0, column=2, sticky=tk.W, padx=(5, 3))
+        self.timelim.grid(row=1, column=1, columnspan=3, pady=1)
+        self.failpsi.grid(row=2, column=1, columnspan=3, pady=1)
+        self.chem.grid(row=3, column=1, columnspan=3, pady=1)
+        self.conc.grid(row=4, column=1, columnspan=3, pady=1)
         self.strtbtn.grid(row=5, column=1, columnspan=2, pady=1)
         cols = self.entfrm.grid_size()
         for col in range(cols[0]):
@@ -178,7 +180,7 @@ class MainWindow(tk.Frame):
         # set up the plot area
         self.pltfrm = tk.LabelFrame(
             master=self.tstfrm,
-            text=(f"Style: {self.plotstyle.get()}")
+            text=(f"Style: {self.plotstyle}")
             )
 
         # matplotlib objects
@@ -202,10 +204,14 @@ class MainWindow(tk.Frame):
         """Looks for COM ports and disables the controls if two aren't found"""
         ports = ["COM" + str(i) for i in range(15)]
         useports = []
-        for i in ports:
-            if serial.Serial(i).is_open:
-                useports.append(i)
-                serial.Serial(i).close
+
+        try:
+            for i in ports:
+                if serial.Serial(i).is_open:
+                    useports.append(i)
+                    serial.Serial(i).close
+        except SerialException:
+            pass
 
         if len(useports) < 2:
             self.to_log("Not enough COM ports found...")
@@ -213,10 +219,10 @@ class MainWindow(tk.Frame):
             useports = ["??", "??"]
 
         try:
-            self.p1.insert(0, useports[0])
-            self.p2.insert(0, useports[1])
+            self.port1.insert(0, useports[0])
+            self.port2.insert(0, useports[1])
 
-            if self.p1.get() == "??" or self.p2.get() == "??":
+            if self.port1.get() == "??" or self.port2.get() == "??":
                 self.strtbtn['state'] = ['disable']
             else:
                 self.strtbtn['state'] = ['enable']
@@ -240,21 +246,22 @@ class MainWindow(tk.Frame):
     def animate(self, i):
         """The animation function for the current test's data"""
         try:
-            data = read_csv(os.path.join(self.savepath.get(), self.outfile))
-        except FileNotFoundError as e:
+            data = read_csv(self.test.outpath)
+        # maybe we didn't start running a test yet
+        except (FileNotFoundError, AttributeError):
             data = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
 
         # TODO: this plt stuff can probably go elsewhere
         plt.rcParams.update(plt.rcParamsDefault)  # refresh the style
         # https://stackoverflow.com/questions/42895216
-        with plt.style.context(self.plotstyle.get()):
-            self.pltfrm.config(text=("Style: " + self.plotstyle.get()))
+        with plt.style.context(self.plotstyle):
+            self.pltfrm.config(text=f"Style: {self.plotstyle}")
             self.ax.clear()
             self.ax.set_xlabel("Time (min)")
             self.ax.set_ylabel("Pressure (psi)")
-            self.ax.set_ylim(top=self.failpsi.get())
+            self.ax.set_ylim(top=int(self.failpsi.get()))
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
-            self.ax.set_xlim(left=0, right=self.timelimit.get())
+            self.ax.set_xlim(left=0, right=int(self.timelim.get()))
 
             y = data[self.plotpsi.get()]
             x = data['Minutes']
