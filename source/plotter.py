@@ -57,7 +57,7 @@ class Plotter(tk.Toplevel):
             )
         self.pltbar.add_command(
             label="Load from plot settings",
-            command=self.unpickle_plot
+            command=lambda: self.unpickle_plot()
             )
         self.winfo_toplevel().config(menu=self.pltbar)
 
@@ -180,9 +180,11 @@ class Plotter(tk.Toplevel):
     def pickle_plot(self, to_plot) -> None:
         """Pickles a list to a file in the project directory"""
         project = self.mainwin.project
-        path = os.path.join(project, f"{project}.plt")
+        print(project)
+        path = os.path.join(project, "plot.plt")
+        print(path)
         self.mainwin.to_log("Saving plot settings to")
-        self.mainwin.to_log(self.mainwin.project)
+        self.mainwin.to_log(path)
         with open(path, 'wb') as p:
             pickle.dump(to_plot, p)
 
@@ -197,18 +199,19 @@ class Plotter(tk.Toplevel):
             )
 
         # this puts the pickled to_plot list back into its original entries
-        with open(fil, 'rb') as p:
-            to_plot = pickle.load(p)
-        plotting = list(zip(to_plot, self.entfrm.winfo_children()))
-        for item in plotting:
-            item[1].path.delete(0, tk.END)
-            item[1].path.insert(0, item[0][0])
-            self.after(200, item[1].path.xview_moveto, 1)
-            item[1].title.delete(0, tk.END)
-            item[1].title.insert(0, item[0][1])
-            self.after(200, item[1].title.xview_moveto, 1)
-            # NOTE: on use of after
-            # https://stackoverflow.com/questions/29334544/
+        if not fil == '':
+            with open(fil, 'rb') as p:
+                to_plot = pickle.load(p)
+            plotting = list(zip(to_plot, self.entfrm.winfo_children()))
+            for item in plotting:
+                item[1].path.delete(0, tk.END)
+                item[1].path.insert(0, item[0][0])
+                self.after(200, item[1].path.xview_moveto, 1)
+                item[1].title.delete(0, tk.END)
+                item[1].title.insert(0, item[0][1])
+                self.after(200, item[1].title.xview_moveto, 1)
+                # NOTE: on use of after
+                # https://stackoverflow.com/questions/29334544/
 
         # raise the settings window
         # relative to the main window
