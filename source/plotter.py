@@ -40,13 +40,13 @@ class Plotter(tk.Toplevel):
 
     def __init__(self, parent, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
-        self.parent = parent
+        self.mainwin = parent.parent
         self.plotterstyle = tk.StringVar()
         self.loc = tk.StringVar()
         self.resizable(0, 0)
         self.build()
 
-    def build(self):
+    def build(self)  -> None:
         """Makes the widgets"""
         self.winfo_toplevel().title("Plotting Utility")
 
@@ -107,7 +107,7 @@ class Plotter(tk.Toplevel):
         self.stylemenu.grid(row=1, column=0, sticky=tk.W, padx=2)
         self.locs.grid(row=1, column=1, sticky=tk.W, padx=2)
         self.anchorent.grid(row=1, column=2, sticky=tk.E, padx=2)
-        # self.anchorent.insert(0, "1.13,0.525")
+        
 
         self.pltbtn = ttk.Button(
             master=self.setfrm,
@@ -118,8 +118,8 @@ class Plotter(tk.Toplevel):
         self.pltbtn.grid(row=2, columnspan=3, pady=1)
         self.setfrm.pack(side=tk.BOTTOM)
 
-    def prep_plot(self):
-        """Returns a 3-tuple of strings from the SeriesEntry widgets;
+    def prep_plot(self) -> [(str, str, str),]:
+        """Returns a list of 3-tuples of strings from the SeriesEntry widgets;
         the csv path, the label for the legend,
         and which column of the data to plot"""
 
@@ -132,7 +132,7 @@ class Plotter(tk.Toplevel):
                     ))
         return(to_plot)
 
-    def make_plot(self, to_plot):
+    def make_plot(self, to_plot) -> None:
         """Makes a new plot from a list of string 3-tuples (see prep_plot)"""
 
         # filter out the blank entries
@@ -163,16 +163,16 @@ class Plotter(tk.Toplevel):
             self.ax.legend(loc=self.loc.get(), bbox_to_anchor=bbox)
             self.fig.show()
 
-    def pickle_plot(self, to_plot):
+    def pickle_plot(self, to_plot) -> None:
         """Pickles a list to a file in the project directory"""
-
-        path = self.parent.parent.savepath.get()
-        path = os.path.join(path, f"{path}.plt")
-        self.parent.parent.to_log(path)
+        project = self.mainwin.project
+        path = os.path.join(project, f"{project}.plt")
+        self.mainwin.to_log("Saving plot settings to")
+        self.mainwin.to_log(self.mainwin.project)
         with open(path, 'wb') as p:
             pickle.dump(to_plot, p)
 
-    def unpickle_plot(self):
+    def unpickle_plot(self) -> None:
         """Unpickles/unpacks a list of string 3-tuples and puts those values
         into SeriesEntry widgets"""
 
@@ -193,7 +193,10 @@ class Plotter(tk.Toplevel):
             item[1].title.delete(0, tk.END)
             item[1].title.insert(0, item[0][1])
             self.after(200, item[1].title.xview_moveto, 1)
+            # NOTE: on use of after
+            # https://stackoverflow.com/questions/29334544/
 
-        # raise the settings window relative to the main window
+        # raise the settings window
+        # relative to the main window
         self.lift()
         self.make_plot(self.prep_plot())
