@@ -17,7 +17,7 @@ class SeriesEntry(tk.Frame):
         self.path.bind("<Button-1>", self.askfil)
         self.path.grid(row=0, column=0, padx=2, pady=1)
 
-        self.title = ttk.Entry(self, width=20)
+        self.title = ttk.Entry(self, width=25)
         self.title.grid(row=0, column=1, padx=2, pady=1)
 
         tk.Radiobutton(
@@ -55,6 +55,11 @@ class SeriesEntry(tk.Frame):
             event.widget.delete(0, tk.END)
             event.widget.insert(0, fil)
             event.widget.after(50, event.widget.xview_moveto, 1)
+            x = fil.split("/")
+            x = x[-1]
+            x = x.replace('_', ' ')
+            x = x[:-4]
+            event.widget.after(50, lambda: self.title.insert(0, x))
             event.widget.after(50, lambda: self.title.focus_set())
         # NOTE: on use of after
         # https://stackoverflow.com/questions/29334544/
