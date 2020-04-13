@@ -265,7 +265,10 @@ class MainWindow(tk.Frame):
 
             y = data[self.plotpsi.get()]
             x = data['Minutes']
-            self.ax.plot(x, y, label=(f"{self.chem.get()}_{self.conc.get()}"))
+            if self.chem.get() == "" and self.conc.get() == "":
+                 datalabel = " "
+            else: datalabel = f"{self.chem.get()}_{self.conc.get()}"
+            self.ax.plot(x, y, label=datalabel)
 
             self.ax.grid(color='grey', alpha=0.3)
             self.ax.set_facecolor('w')
