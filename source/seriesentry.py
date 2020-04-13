@@ -57,7 +57,7 @@ class SeriesEntry(tk.Frame):
             event.widget.insert(0, fil)
             event.widget.after(50, event.widget.xview_moveto, 1)
             event.widget.after(50, lambda: self.title.focus_set())
-        # NOTE: :  for some reason this only fires if postponed
+        # NOTE: on use of after
         # https://stackoverflow.com/questions/29334544/
 
     def clear_ents(self):
