@@ -1,5 +1,4 @@
-"""A custom tkinter widget for collecting user input
-"""
+"""A custom tkinter widget for collecting user input"""
 
 import tkinter as tk
 from tkinter import ttk, filedialog
