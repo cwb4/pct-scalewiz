@@ -68,7 +68,7 @@ class Plotter(tk.Toplevel):
             text=(
                 "File path:                           " +
                 "Series title:                        " +
-                "  Pressure to plot:"
+                "           Pressure to plot:"
                 )
             )  # to hold all the SeriesEntries
         for _ in range(10):
