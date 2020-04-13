@@ -229,8 +229,8 @@ class MainWindow(tk.Frame):
                     serial.Serial(i).close
             except serial.SerialException:
                 pass
-        if useports == []:
-            self.to_log("No COM ports found...")
+        if len(useports) < 2:
+            self.to_log("Not enough COM ports found...")
             self.to_log("Click 'COM ports:' to try again.")
             useports = ["??", "??"]
         try:
