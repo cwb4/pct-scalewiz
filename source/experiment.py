@@ -1,7 +1,12 @@
 """A class to handle the logic for running the test"""
 
+import csv  # logging the data
+from datetime import datetime  # logging the data
 from concurrent.futures import ThreadPoolExecutor  # handling the test loop
 import os  # handling file paths
+import tkinter as tk  # GUI
+import time  # sleeping
+from winsound import Beep  # beeping when the test ends
 
 
 class Experiment(tk.Frame):
@@ -9,15 +14,15 @@ class Experiment(tk.Frame):
         """Collects all the user data from the MainWindow widgets"""
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.port1 = self.parent.p1.get()
-        self.port2 = self.parent.p2.get()
-        self.timelimit = double(self.parent.tl.get())
-        self.failpsi = self.parent.fp.get()
-        self.chem = self.parent.ch.get()
-        self.conc = self.parent.co.get()
+        self.port1 = self.parent.port1.get()
+        self.port2 = self.parent.port2.get()
+        self.timelimit = double(self.parent.timelim.get())
+        self.failpsi = self.parent.failpsi.get()
+        self.chem = self.parent.chem.get()
+        self.conc = self.parent.conc.get()
 
         self.outfile = f"{self.chem}_{self.conc}.csv"
-        self.savepath = os.getcwd()
+        self.savepath = self.parent.project
         self.outpath = os.path.join(self.savepath, self.outfile)
 
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
