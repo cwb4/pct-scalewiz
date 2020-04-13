@@ -29,7 +29,7 @@ class MenuBar(tk.Frame):
         self.menubar = tk.Menu(self)
         self.filemenu = tk.Menu(self, tearoff=0)
         self.filemenu.add_command(
-            label="Set project directory",
+            label="Set project folder",
             command=self.askdir
             )
         self.pltmenu = tk.Menu(master=self, tearoff=0)
