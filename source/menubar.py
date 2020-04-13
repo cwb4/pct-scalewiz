@@ -2,6 +2,7 @@
 
 import tkinter as tk  # GUI
 from tkinter import filedialog
+import os  # handling file paths
 
 from plotter import Plotter
 
@@ -58,7 +59,7 @@ class MenuBar(tk.Frame):
             )
 
         if out != "":
-            self.parent.project = out
+            self.parent.project = os.path.abspath(out)
 
             # make it the MainWindow title in a pretty way
             p = out.split('/')
