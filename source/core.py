@@ -19,7 +19,7 @@ class ScaleWiz(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("Scale Block Wizard")
-    # root.resizable(0, 0)
+    root.resizable(0, 0)
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
     # root.pack(side="top", fill="both", expand=False)
     root.mainloop()
