@@ -114,7 +114,7 @@ class MainWindow(tk.Frame):
         self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
 
         # grid entries into self.entfrm
-        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(9, 1))
+        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(17, 1))
         self.port2.grid(row=0, column=2, sticky=tk.W, padx=(5, 3))
         self.timelim.grid(row=1, column=1, columnspan=3, pady=1)
         self.failpsi.grid(row=2, column=1, columnspan=3, pady=1)
@@ -129,7 +129,7 @@ class MainWindow(tk.Frame):
         scrollbar = tk.Scrollbar(self.outfrm)
         self.dataout = tk.Text(
             master=self.outfrm,
-            width=39,
+            width=45,
             height=12,
             yscrollcommand=scrollbar.set,
             state='disabled'
