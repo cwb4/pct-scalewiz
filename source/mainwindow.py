@@ -138,7 +138,9 @@ class MainWindow(tk.Frame):
         scrollbar.config(command=self.dataout.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.dataout.pack(fill=tk.BOTH)
-
+        self.to_log("Click 'Set project folder' to choose where " +
+                    "files will be saved")
+                    
         # build self.cmdfrm 4x3 grid
         self.runbtn = ttk.Button(
             master=self.cmdfrm,
