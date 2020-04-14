@@ -13,7 +13,7 @@ run.bat
 
 # Distribution / packaging
 .Python
-images/*.db
+*.db
 scripts/
 build/
 develop-eggs/
