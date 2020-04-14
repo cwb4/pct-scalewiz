@@ -221,10 +221,12 @@ class MainWindow(tk.Frame):
             useports = ["??", "??"]
 
         try:
+            self.port1.delete(0, tk.END)
+            self.port2.delete(0, tk.END)
             self.port1.insert(0, useports[0])
             self.port2.insert(0, useports[1])
 
-            if self.port1.get() == "??" or self.port2.get() == "??":
+            if "?" in self.port1.get()  or "?" in self.port2.get():
                 self.strtbtn['state'] = ['disable']
             else:
                 self.strtbtn['state'] = ['enable']
