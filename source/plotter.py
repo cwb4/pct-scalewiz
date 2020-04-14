@@ -1,5 +1,5 @@
 """The window used for plotting, spawned by MenuBar"""
-
+import matplotlib as mpl
 import matplotlib.pyplot as plt  # plotting the data
 from matplotlib.ticker import MultipleLocator
 import os  # handling file paths
@@ -126,7 +126,7 @@ class Plotter(tk.Toplevel):
             master=self.setfrm,
             text="Plot",
             width=30,
-            command=lambda: self.make_plot(self.prep_plot())
+            command=lambda: self.prep_make()
             )
         self.pltbtn.grid(row=3, columnspan=4, pady=2)
 
@@ -142,6 +142,8 @@ class Plotter(tk.Toplevel):
                         last arg optional
         """
 
+        # self.series_entries = [child for child in self.entfrm.winfo_children()]
+
         paths = tuple(
             [
             child.path.get()
@@ -149,18 +151,17 @@ class Plotter(tk.Toplevel):
             ]
         )
 
-        this_data = tuple(
-            [
-            DataFrame(read_csv(path))[child.plotpump.get()]
-            for child in self.entfrm.winfo_children()
-            ]
-        )
+        # dfs = tuple(
+        #     [
+        #     DataFrame(read_csv(path))
+        #     for path in paths
+        #     ]
+        # )
 
-        series_titles = tuple(
+        titles = tuple(
             [
             child.title.get()
             for child in self.entfrm.winfo_children()
-            if child.title.get() is not ""
             ]
         )
 
@@ -184,19 +185,58 @@ class Plotter(tk.Toplevel):
                     bbox  # tuple of floats or None
                      )
 
-        return(paths, this_data, series_titles, plotpumps, plot_params)
 
-    def make_plot(self, this_data, series_titles, plotpump, plot_params) -> None:
+        # _paths = [i for i in paths]
+        # _titles = [i for i in titles]
+        # _plotpumps = [i for i in plotpumps]
+        # _plot_params = plot_params
+
+        return (paths, titles, plotpumps, plot_params)
+
+    def prep_make(self):
+        _plt = self.prep_plot()
+        _paths = [i for i in _plt[0]]
+        _titles = [i for i in _plt[1]]
+        _plotpumps = [i for i in _plt[2]]
+        _plot_params = _plt[3]
+
+        self.make_plot(_paths, _titles, _plotpumps, _plot_params)
+
+        # _plt = self.prep_plot()
+        # [print(i) for i in _plt]
+        # print()
+        #
+
+
+        # _paths = [_plt[i][0] for i in range(len(_plt))]
+
+
+
+    def make_plot(self, paths, titles, plotpumps, plot_params) -> None:
         """Makes a new plot from some tuples"""
+
+        # unpack values from _plt here
 
         # reset the stylesheet
         plt.rcParams.update(plt.rcParamsDefault)
-        with plt.style.context(plot_params[0]):
+        style = plot_params[0]
+        xlim = plot_params[1]
+        ylim = plot_params[2]
+        bbox = plot_params[3]
+
+        with plt.style.context(style):
+            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(
+            color = [
+                'orange', 'blue', 'red',
+                'teal', 'magenta', 'green',
+                 'purple', 'yellow', 'brown', 'darkgreen'
+                 ]
+            )
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             self.ax.set_xlabel("Time (min)")
-            self.ax.set_xlim(left=0, right=plot_params[1])
+            self.ax.set_xlim(left=0, right=xlim)
             self.ax.set_ylabel("Pressure (psi)")
-            self.ax.set_ylim(top=plot_params[2])
+            self.ax.set_ylim(top=ylim)
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
             self.ax.grid(color='grey', alpha=0.3)
             self.ax.set_facecolor('w')
@@ -204,18 +244,25 @@ class Plotter(tk.Toplevel):
             plt.tight_layout()
 
             # NOTE: to_plot = [(0: path, 1: title, 2: plotpump)]
-            for df, title, plotpump in zip(this_data, series_titles, plotpumps):
-                                # if the trial is a blank run change the line style
-                if "blank" in title.lower():
+            for path, title, plotpump in zip(paths, titles, plotpumps):
+                # print(path, title, plotpump)
+                if os.path.exists(path):
+                    df = DataFrame(read_csv(path))
+                else:
+                    df = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
+                # if the trial is a blank run change the line style
+                if title is "": pass
+                elif "blank" in str(title).lower():
                     self.ax.plot(df['Minutes'], df[plotpump],
-                    label=title,
-                    linestyle='--')
+                        label=title,
+                        linestyle=('-.')
+                        )
                 else:  # plot using default line style
-                    self.ax.plot(data['Minutes'], df[plotpump],
-                    label=title
-                    )
+                    self.ax.plot(df['Minutes'], df[plotpump],
+                        label=title
+                        )
 
-            self.ax.legend(loc=self.loc.get(), bbox_to_anchor=plot_params[3])
+            self.ax.legend(loc=self.loc.get(), bbox_to_anchor=bbox)
             self.fig.show()
 
     def pickle_plot(self) -> None:
@@ -225,8 +272,9 @@ class Plotter(tk.Toplevel):
         path = os.path.join(project, "plot.plt")
         self.mainwin.to_log("Saving plot settings to")
         self.mainwin.to_log(path)
+
         with open(path, 'wb') as p:
-            pickle.dump(self.prep_plot(), p)
+            pickle.dump(_paths, _titles, _plotpumps, _plot_params, p)
 
     def unpickle_plot(self) -> None:
         """Unpickles/unpacks a list of string 3-tuples and puts those values
@@ -242,20 +290,21 @@ class Plotter(tk.Toplevel):
         if fil is not '':
             with open(fil, 'rb') as p:
                 _plt = pickle.load(p)
-                _settings = _plt[1:4]
-                self.make_plot(_settings)
-                _paths = _plt[0]
-                _titles = _plt[2]
+                _paths = [_plt[i][0] for i in range(10)]
+                # _dfs = [_plt[i][1] for i in range(10)]
+                _titles = [_plt[i][2] for i in range(10)]
+                _plotpump = [_plt[i][3] for i in range(10)]
+                _plt_params = _plt[4]
 
-            into_widgets = zip(_paths, _titles, self.entfrm.winfo_children())
-            for path, title, child in into_widgets:
-                child.path.delete(0, tk.END)
-                child.path.insert(0, path)
-                self.after(200, child.title.xview_moveto, 1)
-                child.title.delete(0, tk.END)
-                child.title.insert(0, title)
-                self.after(200, child.title.xview_moveto, 1)
-                if plotpump: child.plotpump.set("PSI 1")
+            # into_widgets = zip(_paths, _titles, self.series_entries)
+            # for path, title, widget in into_widgets:
+            #     widget.path.delete(0, tk.END)
+            #     widget.path.insert(0, path)
+            #     self.after(200, widget.title.xview_moveto, 1)
+            #     widget.title.delete(0, tk.END)
+            #     widget.title.insert(0, title)
+            #     self.after(200, widget.title.xview_moveto, 1)
+            #     if plotpump: widget.plotpump.set("PSI 1")
                 # NOTE: on use of after
                 # https://stackoverflow.com/questions/29334544/
 
