@@ -3,7 +3,7 @@
 import matplotlib.pyplot as plt  # plotting the data
 from matplotlib.ticker import MultipleLocator
 import os  # handling file paths
-from pandas import read_csv  # reading the data
+from pandas import DataFrame, read_csv # reading the data
 import pickle  # storing plotter settings
 import tkinter as tk  # GUI
 from tkinter import ttk, filedialog
@@ -53,7 +53,7 @@ class Plotter(tk.Toplevel):
         self.pltbar = tk.Menu(self)
         self.pltbar.add_command(
             label="Save plot settings",
-            command=lambda: self.pickle_plot(self.prep_plot())
+            command=lambda: self.pickle_plot()
             )
         self.pltbar.add_command(
             label="Load from plot settings",
@@ -132,61 +132,101 @@ class Plotter(tk.Toplevel):
 
         self.setfrm.grid(row=1, pady=2)
 
-    def prep_plot(self) -> [(str, str, str),]:
-        """Returns a list of 3-tuples of strings from the SeriesEntry widgets;
-        the csv path, the label for the legend,
-        and which column of the data to plot"""
+    def prep_plot(self) -> "tuple of 5 tuples":
+        """Returns a tuple of
+            paths - paths of original datafiles
+            this_data - a tuple of pandas dataframes of the original data
+            series_titles - str tuple of original series titles
+            plotpumps - tuple of bools whether to plot 'PSI 1'
+            plot_params - a tuple of (str, int, int, (floats,))
+                        last arg optional
+        """
 
-        to_plot = []
-        for child in self.entfrm.winfo_children():
-            to_plot.append((
-                    child.path.get(),
-                    child.title.get(),
-                    child.plotpump.get()
-                    ))
-        return(to_plot)
+        paths = tuple(
+            [
+            child.path.get()
+            for child in self.entfrm.winfo_children()
+            ]
+        )
 
-    def make_plot(self, to_plot) -> None:
-        """Makes a new plot from a list of string 3-tuples (see prep_plot)"""
+        this_data = tuple(
+            [
+            DataFrame(read_csv(path))[child.plotpump.get()]
+            for child in self.entfrm.winfo_children()
+            ]
+        )
 
-        # filter out the blank entries
-        to_plot = [x for x in to_plot if not x[0] == ""]
+        series_titles = tuple(
+            [
+            child.title.get()
+            for child in self.entfrm.winfo_children()
+            if child.title.get() is not ""
+            ]
+        )
+
+        plotpumps = tuple(
+            [
+            child.plotpump.get()
+            for child in self.entfrm.winfo_children()
+            ]
+        )
+
+        if self.anchorent.get() is "":  # the default value
+            bbox = None
+        else:
+            # cast it into a tuple of floats to pass to pyplot
+            bbox = tuple(map(float, self.anchorent.get().split(',')))
+
+        plot_params = (
+                    self.plotterstyle.get(),
+                    int(self.xlim.get()),
+                    int(self.ylim.get()),
+                    bbox  # tuple of floats or None
+                     )
+
+        return(paths, this_data, series_titles, plotpumps, plot_params)
+
+    def make_plot(self, this_data, series_titles, plotpump, plot_params) -> None:
+        """Makes a new plot from some tuples"""
+
         # reset the stylesheet
         plt.rcParams.update(plt.rcParamsDefault)
-        with plt.style.context(self.plotterstyle.get()):
+        with plt.style.context(plot_params[0]):
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             self.ax.set_xlabel("Time (min)")
-            self.ax.set_xlim(left=0, right=90)
+            self.ax.set_xlim(left=0, right=plot_params[1])
             self.ax.set_ylabel("Pressure (psi)")
-            self.ax.set_ylim(top=1500)
+            self.ax.set_ylim(top=plot_params[2])
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
             self.ax.grid(color='grey', alpha=0.3)
             self.ax.set_facecolor('w')
             self.fig.canvas.set_window_title("")
             plt.tight_layout()
 
-            for item in to_plot:
-                data = read_csv(item[0])
-                self.ax.plot(data['Minutes'], data[item[2]], label=item[1])
+            # NOTE: to_plot = [(0: path, 1: title, 2: plotpump)]
+            for df, title, plotpump in zip(this_data, series_titles, plotpumps):
+                                # if the trial is a blank run change the line style
+                if "blank" in title.lower():
+                    self.ax.plot(df['Minutes'], df[plotpump],
+                    label=title,
+                    linestyle='--')
+                else:  # plot using default line style
+                    self.ax.plot(data['Minutes'], df[plotpump],
+                    label=title
+                    )
 
-            if self.anchorent.get() == "":
-                bbox = None
-            else:
-                bbox = tuple(map(float, self.anchorent.get().split(',')))
-
-            self.ax.legend(loc=self.loc.get(), bbox_to_anchor=bbox)
+            self.ax.legend(loc=self.loc.get(), bbox_to_anchor=plot_params[3])
             self.fig.show()
 
-    def pickle_plot(self, to_plot) -> None:
+    def pickle_plot(self) -> None:
         """Pickles a list to a file in the project directory"""
+
         project = self.mainwin.project
-        print(project)
         path = os.path.join(project, "plot.plt")
-        print(path)
         self.mainwin.to_log("Saving plot settings to")
         self.mainwin.to_log(path)
         with open(path, 'wb') as p:
-            pickle.dump(to_plot, p)
+            pickle.dump(self.prep_plot(), p)
 
     def unpickle_plot(self) -> None:
         """Unpickles/unpacks a list of string 3-tuples and puts those values
@@ -198,22 +238,26 @@ class Plotter(tk.Toplevel):
             filetypes=[("Plot settings", "*.plt")]
             )
 
-        # this puts the pickled to_plot list back into its original entries
-        if not fil == '':
+        # this puts data paths into their original entries
+        if fil is not '':
             with open(fil, 'rb') as p:
-                to_plot = pickle.load(p)
-            plotting = list(zip(to_plot, self.entfrm.winfo_children()))
-            for item in plotting:
-                item[1].path.delete(0, tk.END)
-                item[1].path.insert(0, item[0][0])
-                self.after(200, item[1].path.xview_moveto, 1)
-                item[1].title.delete(0, tk.END)
-                item[1].title.insert(0, item[0][1])
-                self.after(200, item[1].title.xview_moveto, 1)
+                _plt = pickle.load(p)
+                _settings = _plt[1:4]
+                self.make_plot(_settings)
+                _paths = _plt[0]
+                _titles = _plt[2]
+
+            into_widgets = zip(_paths, _titles, self.entfrm.winfo_children())
+            for path, title, child in into_widgets:
+                child.path.delete(0, tk.END)
+                child.path.insert(0, path)
+                self.after(200, child.title.xview_moveto, 1)
+                child.title.delete(0, tk.END)
+                child.title.insert(0, title)
+                self.after(200, child.title.xview_moveto, 1)
+                if plotpump: child.plotpump.set("PSI 1")
                 # NOTE: on use of after
                 # https://stackoverflow.com/questions/29334544/
 
         # raise the settings window
-        # relative to the main window
         self.lift()
-        self.make_plot(self.prep_plot())
