@@ -271,7 +271,7 @@ class MainWindow(tk.Frame):
             x = data['Minutes']
             if self.chem.get() == "" and self.conc.get() == "":
                  datalabel = " "
-            else: datalabel = f"{self.chem.get()}_{self.conc.get()}"
+            else: datalabel = f"{self.chem.get()} {self.conc.get()}"
             self.ax.plot(x, y, label=datalabel)
 
             self.ax.grid(color='grey', alpha=0.3)
