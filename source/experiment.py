@@ -15,6 +15,15 @@ class Experiment(tk.Frame):
         """Collects all the user data from the MainWindow widgets"""
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
+
+        # disable the entries for test parameters
+        for child in self.parent.entfrm.winfo_children():
+            child.configure(state="disabled")
+
+        # enable the commands for starting/stopping the test
+        for child in self.parent.cmdfrm.winfo_children():
+            child.configure(state="normal")
+
         self.port1 = self.parent.port1.get()
         self.port2 = self.parent.port2.get()
         self.timelimit = float(self.parent.timelim.get())
@@ -58,15 +67,6 @@ class Experiment(tk.Frame):
 
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
-
-        # disable the entries for test parameters
-        for child in self.parent.entfrm.winfo_children():
-            child.configure(state="disabled")
-
-        # enable the commands for starting/stopping the test
-        for child in self.parent.cmdfrm.winfo_children():
-            child.configure(state="normal")
-
         self.thread_pool_executor.submit(self.take_reading)
 
     def take_reading(self) -> None:

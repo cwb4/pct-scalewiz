@@ -146,7 +146,7 @@ class MainWindow(tk.Frame):
         self.runbtn = ttk.Button(
             master=self.cmdfrm,
             text="Run",
-            command=lambda: self.run_test(),
+            command=lambda: self.test.run_test(),
             width=15
             )
         self.endbtn = ttk.Button(
