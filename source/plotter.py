@@ -126,7 +126,7 @@ class Plotter(tk.Toplevel):
             master=self.setfrm,
             text="Plot",
             width=30,
-            command=lambda: self.prep_make()
+            command=lambda: self.make_plot(**self.prep_plot())
             )
         self.pltbtn.grid(row=3, columnspan=4, pady=2)
 
@@ -142,21 +142,12 @@ class Plotter(tk.Toplevel):
                         last arg optional
         """
 
-        # self.series_entries = [child for child in self.entfrm.winfo_children()]
-
         paths = tuple(
             [
             child.path.get()
             for child in self.entfrm.winfo_children()
             ]
         )
-
-        # dfs = tuple(
-        #     [
-        #     DataFrame(read_csv(path))
-        #     for path in paths
-        #     ]
-        # )
 
         titles = tuple(
             [
@@ -172,60 +163,62 @@ class Plotter(tk.Toplevel):
             ]
         )
 
+        # look for empty entries in the form
+        if self.xlim.get() is not '':
+            xlim = int(self.xlim.get())
+        else:
+            xlim = int(self.mainwin.timelim.get())
+
+        if self.ylim.get() is not '':
+            ylim = int(self.ylim.get())
+        else:
+            ylim = int(self.mainwin.failpsi.get())
+
         if self.anchorent.get() is "":  # the default value
             bbox = None
         else:
             # cast it into a tuple of floats to pass to pyplot
             bbox = tuple(map(float, self.anchorent.get().split(',')))
+        plot_params = (self.plotterstyle.get(), xlim, ylim, bbox)
 
-        plot_params = (
-                    self.plotterstyle.get(),
-                    int(self.xlim.get()),
-                    int(self.ylim.get()),
-                    bbox  # tuple of floats or None
-                     )
+        _paths = [i for i in paths]
+        _titles = [i for i in titles]
+        _plotpumps = [i for i in plotpumps]
+        _plot_params = plot_params
 
-
-        # _paths = [i for i in paths]
-        # _titles = [i for i in titles]
-        # _plotpumps = [i for i in plotpumps]
-        # _plot_params = plot_params
-
-        return (paths, titles, plotpumps, plot_params)
-
-    def prep_make(self):
-        _plt = self.prep_plot()
-        _paths = [i for i in _plt[0]]
-        _titles = [i for i in _plt[1]]
-        _plotpumps = [i for i in _plt[2]]
-        _plot_params = _plt[3]
-
-        self.make_plot(_paths, _titles, _plotpumps, _plot_params)
-
-        # _plt = self.prep_plot()
-        # [print(i) for i in _plt]
-        # print()
-        #
-
-
-        # _paths = [_plt[i][0] for i in range(len(_plt))]
-
-
+        _plt = {
+                'paths' : _paths,
+                'titles' : _titles,
+                'plotpumps' : _plotpumps,
+                'plot_params' : _plot_params
+                }
+        return _plt
 
     def make_plot(self, paths, titles, plotpumps, plot_params) -> None:
+    # def make_plot(self, **_plt) -> None:
         """Makes a new plot from some tuples"""
 
         # unpack values from _plt here
 
         # reset the stylesheet
         plt.rcParams.update(plt.rcParamsDefault)
+
+        # give names to plot parameters
         style = plot_params[0]
-        xlim = plot_params[1]
-        ylim = plot_params[2]
+        if plot_params[1] is not '':
+            xlim = int(plot_params[1])
+        else:
+            xlim = int(self.mainwin.timelim.get())
+
+        if plot_params[2] is not '':
+            ylim = int(plot_params[2])
+        else:
+            ylim = int(self.mainwin.failpsi.get())
         bbox = plot_params[3]
 
         with plt.style.context(style):
             mpl.rcParams['axes.prop_cycle'] = mpl.cycler(
+            # TODO: make this reference a JSON instead
             color = [
                 'orange', 'blue', 'red',
                 'teal', 'magenta', 'green',
@@ -268,13 +261,21 @@ class Plotter(tk.Toplevel):
     def pickle_plot(self) -> None:
         """Pickles a list to a file in the project directory"""
 
-        project = self.mainwin.project
-        path = os.path.join(project, "plot.plt")
-        self.mainwin.to_log("Saving plot settings to")
-        self.mainwin.to_log(path)
+        project = self.mainwin.project.split('\\')
+        short_proj = project[-1]
+        med_proj = project[-2] + '\\' + short_proj
+        _pickle = f"{short_proj}.plt"
 
-        with open(path, 'wb') as p:
-            pickle.dump(_paths, _titles, _plotpumps, _plot_params, p)
+        _path = os.path.join(self.mainwin.project, _pickle)
+
+        self.mainwin.to_log("Saving plot settings to")
+
+        self.mainwin.to_log(f"{med_proj}" + "\\" + _pickle)
+
+        _plt = self.prep_plot()
+
+        with open(_path, 'wb') as p:
+            pickle.dump(self.prep_plot(), file=p)
 
     def unpickle_plot(self) -> None:
         """Unpickles/unpacks a list of string 3-tuples and puts those values
@@ -290,23 +291,24 @@ class Plotter(tk.Toplevel):
         if fil is not '':
             with open(fil, 'rb') as p:
                 _plt = pickle.load(p)
-                _paths = [_plt[i][0] for i in range(10)]
-                # _dfs = [_plt[i][1] for i in range(10)]
-                _titles = [_plt[i][2] for i in range(10)]
-                _plotpump = [_plt[i][3] for i in range(10)]
-                _plt_params = _plt[4]
 
-            # into_widgets = zip(_paths, _titles, self.series_entries)
-            # for path, title, widget in into_widgets:
-            #     widget.path.delete(0, tk.END)
-            #     widget.path.insert(0, path)
-            #     self.after(200, widget.title.xview_moveto, 1)
-            #     widget.title.delete(0, tk.END)
-            #     widget.title.insert(0, title)
-            #     self.after(200, widget.title.xview_moveto, 1)
-            #     if plotpump: widget.plotpump.set("PSI 1")
-                # NOTE: on use of after
-                # https://stackoverflow.com/questions/29334544/
+        into_widgets = zip(
+            _plt['paths'],
+            _plt['titles'],
+            _plt['plotpumps'],
+            self.entfrm.winfo_children()
+        )
+
+        for path, title, plotpump, widget in into_widgets:
+            widget.path.delete(0, tk.END)
+            widget.path.insert(0, path)
+            self.after(150, widget.path.xview_moveto, 1)
+            widget.title.delete(0, tk.END)
+            widget.title.insert(0, title)
+            self.after(150, widget.title.xview_moveto, 1)
+            widget.plotpump.set(plotpump)
+            #  NOTE: on use of after
+            #  https://stackoverflow.com/questions/29334544/
 
         # raise the settings window
         self.lift()
