@@ -110,8 +110,8 @@ class MainWindow(tk.Frame):
             ).grid(row=4, sticky=tk.E)
 
         # widget bindings for user convenience
-        self.conc.bind("<Return>", self.init_test)
-        self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
+        self.conc.bind("<Return>", lambda: self.init_test())
+        self.comlbl.bind("<Button-1>", lambda: self.findcoms())
 
         # grid entries into self.entfrm
         self.port1.grid(row=0, column=1, sticky=tk.E, padx=(17, 1))
