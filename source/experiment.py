@@ -4,6 +4,7 @@ import csv  # logging the data
 from datetime import datetime  # logging the data
 from concurrent.futures import ThreadPoolExecutor  # handling the test loop
 import os  # handling file paths
+import serial
 import tkinter as tk  # GUI
 import time  # sleeping
 from winsound import Beep  # beeping when the test ends
@@ -25,12 +26,13 @@ class Experiment(tk.Frame):
         self.savepath = self.parent.project
         self.outpath = os.path.join(self.savepath, self.outfile)
 
+        self.to_log(f"Creating output file at \n{self.outpath}")
+        header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
+        with open(self.outpath, "w") as f:
+            csv.writer(f, delimiter=',').writerow(header_row)
+
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
         self.psi1, self.psi2, self.elapsed = 0, 0, 0
-
-        # the timeout values are an alternative to using TextIOWrapper
-        self.pump1 = serial.Serial(self.port1, timeout=0.01)
-        self.pump2 = serial.Serial(self.port2, timeout=0.01)
 
     def to_log(self, msg) -> None:
         """Logs a message to the Text widget in MainWindow's outfrm"""
@@ -57,11 +59,6 @@ class Experiment(tk.Frame):
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
 
-        self.to_log(f"Creating output file at \n{self.outpath}")
-        header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
-        with open(self.outpath, "w") as f:
-            csv.writer(f, delimiter=',').writerow(header_row)
-
         # disable the entries for test parameters
         for child in self.parent.entfrm.winfo_children():
             child.configure(state="disabled")
@@ -70,15 +67,20 @@ class Experiment(tk.Frame):
         for child in self.parent.cmdfrm.winfo_children():
             child.configure(state="normal")
 
+        self.thread_pool_executor.submit(self.take_reading)
+
+    def take_reading(self) -> None:
+        """Loop to be handled by the thread_pool_executor"""
+
+        # the timeout values are an alternative to using TextIOWrapper
+        self.pump1 = serial.Serial(self.port1, timeout=0.01)
+        self.pump2 = serial.Serial(self.port2, timeout=0.01)
+
         self.to_log("Starting the test...")
         for pump in (self.pump1, self.pump2):
             pump.write('ru'.encode())
         # let the pumps warm up before we start recording data
         time.sleep(3)
-        self.thread_pool_executor.submit(self.take_reading)
-
-    def take_reading(self) -> None:
-        """Loop to be handled by the thread_pool_executor"""
 
         starttime = datetime.now()
         while (
