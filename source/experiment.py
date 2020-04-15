@@ -16,7 +16,7 @@ class Experiment(tk.Frame):
         self.parent = parent
         self.port1 = self.parent.port1.get()
         self.port2 = self.parent.port2.get()
-        self.timelimit = double(self.parent.timelim.get())
+        self.timelimit = float(self.parent.timelim.get())
         self.failpsi = self.parent.failpsi.get()
         self.chem = self.parent.chem.get()
         self.conc = self.parent.conc.get()
