@@ -14,7 +14,7 @@ from matplotlib.ticker import MultipleLocator
 from pandas import DataFrame, read_csv  # reading data from csv
 import os  # handling file paths
 import serial  # talking to the pumps
-from serial import SerialException
+# from serial import SerialException
 import sys  # handling file paths
 import tkinter as tk  # GUI
 from tkinter import ttk
@@ -205,15 +205,15 @@ class MainWindow(tk.Frame):
     def findcoms(self) -> None:
         """Looks for COM ports and disables the controls if two aren't found"""
         ports = ["COM" + str(i) for i in range(15)]
-        useports = []
+        useports = [port for port in ports if serial.Serial(i).is_open]
 
-        try:
-            for i in ports:
-                if serial.Serial(i).is_open:
-                    useports.append(i)
-                    serial.Serial(i).close
-        except SerialException:
-            pass
+        # for i in ports:
+        #     try:
+        #         if serial.Serial(i).is_open:
+        #             useports.append(i)
+        #             serial.Serial(i).close
+        #     except SerialException:
+        #         pass
 
         if len(useports) < 2:
             self.to_log("Not enough COM ports found...")
