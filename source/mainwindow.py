@@ -83,7 +83,7 @@ class MainWindow(tk.Frame):
         self.strtbtn = ttk.Button(
             master=self.entfrm,
             text="Start",
-            command=self.init_test
+            command= lambda: self.init_test()
             )
 
         # default values for convenience (maybe store in config file instead)
@@ -152,7 +152,7 @@ class MainWindow(tk.Frame):
         self.endbtn = ttk.Button(
             master=self.cmdfrm,
             text="End",
-            command=lambda: self.end_test(),
+            command=lambda: self.test.end_test(),
             width=15
             )
         self.runbtn.grid(row=1, column=1, padx=5, pady=2, sticky=tk.W)
