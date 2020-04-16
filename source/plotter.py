@@ -221,8 +221,8 @@ class Plotter(tk.Toplevel):
             # TODO: make this reference a JSON instead
             color = [
                 'orange', 'blue', 'red',
-                'brown', 'magenta', 'green',
-                'purple', 'yellow', 'brown', 'olive'
+                'darkcyan', 'darkslategrey', 'mediumvioletred',
+                'gold', 'black', 'orangered'
                  ]
             )
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
