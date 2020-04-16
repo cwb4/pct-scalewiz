@@ -92,21 +92,18 @@ class Experiment(tk.Frame):
 
         starttime = datetime.now()
 
-        pressures = {'PSI 1' : [1, 1, 1] , 'PSI 2' : [1, 1, 1]}
+        pressures = {'PSI 1' : [1, 1, 1], 'PSI 2' : [1, 1, 1]}
 
         while (
          (self.psi1 < self.failpsi or self.psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
          ):
-            print("asking pump")
             for pump in (self.pump1, self.pump2):
                 pump.write('cc'.encode())
 
             time.sleep(0.1)
-
             self.psi1 = int(self.pump1.readline().decode().split(',')[1])
             self.psi2 = int(self.pump2.readline().decode().split(',')[1])
-
             thisdata = [
                         time.strftime("%I:%M:%S", time.localtime()),
                         self.elapsed,  # as seconds
@@ -115,16 +112,20 @@ class Experiment(tk.Frame):
                         self.psi1,
                         self.psi2
                         ]
-            with open(self.outpath, "a", newline='') as f:
-                csv.writer(f, delimiter=',').writerow(thisdata)
+
+            try:
+                with open(self.outpath, "a", newline='') as f:
+                    csv.writer(f, delimiter=',').writerow(thisdata)
+            except Exception as e:
+                print(e)
 
             nums = ((self.elapsed/60), self.psi1, self.psi2)
-            this_reading = ("{0:.2f} min, {1} psi, {2} psi".format(nums))
+            this_reading = (f"{self.elapsed/60:.2f} min, {self.psi1} psi, {self.psi2} psi")
             self.to_log(this_reading)
 
-            pressures['PSI 1'].insert(0, psi1)
+            pressures['PSI 1'].insert(0, self.psi1)
             pressures['PSI 1'].pop(-1)
-            pressures['PSI 2'].insert(0, psi2)
+            pressures['PSI 2'].insert(0, self.psi2)
             pressures['PSI 2'].pop(-1)
 
             for list in (pressures['PSI 1'], pressures['PSI 2']):
