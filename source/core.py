@@ -3,6 +3,7 @@
   - has a thread_pool_executor attribute for a blocking loop made in MainWindow
 """
 
+from concurrent.futures import ThreadPoolExecutor  # handling the test loop
 import serial  # talking to the pumps
 import sys  # to sys.exit() on window close
 import tkinter as tk  # GUI
@@ -14,7 +15,7 @@ class ScaleWiz(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.main = MainWindow(self)
-
+        self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
 if __name__ == "__main__":
     root = tk.Tk()
