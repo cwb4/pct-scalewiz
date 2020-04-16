@@ -2,7 +2,7 @@
 
 import csv  # logging the data
 from datetime import datetime  # logging the data
-from concurrent.futures import ThreadPoolExecutor  # handling the test loop
+
 import os  # handling file paths
 import serial
 import tkinter as tk  # GUI
@@ -15,6 +15,7 @@ class Experiment(tk.Frame):
         """Collects all the user data from the MainWindow widgets"""
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
+        self.core = parent.parent
 
         # disable the entries for test parameters
         for child in self.parent.entfrm.winfo_children():
@@ -27,7 +28,7 @@ class Experiment(tk.Frame):
         self.port1 = self.parent.port1.get()
         self.port2 = self.parent.port2.get()
         self.timelimit = float(self.parent.timelim.get())
-        self.failpsi = self.parent.failpsi.get()
+        self.failpsi = int(self.parent.failpsi.get())
         self.chem = self.parent.chem.get()
         self.conc = self.parent.conc.get()
 
@@ -35,13 +36,19 @@ class Experiment(tk.Frame):
         self.savepath = self.parent.project
         self.outpath = os.path.join(self.savepath, self.outfile)
 
-        self.to_log(f"Creating output file at \n{self.outpath}")
-        header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
-        with open(self.outpath, "w") as f:
-            csv.writer(f, delimiter=',').writerow(header_row)
-
-        self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
         self.psi1, self.psi2, self.elapsed = 0, 0, 0
+
+        # the timeout values are an alternative to using TextIOWrapper
+        try:
+            self.pump1 = serial.Serial(self.port1, timeout=0.01)
+            self.pump2 = serial.Serial(self.port2, timeout=0.01)
+        except serial.serialutil.SerialException:
+            self.to_log("Could not establish a connection to the pumps")
+            self.to_log("Try resetting the port connections")
+            for child in self.parent.cmdfrm.winfo_children():
+                child.configure(state="disabled")
+            for child in self.parent.entfrm.winfo_children():
+                child.configure(state="normal")
 
     def to_log(self, msg) -> None:
         """Logs a message to the Text widget in MainWindow's outfrm"""
@@ -67,14 +74,15 @@ class Experiment(tk.Frame):
 
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
-        self.thread_pool_executor.submit(self.take_reading)
+
+        self.to_log(f"Creating output file at \n{self.outpath}")
+        header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
+        with open(self.outpath, "a") as f:
+            csv.writer(f, delimiter=',').writerow(header_row)
+        self.core.thread_pool_executor.submit(self.take_reading)
 
     def take_reading(self) -> None:
         """Loop to be handled by the thread_pool_executor"""
-
-        # the timeout values are an alternative to using TextIOWrapper
-        self.pump1 = serial.Serial(self.port1, timeout=0.01)
-        self.pump2 = serial.Serial(self.port2, timeout=0.01)
 
         self.to_log("Starting the test...")
         for pump in (self.pump1, self.pump2):
@@ -83,10 +91,14 @@ class Experiment(tk.Frame):
         time.sleep(3)
 
         starttime = datetime.now()
+
+        pressures = {'PSI 1' : [1, 1, 1] , 'PSI 2' : [1, 1, 1]}
+
         while (
          (self.psi1 < self.failpsi or self.psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
          ):
+            print("asking pump")
             for pump in (self.pump1, self.pump2):
                 pump.write('cc'.encode())
 
@@ -110,7 +122,16 @@ class Experiment(tk.Frame):
             this_reading = ("{0:.2f} min, {1} psi, {2} psi".format(nums))
             self.to_log(this_reading)
 
+            pressures['PSI 1'].insert(0, psi1)
+            pressures['PSI 1'].pop(-1)
+            pressures['PSI 2'].insert(0, psi2)
+            pressures['PSI 2'].pop(-1)
+
+            for list in (pressures['PSI 1'], pressures['PSI 2']):
+                if list.count(0) is 3: Beep(750, 500)
+
             time.sleep(0.9)
+
             self.elapsed = (datetime.now() - starttime).seconds
             # end of while loop
 
