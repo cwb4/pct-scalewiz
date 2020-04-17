@@ -242,12 +242,14 @@ class MainWindow(tk.Frame):
         """init an Experiment object as an attribute of MainWindow"""
         self.test = Experiment(self)
 
-    def to_log(self, msg) -> None:
+    def to_log(self, *msgs) -> None:
         """Logs a message to the Text widget in MainWindow's outfrm"""
-        self.dataout['state'] = 'normal'
-        self.dataout.insert('end', f"{msg}" + "\n")
-        self.dataout['state'] = 'disabled'
-        self.dataout.see('end')
+
+        for msg in msgs:
+            self.dataout['state'] = 'normal'
+            self.dataout.insert('end', f"{msg}" + "\n")
+            self.dataout['state'] = 'disabled'
+            self.dataout.see('end')
 
     def animate(self, i):
         """The animation function for the current test's data"""
