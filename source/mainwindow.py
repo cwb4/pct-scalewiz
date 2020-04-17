@@ -111,8 +111,8 @@ class MainWindow(tk.Frame):
             ).grid(row=4, sticky=tk.E)
 
         # widget bindings for user convenience
-        self.conc.bind("<Return>", lambda: self.init_test())
-        self.comlbl.bind("<Button-1>", lambda: self.findcoms())
+        self.conc.bind("<Return>", lambda _: self.init_test())
+        self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
 
         # grid entries into self.entfrm
         self.port1.grid(row=0, column=1, sticky=tk.E, padx=(17, 1))
@@ -267,7 +267,8 @@ class MainWindow(tk.Frame):
             self.ax.set_ylabel("Pressure (psi)")
             self.ax.set_ylim(top=int(self.failpsi.get()))
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
-            self.ax.set_xlim(left=0, right=int(self.timelim.get()))
+            self.ax.set_xlim(left=0,)
+            # right=int(self.timelim.get()))
 
             y = data[self.plotpsi.get()]
             x = data['Minutes']
