@@ -76,8 +76,11 @@ class Experiment(tk.Frame):
         """Submits a test loop to the thread_pool_executor"""
 
         # make sure we don't overwrite existing data
+        self.to_log("A file with that name already exists")
+        self.to_log("making a copy instead")
         while os.path.exists(self.outpath):
-            self.outpath += r" - copy"
+            self.outpath = self.outputpath[0:-4]
+            self.outpath += r"- copy.csv"
 
         self.to_log(f"Creating output file at \n{self.outpath}")
         header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
