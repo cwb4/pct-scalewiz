@@ -32,7 +32,7 @@ class MainWindow(tk.Frame):
         self.plotpsi = tk.StringVar()
         self.plotpsi.set('PSI 2')
         self.project = os.getcwd()
-        self.plotstyle = ('seaborn-colorblind')
+        self.plotstyle = ('bmh')
 
         self.build_window()
         self.findcoms()
