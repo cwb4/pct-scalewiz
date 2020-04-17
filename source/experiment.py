@@ -75,9 +75,13 @@ class Experiment(tk.Frame):
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
 
+        # make sure we don't overwrite existing data
+        while os.path.exists(self.outpath):
+            self.outpath += r" - copy"
+
         self.to_log(f"Creating output file at \n{self.outpath}")
         header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
-        with open(self.outpath, "a") as f:
+        with open(self.outpath, "w") as f:
             csv.writer(f, delimiter=',').writerow(header_row)
         self.core.thread_pool_executor.submit(self.take_reading)
 
