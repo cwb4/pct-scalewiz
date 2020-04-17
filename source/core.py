@@ -17,6 +17,18 @@ class ScaleWiz(tk.Frame):
         self.main = MainWindow(self)
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
+def close_ports():  # attempts to close all open ports, just in case
+    list = serial.tools.list_ports.comports()
+    ports = [i.device for i in list]
+    for i in ports:
+            if serial.Serial(i).is_open:
+                print(f"Closing {i}")
+                serial.Serial(i).close
+
+    print("Destroying root")
+    root.destroy()
+    sys.exit()
+
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("Scale Block Wizard")
