@@ -25,22 +25,11 @@ class Plotter(tk.Toplevel):
         "upper center",
         "center"
         ]
-    Styles = [  # list of matplotlib styles - used in a widget
-        "bmh",
-        "fivethirtyeight",
-        "seaborn",
-        "seaborn-colorblind",
-        "seaborn-dark-palette",
-        "seaborn-muted",
-        "seaborn-notebook",
-        "seaborn-paper",
-        "seaborn-pastel",
-        "tableau-colorblind10"
-        ]
 
     def __init__(self, parent, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
         self.mainwin = parent.parent
+        self.core = parent.parent.parent
         self.plotterstyle = tk.StringVar()
         self.loc = tk.StringVar()
         self.resizable(0, 0)
@@ -84,8 +73,8 @@ class Plotter(tk.Toplevel):
         self.stylemenu = ttk.OptionMenu(
             self.setfrm,
             self.plotterstyle,
-            Plotter.Styles[3],
-            *Plotter.Styles
+            self.core.PLOT_STYLES[0],
+            *self.core.PLOT_STYLES
             )
         self.stylemenu.grid(row=0, column=1, sticky=tk.W, padx=(5, 10), pady=2)
 
@@ -217,14 +206,7 @@ class Plotter(tk.Toplevel):
         bbox = plot_params[3]
 
         with plt.style.context(style):
-            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(
-            # TODO: make this reference a JSON instead
-            color = [
-                'orange', 'blue', 'red',
-                'darkcyan', 'darkslategrey', 'mediumvioletred',
-                'gold', 'black', 'orangered'
-                 ]
-            )
+            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(self.core.COLOR_CYCLE)
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             self.ax.set_xlabel("Time (min)")
             self.ax.set_xlim(left=0, right=xlim)
