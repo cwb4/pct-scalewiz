@@ -12,9 +12,31 @@ from mainwindow import MainWindow
 
 
 class ScaleWiz(tk.Frame):
+    # list of matplotlib styles
+    PLOT_STYLES = [
+        "bmh",
+        "fivethirtyeight",
+        "seaborn",
+        "seaborn-colorblind",
+        "seaborn-dark-palette",
+        "seaborn-muted",
+        "seaborn-notebook",
+        "seaborn-paper",
+        "seaborn-pastel",
+        "tableau-colorblind10"
+        ]
+    # color cycle to use when plotting multiple series
+    COLOR_CYCLE = [
+        'orange', 'blue', 'red',
+        'darkcyan', 'darkslategrey', 'mediumvioletred',
+        'gold', 'black', 'orangered'
+         ]
+
+
+
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-        self.main = MainWindow(self)
+        self.mainwin = MainWindow(self)
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
 def close_ports():  # attempts to close all open ports, just in case
