@@ -261,6 +261,7 @@ class MainWindow(tk.Frame):
 
         # TODO: this plt stuff can probably go elsewhere
         plt.rcParams.update(plt.rcParamsDefault)  # refresh the style
+        # plt.rcParams['axes.xmargin'] = 0.
         # https://stackoverflow.com/questions/42895216
         with plt.style.context(self.plotstyle):
             self.pltfrm.config(text=f"Style: {self.plotstyle}")
@@ -269,7 +270,9 @@ class MainWindow(tk.Frame):
             self.ax.set_ylabel("Pressure (psi)")
             self.ax.set_ylim(top=int(self.failpsi.get()))
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
-            self.ax.set_xlim(left=0,)
+            self.ax.set_xlim((0, None), auto=True)
+            self.ax.margins(0)
+            # self.ax.set_xlim(left=0)
             # right=int(self.timelim.get()))
 
             y = data[self.plotpsi.get()]
@@ -279,6 +282,6 @@ class MainWindow(tk.Frame):
             else: datalabel = f"{self.chem.get()} {self.conc.get()}"
             self.ax.plot(x, y, label=datalabel)
 
-            self.ax.grid(color='grey', alpha=0.3)
+            self.ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
             self.ax.set_facecolor('w')
             self.ax.legend(loc=0)

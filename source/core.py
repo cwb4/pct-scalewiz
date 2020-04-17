@@ -28,8 +28,8 @@ class ScaleWiz(tk.Frame):
     # color cycle to use when plotting multiple series
     COLOR_CYCLE = [
         'orange', 'blue', 'red',
-        'mediumseagreen', 'darkslategrey', 'mediumvioletred',
-        'gold', 'black', 'orangered'
+        'mediumseagreen', 'rosybrown', 'mediumslateblue', 'mediumvioletred',
+        'darkslategrey', 'maroon', 'darkcyan'
          ]
 
 

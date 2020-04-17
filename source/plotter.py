@@ -206,14 +206,16 @@ class Plotter(tk.Toplevel):
         bbox = plot_params[3]
 
         with plt.style.context(style):
-            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(self.core.COLOR_CYCLE)
+            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(
+                color = self.core.COLOR_CYCLE
+                )
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             self.ax.set_xlabel("Time (min)")
             self.ax.set_xlim(left=0, right=xlim)
             self.ax.set_ylabel("Pressure (psi)")
             self.ax.set_ylim(top=ylim)
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
-            self.ax.grid(color='grey', alpha=0.3)
+            self.ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
             self.ax.set_facecolor('w')
             self.fig.canvas.set_window_title("")
             plt.tight_layout()
