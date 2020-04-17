@@ -96,7 +96,10 @@ class Experiment(tk.Frame):
 
         starttime = datetime.now()
 
-        pressures = {'PSI 1' : [1, 1, 1], 'PSI 2' : [1, 1, 1]}
+        # a dict to hold recent pressure readings
+        pressures = {'PSI 1' : [1, 1, 1, 1, 1],
+                     'PSI 2' : [1, 1, 1, 1, 1]
+                    }
 
         while (
          (self.psi1 < self.failpsi or self.psi2 < self.failpsi)
@@ -127,6 +130,7 @@ class Experiment(tk.Frame):
             this_reading = (f"{self.elapsed/60:.2f} min, {self.psi1} psi, {self.psi2} psi")
             self.to_log(this_reading)
 
+            # make sure we have flow - consecutive 0 readings alert user
             pressures['PSI 1'].insert(0, self.psi1)
             pressures['PSI 1'].pop(-1)
             pressures['PSI 2'].insert(0, self.psi2)
