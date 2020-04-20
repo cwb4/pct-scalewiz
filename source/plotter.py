@@ -184,7 +184,6 @@ class Plotter(tk.Toplevel):
         return _plt
 
     def make_plot(self, paths, titles, plotpumps, plot_params) -> None:
-    # def make_plot(self, **_plt) -> None:
         """Makes a new plot from some tuples"""
 
         # unpack values from _plt here
