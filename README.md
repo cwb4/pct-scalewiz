@@ -36,12 +36,14 @@ The appropriate hardware drivers may be downloaded from the
 ![](images/demo_plot.PNG)
 
 ## Roadmap
-Expanded functionality for the plotting utility is the most recently
-added feature. The user may select from a small range of Matplotlib styles and formatting options such as legend location.
-Additionally, the user inputs in the plotter window can be saved to or loaded from a ".plt" file. This allows for easy modification of previously created plots.  
+Expanded functionality for the plotting utility is the most recently added feature.
+The user may select from a small range of Matplotlib styles and formatting options such as legend location.
+Additionally, the user inputs in the plotter window can be saved to or loaded from a ".plt" file.
+This allows for easy modification of previously created plots.  
 Planned features include
   * simple utility to read/write generic messages to/from the pumps,
-    such as commands to change flowrate
+    such as commands to change the pumps' flow rates
+  * menu command to allow users to choose custom plot colors
 
 
 ## License
