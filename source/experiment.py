@@ -29,8 +29,8 @@ class Experiment(tk.Frame):
         self.port2 = self.parent.port2.get()
         self.timelimit = float(self.parent.timelim.get())
         self.failpsi = int(self.parent.failpsi.get())
-        self.chem = self.parent.chem.get()
-        self.conc = self.parent.conc.get()
+        self.chem = self.parent.chem.get().strip().replace(' ', '_')
+        self.conc = self.parent.conc.get().strip().replace(' ', '_')
 
         self.outfile = f"{self.chem}_{self.conc}.csv"
         self.savepath = self.parent.project
@@ -62,7 +62,7 @@ class Experiment(tk.Frame):
             pump.write('st'.encode())
             pump.close()
 
-        msg = "The test finished in {0:.2f} minutes".format(self.elapsed/60)
+        msg = f"The test finished in {self.elapsed/60:.2f} minutes"
         self.to_log(msg)
 
         # re-enable the entries to let user start new test
@@ -118,7 +118,7 @@ class Experiment(tk.Frame):
                         time.strftime("%I:%M:%S", time.localtime()),
                         self.elapsed,  # as seconds
                         # TODO: learn how to do this with a real f-string
-                        '{0:.2f}'.format(self.elapsed/60),  # as minutes
+                        f'{self.elapsed/60:.2f}',  # as minutes
                         self.psi1,
                         self.psi2
                         ]
