@@ -35,6 +35,16 @@ class Experiment(tk.Frame):
         self.outfile = f"{self.chem}_{self.conc}.csv"
         self.savepath = self.parent.project
         self.outpath = os.path.join(self.savepath, self.outfile)
+        # make sure we don't overwrite existing data
+        if os.path.isfile(self.outpath):
+            self.to_log("A file with that name already exists",
+                        "making a copy instead")
+            self.outpath = self.outpath[0:-4]
+            self.outpath += r"- copy.csv"
+        self.to_log(f"Creating output file at \n{self.outpath}")
+        header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
+        with open(self.outpath, "w") as f:
+            csv.writer(f, delimiter=',').writerow(header_row)
 
         self.psi1, self.psi2, self.elapsed = 0, 0, 0
 
@@ -75,17 +85,6 @@ class Experiment(tk.Frame):
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
 
-        # make sure we don't overwrite existing data
-        if os.path.isfile(self.outpath):
-            self.to_log("A file with that name already exists",
-                        "making a copy instead")
-            self.outpath = self.outpath[0:-4]
-            self.outpath += r"- copy.csv"
-
-        self.to_log(f"Creating output file at \n{self.outpath}")
-        header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
-        with open(self.outpath, "w") as f:
-            csv.writer(f, delimiter=',').writerow(header_row)
         self.core.thread_pool_executor.submit(self.take_reading)
 
     def take_reading(self) -> None:
@@ -129,7 +128,7 @@ class Experiment(tk.Frame):
             except Exception as e:
                 print(e)
 
-            nums = ((self.elapsed/60), self.psi1, self.psi2)
+            nums = (self.elapsed/60, self.psi1, self.psi2)
             this_reading = (f"{self.elapsed/60:.2f} min, {self.psi1} psi, {self.psi2} psi")
             self.to_log(this_reading)
 
