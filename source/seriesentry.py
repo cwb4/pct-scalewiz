@@ -55,11 +55,11 @@ class SeriesEntry(tk.Frame):
         if not fil == "":
             event.widget.delete(0, tk.END)
             event.widget.insert(0, fil)
-            event.widget.after(50, event.widget.xview_moveto, 1)
+            event.widget.after(75, event.widget.xview_moveto, 1)
             title = fil.split("/")[-1].replace('_', ' ')[:-4]
-            evemt.widget.after(50, lambda: self.title.delete(0, tk.END))
-            event.widget.after(50, lambda: self.title.insert(0, title))
-            event.widget.after(50, lambda: self.title.focus_set())
+            event.widget.after(75, lambda: self.title.delete(0, tk.END))
+            event.widget.after(75, lambda: self.title.insert(0, title))
+            # event.widget.after(50, lambda: self.title.focus_set())
         # NOTE: on use of after
         # https://stackoverflow.com/questions/29334544/
 
