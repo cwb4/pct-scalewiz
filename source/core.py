@@ -55,6 +55,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.title("Scale Block Wizard")
     root.resizable(0, 0)
+    root.protocol("WM_DELETE_WINDOW", close_ports)
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
     # root.pack(side="top", fill="both", expand=False)
     root.mainloop()
