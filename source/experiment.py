@@ -60,9 +60,9 @@ class Experiment(tk.Frame):
             for child in self.parent.entfrm.winfo_children():
                 child.configure(state="normal")
 
-    def to_log(self, msg) -> None:
+    def to_log(self, *msgs) -> None:
         """Logs a message to the Text widget in MainWindow's outfrm"""
-        self.parent.to_log(msg)
+        self.parent.to_log(*msgs)
 
     def end_test(self) -> None:
         """Stops the pumps and closes their COM ports, then swaps the button
