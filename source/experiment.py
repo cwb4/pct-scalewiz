@@ -25,6 +25,11 @@ class Experiment(tk.Frame):
         for child in self.parent.cmdfrm.winfo_children():
             child.configure(state="normal")
 
+        # clear the text widget
+        self.parent.dataout['state'] = 'normal'
+        self.parent.dataout.delete(1.0, tk.END)
+        self.parent.dataout['state'] = 'disabled'
+
         self.port1 = self.parent.port1.get()
         self.port2 = self.parent.port2.get()
         self.timelimit = float(self.parent.timelim.get())
