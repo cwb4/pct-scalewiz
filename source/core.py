@@ -46,7 +46,8 @@ def close_ports():  # attempts to close all open ports, just in case
             if serial.Serial(i).is_open:
                 print(f"Closing {i}")
                 serial.Serial(i).close
-
+                # serial exception here if test running -
+                # call to end_test also? 
     print("Destroying root")
     root.destroy()
     sys.exit()
