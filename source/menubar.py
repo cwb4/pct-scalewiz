@@ -4,7 +4,8 @@ import tkinter as tk  # GUI
 from tkinter import filedialog
 import os  # handling file paths
 
-from plotter import Plotter
+# from plotter import Plotter
+from reporter import Reporter
 
 
 class MenuBar(tk.Frame):
@@ -72,4 +73,5 @@ class MenuBar(tk.Frame):
 
     def new_plot(self):
         """Spawns a new Plotter window"""
-        self.parent.plotter = Plotter(self)
+        # self.parent.plotter = Plotter(self)
+        self.parent.reporter = Reporter(self)
