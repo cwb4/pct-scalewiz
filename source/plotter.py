@@ -121,8 +121,8 @@ class Plotter(tk.Toplevel):
 
         self.setfrm.grid(row=1, pady=2)
 
-    def prep_plot(self) -> "tuple of 5 tuples":
-        """Returns a tuple of
+    def prep_plot(self) -> "dict":
+        """Returns a dict of
             paths - paths of original datafiles
             this_data - a tuple of pandas dataframes of the original data
             series_titles - str tuple of original series titles
