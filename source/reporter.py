@@ -373,7 +373,7 @@ class Reporter(tk.Toplevel):
             print()
 
         result_titles = [f"{i}" for i in scores]
-        result_values = [f"{scores[i]:.2f}%" for i in scores]
+        result_values = [f"{scores[i]:.1f}%" for i in scores]
 
         result_window = tk.Toplevel(self)
         result_window.title("Results")
