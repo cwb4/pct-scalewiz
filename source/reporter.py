@@ -330,7 +330,7 @@ class Reporter(tk.Toplevel):
 
     def evaluate(self, blanks, trials, baseline, xlim, ylim):
         print(f"baseline: {baseline}")
-        print(f"xlim: {xlim}")
+        print(f"xlim: {xlim*60}")
         print(f"ylim: {ylim}")
         print()
         total_area = ylim*xlim*60
