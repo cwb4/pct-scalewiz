@@ -42,11 +42,11 @@ class Reporter(tk.Toplevel):
 
         self.pltbar = tk.Menu(self)
         self.pltbar.add_command(
-            label="Save plot settings",
+            label="Save project settings",
             command=lambda: self.pickle_plot()
             )
         self.pltbar.add_command(
-            label="Load from plot settings",
+            label="Load from project settings",
             command=lambda: self.unpickle_plot()
             )
         self.winfo_toplevel().config(menu=self.pltbar)
@@ -58,7 +58,7 @@ class Reporter(tk.Toplevel):
             text=(
                 "File path:                           " +
                 "Series title:                        " +
-                "           Pressure to plot:"
+                "           Pressure to evaluate:"
                 )
             )  # to hold all the SeriesEntries
         for _ in range(10):
@@ -81,10 +81,11 @@ class Reporter(tk.Toplevel):
 
         tk.Label(
             master=self.setfrm,
-            text="x limit:"
+            text="Time limit (min):"
             ).grid(row=0, column=2, sticky=tk.E, padx=5, pady=(10,2))
         self.xlim = ttk.Entry(self.setfrm, width=14)
-        self.xlim.grid(row=0, column=3, sticky=tk.W, padx=5, pady=(5,2))
+        self.xlim.insert(0, self.mainwin.timelim.get())
+        self.xlim.grid(row=0, column=3, sticky=tk.W, padx=5, pady=(2))
 
         tk.Label(
             master=self.setfrm,
@@ -100,21 +101,22 @@ class Reporter(tk.Toplevel):
 
         tk.Label(
             master=self.setfrm,
-            text="y limit:"
+            text="Max pressure (psi):"
             ).grid(row=1, column=2, sticky=tk.E, padx=5, pady=2)
         self.ylim = ttk.Entry(self.setfrm, width=14)
+        self.ylim.insert(0, self.mainwin.failpsi.get())
         self.ylim.grid(row=1, column=3, sticky=tk.W, padx=5, pady=2)
 
         tk.Label(
             master=self.setfrm,
             text="Baseline pressure (psi):"
-            ).grid(row=2, column=0, sticky=tk.E, padx=5, pady=2)
+            ).grid(row=2, column=2, sticky=tk.E, padx=5, pady=2)
         self.baseline = ttk.Entry(self.setfrm, width=14)
-        self.baseline.grid(row=2, column=1, sticky=tk.W, padx=5, pady=2)
+        self.baseline.grid(row=2, column=3, sticky=tk.W, padx=5, pady=2)
 
         self.pltbtn = ttk.Button(
             master=self.setfrm,
-            text="Plot",
+            text="Evaluate",
             width=30,
             command=lambda: self.make_plot(**self.prep_plot())
             )
@@ -167,7 +169,7 @@ class Reporter(tk.Toplevel):
         if self.baseline.get() is not '':
             baseline = int(self.baseline.get())
         else:
-            baseline = 75
+            baseline = 0
 
         plot_params = (self.plotterstyle.get(), xlim, ylim, baseline)
 
@@ -244,29 +246,51 @@ class Reporter(tk.Toplevel):
                     trials.append(Series(df[plotpump], name=title))
 
             self.ax.legend(loc=self.loc.get())
-            self.fig.show()
 
             baseline = plot_params[3]
-            self.evaluate(blanks, trials, baseline, xlim, ylim)
+
+            # some tests to validate user input
+            if len(blanks) is 0 and len(trials) is 0:
+                tk.messagebox.showwarning(
+                master=self,
+                title="No data selected",
+                message="Click a 'File path:' entry to select a data file")
+                self.lift()
+            elif len(blanks) is 0:
+                tk.messagebox.showwarning(
+                master=self,
+                title="No series designated as blank",
+                message="At least one series title must contain 'blank'")
+                self.lift()
+            elif len(trials) is 0:
+                tk.messagebox.showwarning(
+                master=self,
+                title="No trial data selected",
+                message="At least one trial not titled 'blank' must be selected")
+                self.lift()
+            else:
+                if baseline is 0:
+                    baseline = 75
+                    tk.messagebox.showwarning(
+                    title="No baseline pressure designated",
+                    message=f"A default value of {baseline} psi will be used")
+                    self.lift()
+                self.evaluate(blanks, trials, baseline, xlim, ylim)
+                self.fig.show()
 
     def pickle_plot(self) -> None:
         """Pickles a list to a file in the project directory"""
 
         project = self.mainwin.project.split('\\')
         short_proj = project[-1]
-        med_proj = project[-2] + '\\' + short_proj
-        _pickle = f"{short_proj}.plt"
-
+        _pickle = f"{short_proj}.pct"
         _path = os.path.join(self.mainwin.project, _pickle)
-
-        self.mainwin.to_log("Saving plot settings to")
-
-        self.mainwin.to_log(f"{med_proj}" + "\\" + _pickle)
-
-        _plt = self.prep_plot()
-
         with open(_path, 'wb') as p:
             pickle.dump(self.prep_plot(), file=p)
+        tk.messagebox.showinfo(
+            message=f"Project data saved to \n {_path}"
+            )
+        self.lift()
 
     def unpickle_plot(self) -> None:
         """Unpickles/unpacks a list of string 3-tuples and puts those values
@@ -275,7 +299,7 @@ class Reporter(tk.Toplevel):
         fil = filedialog.askopenfilename(
             initialdir="C:\"",
             title="Select data to plot:",
-            filetypes=[("Plot settings", "*.plt")]
+            filetypes=[("Plot settings", "*.pct")]
             )
 
         # this puts data paths into their original entries
@@ -283,23 +307,23 @@ class Reporter(tk.Toplevel):
             with open(fil, 'rb') as p:
                 _plt = pickle.load(p)
 
-        into_widgets = zip(
-            _plt['paths'],
-            _plt['titles'],
-            _plt['plotpumps'],
-            self.entfrm.winfo_children()
-        )
+            into_widgets = zip(
+                _plt['paths'],
+                _plt['titles'],
+                _plt['plotpumps'],
+                self.entfrm.winfo_children()
+            )
 
-        for path, title, plotpump, widget in into_widgets:
-            widget.path.delete(0, tk.END)
-            widget.path.insert(0, path)
-            self.after(150, widget.path.xview_moveto, 1)
-            widget.title.delete(0, tk.END)
-            widget.title.insert(0, title)
-            self.after(150, widget.title.xview_moveto, 1)
-            widget.plotpump.set(plotpump)
-            #  NOTE: on use of after
-            #  https://stackoverflow.com/questions/29334544/
+            for path, title, plotpump, widget in into_widgets:
+                widget.path.delete(0, tk.END)
+                widget.path.insert(0, path)
+                self.after(150, widget.path.xview_moveto, 1)
+                widget.title.delete(0, tk.END)
+                widget.title.insert(0, title)
+                self.after(150, widget.title.xview_moveto, 1)
+                widget.plotpump.set(plotpump)
+                #  NOTE: on use of after
+                #  https://stackoverflow.com/questions/29334544/
 
         # raise the settings window
         self.lift()
@@ -308,26 +332,55 @@ class Reporter(tk.Toplevel):
         total_area = ylim*xlim*60
         baseline_area = baseline*xlim*60
         avail_area = total_area - baseline_area
+        print(f"total_area: {total_area}")
+        print(f"baseline_area: {baseline_area}")
+        print(f"avail_area: {avail_area}")
+        print()
 
         blank_scores = []
         for blank in blanks:
+            print(blank.name)
             scale_area = blank.sum()
-            print(scale_area)
+            print(f"scale area: {scale_area}")
             area_over_blank = ylim*len(blank) - scale_area
-            print(f"area over blank {area_over_blank}")
+            print(f"area over blank: {area_over_blank}")
             protectable_area = avail_area - area_over_blank
-            print(f"protectable_area {protectable_area}")
+            print(f"protectable_area: {protectable_area}")
             blank_scores.append(protectable_area)
-
+            print()
         protectable_area = int(DataFrame(blank_scores).mean())
-        print("avg: ", protectable_area)
+        print(f"avg protectable_area: {protectable_area}")
+        print()
 
         scores = {}
         for trial in trials:
-            scale_area = trial.sum()
+            print(trial.name)
+            scale_area = int(trial.sum() + ylim*(xlim*60 - len(trial)))
             print(f"scale area {scale_area}")
             score = 1 - (scale_area - baseline_area)/protectable_area
-            scores[trial.name] = score
+            print(f"ratio used: {score:.2f}")
+            scores[trial.name] = score*100
+            print()
 
-        results = [f"{i}, {scores[i]:.2f}, \n" for i in scores]
-        messagebox.showinfo(title="Results", message=[f"{i}" for i in results])
+        result_titles = [f"{i}" for i in scores]
+        result_values = [f"{scores[i]:.2f}%" for i in scores]
+
+        result_window = tk.Toplevel(self)
+        result_window.title("Results")
+        def_bg = result_window.cget('bg')
+        for i, title in enumerate(result_titles):
+            e = tk.Label(result_window, text=title)
+            e.grid(row=i, column=0, padx=(45))
+            # e = tk.Entry(result_window, bg=def_bg)
+            # e.insert(0, title)
+            # e.configure(state='readonly', relief='flat')
+            # e.grid(row=i, column=0, padx=(20))
+        for i, value in enumerate(result_values):
+            e = tk.Entry(result_window, bg=def_bg, width=10)
+            e.insert(0, value)
+            e.configure(state='readonly', relief='flat')
+            e.grid(row=i, column=1, sticky='W')
+
+        # text = tk.Text(result_window, width = 35)
+        # [text.insert(tk.INSERT, result) for result in results]
+        # text.pack()

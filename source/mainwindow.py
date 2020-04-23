@@ -18,7 +18,7 @@ import serial.tools.list_ports
 # from serial import SerialException
 import sys  # handling file paths
 import tkinter as tk  # GUI
-from tkinter import ttk
+from tkinter import ttk, scrolledtext
 
 
 from experiment import Experiment
@@ -127,17 +127,17 @@ class MainWindow(tk.Frame):
             self.entfrm.grid_columnconfigure(col, weight=1)
 
         # build self.outfrm packed
-        scrollbar = tk.Scrollbar(self.outfrm)
-        self.dataout = tk.Text(
+        # scrollbar = tk.Scrollbar(self.outfrm)
+        self.dataout = tk.scrolledtext.ScrolledText(
             master=self.outfrm,
             width=45,
             height=12,
-            yscrollcommand=scrollbar.set,
+            # yscrollcommand=scrollbar.set,
             state='disabled'
             )
         # TODO: try calling tk.Scrollbar(self.outfrm) directly
-        scrollbar.config(command=self.dataout.yview)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        # scrollbar.config(command=self.dataout.yview)
+        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.dataout.pack(fill=tk.BOTH)
         self.to_log("Click 'Set project folder' to choose where")
         self.to_log("files will be saved")
