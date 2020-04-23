@@ -329,6 +329,10 @@ class Reporter(tk.Toplevel):
         self.lift()
 
     def evaluate(self, blanks, trials, baseline, xlim, ylim):
+        print(f"baseline: {baseline}")
+        print(f"xlim: {xlim}")
+        print(f"ylim: {ylim}")
+        print()
         total_area = ylim*xlim*60
         baseline_area = baseline*xlim*60
         avail_area = total_area - baseline_area
@@ -355,11 +359,17 @@ class Reporter(tk.Toplevel):
         scores = {}
         for trial in trials:
             print(trial.name)
-            scale_area = int(trial.sum() + ylim*(xlim*60 - len(trial)))
+            measures = len(trial)
+            # disregard data taken past the timelimit
+            if measures > xlim*60: measures = xlim*60
+            print(f"number of measurements: {measures}")
+            scale_area = int(trial.sum() + ylim*(xlim*60 - measures))
             print(f"scale area {scale_area}")
             score = 1 - (scale_area - baseline_area)/protectable_area
             print(f"ratio used: {score:.2f}")
-            scores[trial.name] = score*100
+            if score*100 > 100: score = 100
+            else: score = score*100
+            scores[trial.name] = score
             print()
 
         result_titles = [f"{i}" for i in scores]
@@ -371,16 +381,9 @@ class Reporter(tk.Toplevel):
         for i, title in enumerate(result_titles):
             e = tk.Label(result_window, text=title)
             e.grid(row=i, column=0, padx=(45))
-            # e = tk.Entry(result_window, bg=def_bg)
-            # e.insert(0, title)
-            # e.configure(state='readonly', relief='flat')
-            # e.grid(row=i, column=0, padx=(20))
+
         for i, value in enumerate(result_values):
             e = tk.Entry(result_window, bg=def_bg, width=10)
             e.insert(0, value)
             e.configure(state='readonly', relief='flat')
             e.grid(row=i, column=1, sticky='W')
-
-        # text = tk.Text(result_window, width = 35)
-        # [text.insert(tk.INSERT, result) for result in results]
-        # text.pack()
