@@ -112,9 +112,10 @@ class Experiment(tk.Frame):
          (self.psi1 < self.failpsi or self.psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
          ):
+            start = time.time()
+            self.elapsed = (datetime.now() - starttime).seconds
             for pump in (self.pump1, self.pump2):
                 pump.write('cc'.encode())
-
             time.sleep(0.1)
             self.psi1 = int(self.pump1.readline().decode().split(',')[1])
             self.psi2 = int(self.pump2.readline().decode().split(',')[1])
@@ -145,10 +146,10 @@ class Experiment(tk.Frame):
 
             for list in (pressures['PSI 1'], pressures['PSI 2']):
                 if list.count(0) is 3: Beep(750, 500)
+            print(f'pre sleep: {round(time.time() - start, 4)}')
+            time.sleep(1 - (time.time() - start))
+            print(f'post sleep: {round(time.time() - start, 4)}')
 
-            time.sleep(0.9)
-
-            self.elapsed = (datetime.now() - starttime).seconds
             # end of while loop
 
         self.end_test()
