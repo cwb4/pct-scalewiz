@@ -10,6 +10,7 @@ __pycache__/
 build.bat
 run.bat
 *.plt
+*.xlsx
 
 # Distribution / packaging
 .Python
