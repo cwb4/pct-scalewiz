@@ -112,6 +112,7 @@ class Reporter(tk.Toplevel):
             text="Baseline pressure (psi):"
             ).grid(row=2, column=2, sticky=tk.E, padx=5, pady=2)
         self.baseline = ttk.Entry(self.setfrm, width=14)
+        self.baseline.insert(0, 75)
         self.baseline.grid(row=2, column=3, sticky=tk.W, padx=5, pady=2)
 
         self.pltbtn = ttk.Button(
@@ -277,6 +278,12 @@ class Reporter(tk.Toplevel):
                     self.lift()
                 self.evaluate(blanks, trials, baseline, xlim, ylim)
                 self.fig.show()
+                
+                project = self.mainwin.project.split('\\')
+                short_proj = project[-1]
+                image = f"{short_proj}.png"
+                image_path = os.path.join(self.mainwin.project, image)
+                self.fig.savefig(image_path)
 
     def pickle_plot(self) -> None:
         """Pickles a list to a file in the project directory"""
