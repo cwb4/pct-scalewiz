@@ -6,7 +6,7 @@ matplotlib==3.2.1
 numpy==1.18.2
 pandas==1.0.3
 pefile==2019.4.18
-PyInstaller==3.6
+PyInstaller==4.0.dev0+c6a74f060e
 pyparsing==2.4.6
 pyserial==3.4
 python-dateutil==2.8.1
