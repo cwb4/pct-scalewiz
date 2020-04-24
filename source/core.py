@@ -29,7 +29,7 @@ class ScaleWiz(tk.Frame):
     COLOR_CYCLE = [
         'orange', 'blue', 'red',
         'mediumseagreen', 'darkgoldenrod', 'indigo', 'mediumvioletred',
-        'darkslategrey', 'maroon', 'darkcyan'
+        'darkcyan', 'maroon', 'darkslategrey'
          ]
 
 
