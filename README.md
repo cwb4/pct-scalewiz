@@ -1,3 +1,7 @@
+<p  align='center'>
+<img src="https://github.com/teauxfu/pct-scalewiz/blob/master/demo/sample_data/sample_logo.PNG" width='200' height='100'>
+</p>
+
 # Premier Chemical Technologies, LLC  - Scale Block Wizard
 A graphical user interface designed to work with Teledyne SSI MX-class pumps.
 The intended usage is for running dynamic tube-blocking tests for calcium
