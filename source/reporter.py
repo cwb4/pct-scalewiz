@@ -1,11 +1,15 @@
 """Evaluates data and makes a plot"""
 
+from datetime import date
 import matplotlib as mpl
 import matplotlib.pyplot as plt  # plotting the data
 from matplotlib.ticker import MultipleLocator
 import os  # handling file paths
+import openpyxl
 from pandas import Series, DataFrame, read_csv # reading the data
 import pickle  # storing plotter settings
+import PIL
+import shutil
 import tkinter as tk  # GUI
 from tkinter import ttk, filedialog, messagebox
 
@@ -49,6 +53,10 @@ class Reporter(tk.Toplevel):
             label="Load from project settings",
             command=lambda: self.unpickle_plot()
             )
+        self.pltbar.add_command(
+            label='Export report',
+            command=lambda: self.export_report()
+        )
         self.winfo_toplevel().config(menu=self.pltbar)
 
         # a LabelFrame to hold the SeriesEntry widgets
@@ -278,7 +286,7 @@ class Reporter(tk.Toplevel):
                     self.lift()
                 self.evaluate(blanks, trials, baseline, xlim, ylim)
                 self.fig.show()
-                
+
                 project = self.mainwin.project.split('\\')
                 short_proj = project[-1]
                 image = f"{short_proj}.png"
@@ -349,7 +357,9 @@ class Reporter(tk.Toplevel):
         print()
 
         blank_scores = []
+        blank_times = []
         for blank in blanks:
+            blank_times.append(len(blank))
             print(blank.name)
             scale_area = blank.sum()
             print(f"scale area: {scale_area}")
@@ -381,6 +391,23 @@ class Reporter(tk.Toplevel):
 
         result_titles = [f"{i}" for i in scores]
         result_values = [f"{scores[i]:.1f}%" for i in scores]
+        durations = [len(trial) for trial in trials]
+        max_psis = [
+                    int(trial.max())
+                    if int(trial.max()) <= ylim
+                    else ylim
+                    for trial in trials
+                    ]
+
+        self.results_queue = (
+                blank_times,
+                result_titles,
+                result_values,
+                durations,
+                baseline,
+                ylim,
+                max_psis
+        )
 
         result_window = tk.Toplevel(self)
         result_window.title("Results")
@@ -394,3 +421,83 @@ class Reporter(tk.Toplevel):
             e.insert(0, value)
             e.configure(state='readonly', relief='flat')
             e.grid(row=i, column=1, sticky='W')
+
+    def export_report(self):
+        """ Part of reporter """
+        template_path = r"C:\Users\P\Documents\GitHub\pct-scalewiz\demo\sample_data\Report Template - Calcium Carbonate Scale Block Analysis.xlsx"
+        project = self.mainwin.project.split('\\')
+        sample_point = project[-1].split('-')[0]
+        customer = project[-2]
+        short_proj = project[-1]
+
+        _img = f"{short_proj}.png"
+        _path = os.path.join(self.mainwin.project, _img)
+        img = PIL.Image.open(_path)
+        img = img.resize((667, 267))
+        _path = _path[:-4]
+        _path += "- temp.png"
+        img.save(_path)
+        img = openpyxl.drawing.image.Image(_path)
+        img.anchor = 'A28'
+
+
+        report_name = f"{short_proj}.xlsx"
+        report_path = os.path.join(self.mainwin.project, report_name)
+        shutil.copyfile(template_path, report_path)
+
+        wb = openpyxl.load_workbook(report_path)
+        ws = wb.active
+        ws._images[1] = img
+
+
+        try:
+            blank_times = self.results_queue[0]
+            result_titles = self.results_queue[1]
+            result_values = self.results_queue[2]
+            durations = self.results_queue[3]
+            baseline = self.results_queue[4]
+            ylim = self.results_queue[5]
+            max_psis = self.results_queue[6]
+        except AttributeError:
+            # messagebox saying no data selected?
+            pass
+
+        ws['C4'] = customer
+        ws['C7'] = sample_point
+        ws['I7'] = f"{date.today()}"
+        ws['D11'] = f"{baseline} psi"
+        ws['G16'] = f"{ylim}"
+
+        blank_time_cells = [f"E{i}" for i in range(16, 18)]
+        chem_name_cells = [f"A{i}" for i in range(19, 27)]
+        chem_conc_cells = [f"D{i}" for i in range(19, 27)]
+        duration_cells = [f"E{i}" for i in range(19, 27)]
+        max_psi_cells = [f"G{i}" for i in range (19, 27)]
+        protection_cells = [f"H{i}" for i in range(19, 27)]
+
+        chem_names = [title.split(' ')[0] for title in result_titles]
+        chem_concs = [" ".join(title.split(' ')[1:2]) for title in result_titles]
+
+        for (cell, blank_time) in zip(blank_time_cells, blank_times):
+            ws[cell] = round(blank_time/60, 2)
+        for (cell, name) in zip(chem_name_cells, chem_names):
+            ws[cell] = name
+        for (cell, conc) in zip(chem_conc_cells, chem_concs):
+            ws[cell] = conc
+        for (cell, duration) in zip(duration_cells, durations):
+            ws[cell] = round(duration/60, 2)
+        for (cell, psi) in zip(max_psi_cells, max_psis):
+            ws[cell] = psi
+        for (cell, score) in zip(protection_cells, result_values):
+            ws[cell] = score
+
+        # del_rows = []
+        # for i in range(19, 27):
+        #     if ws[f'A{i}'].value is None:
+        #         del_rows.append(i)
+        # if len(del_rows) is 0: pass
+        # elif len(del_rows) is 1: ws.delete_rows(del_rows[0])
+        # else: ws.delete_rows(del_rows[0], del_rows[-1])
+
+        wb.save(filename=report_path)
+        os.remove(_path)
