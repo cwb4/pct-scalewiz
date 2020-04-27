@@ -20,8 +20,8 @@ Then download the source code and run core.py
 ```bash
 python core.py
 ```
-Alternatively, Windows x64 systems may just download and run
-the latest [executable](https://github.com/teauxfu/pct-scalewiz/releases).
+<!-- Alternatively, Windows x64 systems may just download and run
+the latest [executable](https://github.com/teauxfu/pct-scalewiz/releases). -->
 
 ### Requirements
 The appropriate hardware drivers may be downloaded from the
