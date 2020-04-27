@@ -3,6 +3,7 @@
   - has a thread_pool_executor attribute for a blocking loop made in MainWindow
 """
 
+import configparser
 from concurrent.futures import ThreadPoolExecutor  # handling the test loop
 import serial  # talking to the pumps
 import sys  # to sys.exit() on window close
@@ -38,6 +39,8 @@ class ScaleWiz(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.mainwin = MainWindow(self)
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
+        self.config = configparser.ConfigParser()
+        config.read('config.ini')
 
 def close_ports():  # attempts to close all open ports, just in case
     list = serial.tools.list_ports.comports()
@@ -47,7 +50,7 @@ def close_ports():  # attempts to close all open ports, just in case
                 print(f"Closing {i}")
                 serial.Serial(i).close
                 # serial exception here if test running -
-                # call to end_test also? 
+                # call to end_test also?
     print("Destroying root")
     root.destroy()
     sys.exit()
