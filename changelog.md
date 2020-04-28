@@ -18,9 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.1] 2020-4-27
 ### Added
  - 'Export report' button in report generator to fill the results into an .xlsx file
+  - Report generator now automatically inserts the relevant data and plot into the report
 ### Changed
  - Evaluating a set of data automatically saves a plot image to the project folder
- - Report generator now automatically inserts the relevant data and plot into the report
 
 ## [0.4.0] 2020-4-23
 ### Removed
