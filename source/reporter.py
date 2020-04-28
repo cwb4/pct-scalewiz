@@ -206,7 +206,7 @@ class Reporter(tk.Toplevel):
         """Makes a new plot from some tuples"""
 
         print("Spawning a new plot")
-
+        self.start = time.time()
         # reset the stylesheet
         plt.rcParams.update(plt.rcParamsDefault)
 
@@ -223,9 +223,9 @@ class Reporter(tk.Toplevel):
             ylim = int(self.mainwin.failpsi.get())
 
         with plt.style.context(style):
-            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(
-                color = self.config.get('plot settings', 'color cycle').split(',')
-            )
+            colors = self.config.get('plot settings', 'color cycle')
+            colors = [i.strip() for i in colors.split(',')]
+            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color = colors)
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             self.ax.set_xlabel("Time (min)")
             self.ax.set_xlim(left=0, right=xlim)
@@ -352,7 +352,6 @@ class Reporter(tk.Toplevel):
         """Evaluates the data"""
 
         print("Evaluating data")
-        start = time.time()
 
         print(f"baseline: {baseline}")
         print(f"xlim: {xlim*60}")
@@ -420,6 +419,8 @@ class Reporter(tk.Toplevel):
         )
 
         result_window = tk.Toplevel(self)
+        result_window.attributes('-topmost', 'true')
+        ## TODO: figure out how this works !!
         result_window.title("Results")
         def_bg = result_window.cget('bg')
         for i, title in enumerate(result_titles):
@@ -432,7 +433,7 @@ class Reporter(tk.Toplevel):
             e.configure(state='readonly', relief='flat')
             e.grid(row=i, column=1, sticky='W')
 
-        print(f"Finished in {round(time.time() - start, 2)}")
+        print(f"Finished evaluation in {round(time.time() - self.start, 2)}")
 
     def export_report(self):
         """ Part of reporter """
@@ -520,7 +521,7 @@ class Reporter(tk.Toplevel):
         wb.save(filename=report_path)
         print("Removing temp files")
         os.remove(_path)
-        print(f"Finished in {round(time.time() - start, 2)}")
+        print(f"Finished in {round(time.time() - start, 2)} s")
         tk.messagebox.showinfo(
             message=f"Report exported to\n{report_path}"
             )
