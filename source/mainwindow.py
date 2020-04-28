@@ -232,11 +232,13 @@ class MainWindow(tk.Frame):
             print("Disabling start button")
             self.strtbtn['state'] = ['disable']
         else:
+            print("Successfully connected to COM ports")
             print("Enabling start button")
             self.strtbtn['state'] = ['enable']
 
     def init_test(self) -> None:
         """init an Experiment object as an attribute of MainWindow"""
+
         print("Spawning a new Experiment")
         self.test = Experiment(self)
 
@@ -244,6 +246,7 @@ class MainWindow(tk.Frame):
         """Logs a message to the Text widget in MainWindow's outfrm"""
 
         for msg in msgs:
+            print(msg)
             self.dataout['state'] = 'normal'
             self.dataout.insert('end', f"{msg}" + "\n")
             self.dataout['state'] = 'disabled'

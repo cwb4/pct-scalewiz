@@ -49,7 +49,6 @@ class Experiment(tk.Frame):
         self.to_log(f"Creating output file at \n{self.outpath}")
         header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
         with open(self.outpath, "w") as f:
-            print(f"Creating output file at \n{self.outpath}")
             csv.writer(f, delimiter=',').writerow(header_row)
 
         self.psi1, self.psi2, self.elapsed = 0, 0, 0
