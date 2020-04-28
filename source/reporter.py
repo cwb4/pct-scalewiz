@@ -10,6 +10,7 @@ from pandas import Series, DataFrame, read_csv # reading the data
 import pickle  # storing plotter settings
 import PIL
 import shutil
+import time
 import tkinter as tk  # GUI
 from tkinter import ttk, filedialog, messagebox
 
@@ -33,8 +34,9 @@ class Reporter(tk.Toplevel):
 
     def __init__(self, parent, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
-        self.mainwin = parent.parent
-        self.core = parent.parent.parent
+        self.mainwin = parent.mainwin
+        self.core = parent.mainwin.core
+        self.config = self.core.config
         self.plotterstyle = tk.StringVar()
         self.loc = tk.StringVar()
         self.resizable(0, 0)
@@ -46,18 +48,18 @@ class Reporter(tk.Toplevel):
 
         self.pltbar = tk.Menu(self)
         self.pltbar.add_command(
-            label="Save project settings",
+            label="Save project",
             command=lambda: self.pickle_plot()
             )
         self.pltbar.add_command(
-            label="Load from project settings",
+            label="Load from project",
             command=lambda: self.unpickle_plot()
             )
         self.pltbar.add_command(
             label='Export report',
             command=lambda: self.export_report()
         )
-        self.winfo_toplevel().config(menu=self.pltbar)
+        self.winfo_toplevel().configure(menu=self.pltbar)
 
         # a LabelFrame to hold the SeriesEntry widgets
         self.entfrm = tk.LabelFrame(
@@ -69,31 +71,34 @@ class Reporter(tk.Toplevel):
                 "           Pressure to evaluate:"
                 )
             )  # to hold all the SeriesEntries
-        for _ in range(10):
+        for _ in range(self.config.getint('report settings', 'max series')):
             SeriesEntry(self.entfrm).grid(padx=2)
         self.entfrm.grid(row=0, padx=2)
 
         # to hold the settings entries
         self.setfrm = tk.LabelFrame(master=self, text="Plot parameters")
-        tk.Label(
-            master=self.setfrm,
-            text="Plot style:"
-            ).grid(row=0, column=0, sticky=tk.E, padx=5, pady=2)
+
+
         self.stylemenu = ttk.OptionMenu(
             self.setfrm,
             self.plotterstyle,
-            self.core.PLOT_STYLES[0],
-            *self.core.PLOT_STYLES
+            self.config.get('plot settings', 'default style'),
+            *self.config.get('plot settings', 'plot styles').split(',')
             )
-        self.stylemenu.grid(row=0, column=1, sticky=tk.W, padx=(5, 10), pady=2)
+        if self.config.getboolean('plot settings', 'show style options'):
+            tk.Label(
+                master=self.setfrm,
+                text="Plot style:"
+                ).grid(row=0, column=0, sticky=tk.E, padx=5, pady=2)
+            self.stylemenu.grid(row=0, column=1, sticky='w', padx=(5, 10), pady=2)
 
         tk.Label(
             master=self.setfrm,
             text="Time limit (min):"
             ).grid(row=0, column=2, sticky=tk.E, padx=5, pady=(10,2))
         self.xlim = ttk.Entry(self.setfrm, width=14)
-        self.xlim.insert(0, self.mainwin.timelim.get())
-        self.xlim.grid(row=0, column=3, sticky=tk.W, padx=5, pady=(2))
+        self.xlim.insert(0, self.config.get('test settings', 'time limit minutes'))
+        self.xlim.grid(row=0, column=3, sticky='w', padx=5, pady=(2))
 
         tk.Label(
             master=self.setfrm,
@@ -112,7 +117,7 @@ class Reporter(tk.Toplevel):
             text="Max pressure (psi):"
             ).grid(row=1, column=2, sticky=tk.E, padx=5, pady=2)
         self.ylim = ttk.Entry(self.setfrm, width=14)
-        self.ylim.insert(0, self.mainwin.failpsi.get())
+        self.ylim.insert(0, self.config.get('test settings', 'fail psi'))
         self.ylim.grid(row=1, column=3, sticky=tk.W, padx=5, pady=2)
 
         tk.Label(
@@ -120,7 +125,7 @@ class Reporter(tk.Toplevel):
             text="Baseline pressure (psi):"
             ).grid(row=2, column=2, sticky=tk.E, padx=5, pady=2)
         self.baseline = ttk.Entry(self.setfrm, width=14)
-        self.baseline.insert(0, 75)
+        self.baseline.insert(0, self.config.get('test settings', 'default baseline'))
         self.baseline.grid(row=2, column=3, sticky=tk.W, padx=5, pady=2)
 
         self.pltbtn = ttk.Button(
@@ -142,6 +147,8 @@ class Reporter(tk.Toplevel):
             plot_params - a tuple of (str, int, int, (floats,))
                         last arg optional
         """
+
+        print("Preparing plot from Reporter fields")
 
         paths = tuple(
             [
@@ -168,17 +175,17 @@ class Reporter(tk.Toplevel):
         if self.xlim.get() is not '':
             xlim = int(self.xlim.get())
         else:
-            xlim = int(self.mainwin.timelim.get())
+            xlim = self.config.getint('test settings', 'time limit minutes')
 
         if self.ylim.get() is not '':
             ylim = int(self.ylim.get())
         else:
-            ylim = int(self.mainwin.failpsi.get())
+            ylim = self.config.getint('test settings', 'fail psi')
 
         if self.baseline.get() is not '':
             baseline = int(self.baseline.get())
         else:
-            baseline = 0
+            baseline = self.config.getint('test settings', 'default baseline')
 
         plot_params = (self.plotterstyle.get(), xlim, ylim, baseline)
 
@@ -198,7 +205,7 @@ class Reporter(tk.Toplevel):
     def make_plot(self, paths, titles, plotpumps, plot_params) -> None:
         """Makes a new plot from some tuples"""
 
-        # unpack values from _plt here
+        print("Spawning a new plot")
 
         # reset the stylesheet
         plt.rcParams.update(plt.rcParamsDefault)
@@ -217,8 +224,8 @@ class Reporter(tk.Toplevel):
 
         with plt.style.context(style):
             mpl.rcParams['axes.prop_cycle'] = mpl.cycler(
-                color = self.core.COLOR_CYCLE
-                )
+                color = self.config.get('plot settings', 'color cycle').split(',')
+            )
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             self.ax.set_xlabel("Time (min)")
             self.ax.set_xlim(left=0, right=xlim)
@@ -292,6 +299,7 @@ class Reporter(tk.Toplevel):
                 image = f"{short_proj}.png"
                 image_path = os.path.join(self.mainwin.project, image)
                 self.fig.savefig(image_path)
+                print(f"Saved plot image to\n{image_path}")
 
     def pickle_plot(self) -> None:
         """Pickles a list to a file in the project directory"""
@@ -301,9 +309,10 @@ class Reporter(tk.Toplevel):
         _pickle = f"{short_proj}.pct"
         _path = os.path.join(self.mainwin.project, _pickle)
         with open(_path, 'wb') as p:
+            print(f"Pickling project to\n{_path}")
             pickle.dump(self.prep_plot(), file=p)
         tk.messagebox.showinfo(
-            message=f"Project data saved to \n {_path}"
+            message=f"Project data saved to\n{_path}"
             )
         self.lift()
 
@@ -319,6 +328,7 @@ class Reporter(tk.Toplevel):
 
         # this puts data paths into their original entries
         if fil is not '':
+            print(f"Unpickling project file\n{fil}")
             with open(fil, 'rb') as p:
                 _plt = pickle.load(p)
 
@@ -329,6 +339,7 @@ class Reporter(tk.Toplevel):
                 self.entfrm.winfo_children()
             )
 
+            print("Populating Reporter fields")
             for path, title, plotpump, widget in into_widgets:
                 widget.path.delete(0, tk.END)
                 widget.path.insert(0, path)
@@ -344,6 +355,11 @@ class Reporter(tk.Toplevel):
         self.lift()
 
     def evaluate(self, blanks, trials, baseline, xlim, ylim):
+        """Evaluates the data"""
+
+        print("Evaluating data")
+        start = time.time()
+
         print(f"baseline: {baseline}")
         print(f"xlim: {xlim*60}")
         print(f"ylim: {ylim}")
@@ -422,9 +438,15 @@ class Reporter(tk.Toplevel):
             e.configure(state='readonly', relief='flat')
             e.grid(row=i, column=1, sticky='W')
 
+        print(f"Finished in {round(time.time() - start, 2)}")
+
     def export_report(self):
         """ Part of reporter """
-        template_path = r"C:\Users\P\Documents\GitHub\pct-scalewiz\demo\sample_data\Report Template - Calcium Carbonate Scale Block Analysis.xlsx"
+
+        print("Exporting report to file")
+        start = time.time()
+
+        template_path = self.config.get('report settings', 'template path')
         project = self.mainwin.project.split('\\')
         sample_point = project[-1].split('-')[0]
         customer = project[-2]
@@ -432,6 +454,7 @@ class Reporter(tk.Toplevel):
 
         _img = f"{short_proj}.png"
         _path = os.path.join(self.mainwin.project, _img)
+        print("Making temp resized plot image")
         img = PIL.Image.open(_path)
         img = img.resize((667, 267))
         _path = _path[:-4]
@@ -440,15 +463,15 @@ class Reporter(tk.Toplevel):
         img = openpyxl.drawing.image.Image(_path)
         img.anchor = 'A28'
 
-
         report_name = f"{short_proj}.xlsx"
         report_path = os.path.join(self.mainwin.project, report_name)
+        print(f"Copying report template to\n{report_path}")
         shutil.copyfile(template_path, report_path)
 
+        print(f"Populating file\n{report_path}")
         wb = openpyxl.load_workbook(report_path)
         ws = wb.active
         ws._images[1] = img
-
 
         try:
             blank_times = self.results_queue[0]
@@ -499,5 +522,8 @@ class Reporter(tk.Toplevel):
         # elif len(del_rows) is 1: ws.delete_rows(del_rows[0])
         # else: ws.delete_rows(del_rows[0], del_rows[-1])
 
+        print(f"Saving file")
         wb.save(filename=report_path)
+        print("Removing temp files")
         os.remove(_path)
+        print(f"Finished in {round(time.time() - start, 2)}")

@@ -17,11 +17,11 @@ class Experiment(tk.Frame):
         self.parent = parent
         self.core = parent.parent
 
-        # disable the entries for test parameters
+        print("Disabling MainWindow parameter entries")
         for child in self.parent.entfrm.winfo_children():
             child.configure(state="disabled")
 
-        # enable the commands for starting/stopping the test
+        print("Enabling MainWindow test controls")
         for child in self.parent.cmdfrm.winfo_children():
             child.configure(state="normal")
 
@@ -49,6 +49,7 @@ class Experiment(tk.Frame):
         self.to_log(f"Creating output file at \n{self.outpath}")
         header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
         with open(self.outpath, "w") as f:
+            print(f"Creating output file at \n{self.outpath}")
             csv.writer(f, delimiter=',').writerow(header_row)
 
         self.psi1, self.psi2, self.elapsed = 0, 0, 0
@@ -60,8 +61,10 @@ class Experiment(tk.Frame):
         except serial.serialutil.SerialException:
             self.to_log("Could not establish a connection to the pumps")
             self.to_log("Try resetting the port connections")
+            print("Disabling MainWindow test controls")
             for child in self.parent.cmdfrm.winfo_children():
                 child.configure(state="disabled")
+            print("Enabling MainWindow parameter entries")
             for child in self.parent.entfrm.winfo_children():
                 child.configure(state="normal")
 
@@ -73,6 +76,7 @@ class Experiment(tk.Frame):
         """Stops the pumps and closes their COM ports, then swaps the button
         states for the entfrm and cmdfrm widgets"""
 
+        print("Ending the test")
         for pump in (self.pump1, self.pump2):
             pump.write('st'.encode())
             pump.close()
@@ -90,6 +94,7 @@ class Experiment(tk.Frame):
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
 
+        print("Starting the test")
         self.core.thread_pool_executor.submit(self.take_reading)
 
     def take_reading(self) -> None:
@@ -146,14 +151,14 @@ class Experiment(tk.Frame):
 
             for list in (pressures['PSI 1'], pressures['PSI 2']):
                 if list.count(0) is 3: Beep(750, 500)
-            print(f'pre sleep: {round(time.time() - start, 4)}')
+            # print(f'pre sleep: {round(time.time() - start, 4)}')
             time.sleep(1 - (time.time() - start))
-            print(f'post sleep: {round(time.time() - start, 4)}')
+            # print(f'post sleep: {round(time.time() - start, 4)}')
 
             # end of while loop
 
+        print("Test went to completion; ending test")
         self.end_test()
-
         for i in range(3):
             Beep(750, 500)
             time.sleep(0.5)

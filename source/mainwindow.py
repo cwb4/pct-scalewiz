@@ -28,11 +28,19 @@ from menubar import MenuBar
 class MainWindow(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-        self.parent = parent
+        self.core = parent
+        self.config = self.core.config
+
         self.plotpsi = tk.StringVar()
-        self.plotpsi.set('PSI 2')
-        self.project = os.getcwd()
-        self.plotstyle = ('bmh')
+        self.plotpsi.set(self.config.get('test settings', 'default pump'))
+        self.project = self.config.get('test settings', 'last proj dir',
+            fallback=os.getcwd()
+        )
+        p = self.project.split('\\')
+        pp = p[-2] + " - " + p[-1]
+        self.winfo_toplevel().title(pp)
+
+        self.plotstyle = self.config.get('plot settings', 'default style')
 
         self.build_window()
         self.findcoms()
@@ -41,7 +49,7 @@ class MainWindow(tk.Frame):
         """Make all the tkinter widgets"""
         self.menu = MenuBar(self)
         # build the main frame
-        self.tstfrm = tk.Frame(self.parent)
+        self.tstfrm = tk.Frame(self.core)
         self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
         # this spacing is to avoid using multiple labels
         self.outfrm = tk.LabelFrame(self.tstfrm,
@@ -87,8 +95,8 @@ class MainWindow(tk.Frame):
             )
 
         # default values for convenience (maybe store in config file instead)
-        self.timelim.insert(0, '90')
-        self.failpsi.insert(0, '1500')
+        self.timelim.insert(0, self.config.get('test settings', 'time limit minutes'))
+        self.failpsi.insert(0, self.config.get('test settings', 'fail psi'))
 
         # grid entry labels into self.entfrm
         self.comlbl = ttk.Label(master=self.entfrm, text="COM ports:")
@@ -122,25 +130,22 @@ class MainWindow(tk.Frame):
         self.chem.grid(row=3, column=1, columnspan=3, pady=1)
         self.conc.grid(row=4, column=1, columnspan=3, pady=1)
         self.strtbtn.grid(row=5, column=1, columnspan=2, pady=1)
-        cols = self.entfrm.grid_size()
-        for col in range(cols[0]):
+        cols = self.entfrm.grid_size()[0]
+        for col in range(cols):
             self.entfrm.grid_columnconfigure(col, weight=1)
 
-        # build self.outfrm packed
-        # scrollbar = tk.Scrollbar(self.outfrm)
         self.dataout = tk.scrolledtext.ScrolledText(
             master=self.outfrm,
             width=45,
             height=12,
-            # yscrollcommand=scrollbar.set,
             state='disabled'
-            )
-        # TODO: try calling tk.Scrollbar(self.outfrm) directly
-        # scrollbar.config(command=self.dataout.yview)
-        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        )
+
         self.dataout.pack(fill=tk.BOTH)
-        self.to_log("Click 'Set project folder' to choose where")
-        self.to_log("files will be saved")
+        if self.project is os.getcwd():
+            self.to_log("Click 'Set project folder' to choose where",
+            "files will be saved"
+            )
 
         # build self.cmdfrm 4x3 grid
         self.runbtn = ttk.Button(
@@ -148,13 +153,13 @@ class MainWindow(tk.Frame):
             text="Run",
             command=lambda: self.test.run_test(),
             width=15
-            )
+        )
         self.endbtn = ttk.Button(
             master=self.cmdfrm,
             text="End",
             command=lambda: self.test.end_test(),
             width=15
-            )
+        )
         self.runbtn.grid(row=1, column=1, padx=5, pady=2, sticky=tk.W)
         self.endbtn.grid(row=1, column=2, padx=5, pady=2, sticky=tk.E)
 
@@ -183,8 +188,10 @@ class MainWindow(tk.Frame):
         # set up the plot area
         self.pltfrm = tk.LabelFrame(
             master=self.tstfrm,
-            text=(f"Style: {self.plotstyle}")
-            )
+            text=" "
+        )
+        if self.config.getboolean('plot settings', 'show style options'):
+            self.pltfrm.configure(text=(f"Style: {self.plotstyle}"))
 
         # matplotlib objects
         self.fig, self.ax = plt.subplots(figsize=(7.5, 4), dpi=100)
@@ -205,41 +212,32 @@ class MainWindow(tk.Frame):
 
     def findcoms(self) -> None:
         """Looks for COM ports and disables the controls if two aren't found"""
+
+        print("Finding COM ports")
         list = serial.tools.list_ports.comports()
         useports = [i.device for i in list]
-        # useports = [port for port in ports if serial.Serial(port).is_open]
-
-        # for i in ports:
-        #     try:
-        #         if serial.Serial(i).is_open:
-        #             useports.append(i)
-        #             serial.Serial(i).close
-        #     except SerialException:
-        #         pass
-
         if len(useports) < 2:
-            self.to_log("Not enough COM ports found...")
-            self.to_log("Click 'COM ports:' to try again.")
+            self.to_log("Not enough COM ports found...",
+                "Click 'COM ports:' to try again."
+            )
             useports = ["??", "??"]
 
-        try:
-            self.port1.delete(0, tk.END)
-            self.port2.delete(0, tk.END)
-            self.port1.insert(0, useports[0])
-            self.port2.insert(0, useports[1])
 
-            if "?" in self.port1.get()  or "?" in self.port2.get():
-                self.strtbtn['state'] = ['disable']
-            else:
-                self.strtbtn['state'] = ['enable']
-                # TODO: clean this up
-        except IndexError:
-            pass
-        except AttributeError:
-            pass
+        self.port1.delete(0, tk.END)
+        self.port2.delete(0, tk.END)
+        self.port1.insert(0, useports[0])
+        self.port2.insert(0, useports[1])
+
+        if "?" in self.port1.get()  or "?" in self.port2.get():
+            print("Disabling start button")
+            self.strtbtn['state'] = ['disable']
+        else:
+            print("Enabling start button")
+            self.strtbtn['state'] = ['enable']
 
     def init_test(self) -> None:
         """init an Experiment object as an attribute of MainWindow"""
+        print("Spawning a new Experiment")
         self.test = Experiment(self)
 
     def to_log(self, *msgs) -> None:
@@ -253,6 +251,7 @@ class MainWindow(tk.Frame):
 
     def animate(self, i):
         """The animation function for the current test's data"""
+
         try:
             data = read_csv(self.test.outpath)
         # maybe we didn't start running a test yet
@@ -264,7 +263,6 @@ class MainWindow(tk.Frame):
         # plt.rcParams['axes.xmargin'] = 0.
         # https://stackoverflow.com/questions/42895216
         with plt.style.context(self.plotstyle):
-            self.pltfrm.config(text=f"Style: {self.plotstyle}")
             self.ax.clear()
             self.ax.set_xlabel("Time (min)")
             self.ax.set_ylabel("Pressure (psi)")
@@ -272,8 +270,6 @@ class MainWindow(tk.Frame):
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
             self.ax.set_xlim((0, None), auto=True)
             self.ax.margins(0)
-            # self.ax.set_xlim(left=0)
-            # right=int(self.timelim.get()))
 
             y = data[self.plotpsi.get()]
             x = data['Minutes']

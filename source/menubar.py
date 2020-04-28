@@ -9,22 +9,14 @@ from reporter import Reporter
 
 
 class MenuBar(tk.Frame):
-    styles = [
-        "bmh",
-        "fivethirtyeight",
-        "seaborn",
-        "seaborn-colorblind",
-        "seaborn-dark-palette",
-        "seaborn-muted",
-        "seaborn-notebook",
-        "seaborn-paper",
-        "seaborn-pastel",
-        "tableau-colorblind10"
-        ]
-
+    """Docstring"""
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-        self.parent = parent
+        self.mainwin = parent
+        self.config = self.mainwin.core.config
+        self.plotstyle_list = self.config.get(
+            'plot settings', 'plot styles'
+            ).split(',')
         self.build()
 
     def build(self):
@@ -36,17 +28,18 @@ class MenuBar(tk.Frame):
             )
         self.pltmenu = tk.Menu(master=self, tearoff=0)
         self.pltstylmenu = tk.Menu(master=self, tearoff=1)
-        for style in MenuBar.styles:
+        for style in self.plotstyle_list:
             self.pltstylmenu.add_command(
                 label=style,
                 command=lambda s = style: self.set_plotstyle(s)
                 )
 
         self.pltmenu.add_command(label="Make new report", command=self.new_plot)
-        self.pltmenu.add_cascade(label="Set plot style", menu=self.pltstylmenu)
-        # self.menubar.add_cascade(label="Set project folder", menu=self.filemenu)
+        # check the config to see if we want to show this label to the user
+        if self.config.getboolean('plot settings', 'show style options'):
+            self.pltmenu.add_cascade(label="Set plot style", menu=self.pltstylmenu)
         self.menubar.add_cascade(label="Report", menu=self.pltmenu)
-        self.parent.winfo_toplevel().config(menu=self.menubar)
+        self.mainwin.winfo_toplevel().config(menu=self.menubar)
 
     def askdir(self):
         """Creates a prompt to ask user for a project folder,
@@ -59,19 +52,26 @@ class MenuBar(tk.Frame):
             title="Select data output directory:"
             )
 
-        if out != "":
-            self.parent.project = os.path.abspath(out)
-
+        if out is not "":
+            self.mainwin.project = os.path(out)
+            self.config['test settings']['last proj dir'] = self.mainwin.project
+            with open('config.ini', 'w') as configfile:
+                self.config.write(configfile)
+                print("Updated 'last proj dir' in config file")
             # make it the MainWindow title in a pretty way
-            p = out.split('/')
+            p = out.split('\\')
             pp = p[-2] + " - " + p[-1]
-            self.parent.winfo_toplevel().title(pp)
+            self.mainwin.winfo_toplevel().title(pp)
+            print(f"Set project directory to\n{self.mainwin.project}")
 
     def set_plotstyle(self, style: str) -> None:
         """Sets the plot style for MainWindow"""
-        self.parent.plotstyle = style
+
+        print(f"Changing MainWindow plot style to {style}")
+        self.mainwin.plotstyle = style
+        self.mainwin.pltfrm.configure(text=(f"Style: {self.plotstyle}"))
 
     def new_plot(self):
         """Spawns a new Plotter window"""
-        # self.parent.plotter = Plotter(self)
-        self.parent.reporter = Reporter(self)
+        print("Spawning a new Reporter")
+        self.mainwin.reporter = Reporter(self)
