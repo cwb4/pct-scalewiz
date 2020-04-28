@@ -8,3 +8,4 @@
    - whether or not to show additional style options (toolbars)
    - name to put in reports
    - let user specify date format in exported report
+   - integrate report export mapping to config? idk 
