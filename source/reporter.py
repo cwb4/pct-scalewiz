@@ -285,12 +285,6 @@ class Reporter(tk.Toplevel):
                 message="At least one trial not titled 'blank' must be selected")
                 self.lift()
             else:
-                if baseline is 0:
-                    baseline = 75
-                    tk.messagebox.showwarning(
-                    title="No baseline pressure designated",
-                    message=f"A default value of {baseline} psi will be used")
-                    self.lift()
                 self.evaluate(blanks, trials, baseline, xlim, ylim)
                 self.fig.show()
 
@@ -527,3 +521,6 @@ class Reporter(tk.Toplevel):
         print("Removing temp files")
         os.remove(_path)
         print(f"Finished in {round(time.time() - start, 2)}")
+        tk.messagebox.showinfo(
+            message=f"Report exported to\n{report_path}"
+            )
