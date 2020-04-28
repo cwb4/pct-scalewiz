@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.0]
+## [0.5.0] 2020-4-28
 ### Added
  - Support for persistent default settings in a config.ini file
 ### Removed
