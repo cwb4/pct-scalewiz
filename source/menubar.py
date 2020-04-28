@@ -73,5 +73,6 @@ class MenuBar(tk.Frame):
 
     def new_plot(self):
         """Spawns a new Plotter window"""
+        
         print("Spawning a new Reporter")
         self.mainwin.reporter = Reporter(self)
