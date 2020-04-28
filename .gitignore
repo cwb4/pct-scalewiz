@@ -11,6 +11,7 @@ build.bat
 run.bat
 *.plt
 *.xlsx
+*.ini
 
 # Distribution / packaging
 .Python
