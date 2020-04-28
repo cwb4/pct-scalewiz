@@ -6,8 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5.0]
 ### Added
- - support for persistent default settings in a config.ini file
+ - Support for persistent default settings in a config.ini file
+### Removed
+ - Color cycle for plots is no longer hard-coded; may be edited in config.ini
+### Changed
+ - Main window now remembers last used project directory
 
 ## [0.4.1] 2020-4-27
 ### Added
