@@ -71,7 +71,7 @@ class Reporter(tk.Toplevel):
                 "           Pressure to evaluate:"
                 )
         )
-        for _ in range(self.config.getint('report settings', 'max series')):
+        for _ in range(self.config.getint('report settings', 'series per project')):
             SeriesEntry(self.entfrm).grid(padx=2)
         self.entfrm.grid(row=0, padx=2)
 

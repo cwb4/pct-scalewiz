@@ -13,6 +13,7 @@ class MenuBar(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.mainwin = parent
+        self.core = parent.core
         self.config = self.mainwin.core.config
         self.plotstyle_list = self.config.get(
             'plot settings', 'plot styles'
@@ -71,10 +72,10 @@ class MenuBar(tk.Frame):
 
         if out is not "":
             self.mainwin.project = os.path(out)
-            self.config['test settings']['last proj dir'] = self.mainwin.project
+            self.config['test settings']['project folder'] = self.mainwin.project
             with open('config.ini', 'w') as configfile:
                 self.config.write(configfile)
-                print("Updated 'last proj dir' in config file")
+                print("Updated 'project folder' in config file")
             # make it the MainWindow title in a pretty way
             p = out.split('\\')
             pp = p[-2] + " - " + p[-1]
