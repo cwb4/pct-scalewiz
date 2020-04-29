@@ -20,55 +20,56 @@ class ScaleWiz(tk.Frame):
 
         self.config = configparser.ConfigParser()
         if not os.path.exists('config.ini'):
-            print("Making new config.ini")
-            self.config['plot settings'] = {
-            'default style' : 'bmh',
-            'show style options' : 'True',
-            'plot styles' : """
-                bmh,
-                fivethirtyeight,
-                seaborn,
-                seaborn-colorblind,
-                seaborn-dark-palette,
-                seaborn-muted,
-                seaborn-notebook,
-                seaborn-paper,
-                seaborn-pastel,
-                tableau-colorblind10
-                """,
-            'color cycle' : """
-                orange,
-                blue,
-                red,
-                mediumseagreen,
-                darkgoldenrod,
-                indigo,
-                mediumvioletred,
-                darkcyan,
-                maroon,
-                darkslategrey
-                """,
-            }
-            self.config['report settings'] = {
-            'date format' : '',
-            'template path' : '',
-            'max series' : 10,
-            }
-
-            self.config['test settings'] = {
-            'fail psi' : 1500,
-            'time limit minutes' : 90,
-            'default pump' : 'PSI 2',
-            'last proj dir' : '',
-            }
-            with open('config.ini', 'w') as configfile:
-                self.config.write(configfile)
+            self.make_config()
         else:
             print("Found config.ini")
         self.config.read('config.ini')
 
         self.mainwin = MainWindow(self)
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
+
+    def make_config(self):
+        print("Making new config.ini")
+        self.config['plot settings'] = {
+        'default style' : 'bmh',
+        'show style options' : 'True',
+        'plot styles' : """bmh,
+            fivethirtyeight,
+            seaborn,
+            seaborn-colorblind,
+            seaborn-dark-palette,
+            seaborn-muted,
+            seaborn-notebook,
+            seaborn-paper,
+            seaborn-pastel,
+            tableau-colorblind10
+            """,
+        'color cycle' : """orange,
+            blue,
+            red,
+            mediumseagreen,
+            darkgoldenrod,
+            indigo,
+            mediumvioletred,
+            darkcyan,
+            maroon,
+            darkslategrey
+            """,
+        }
+        self.config['report settings'] = {
+        'date format' : '',
+        'template path' : '',
+        'series per project' : 10,
+        }
+
+        self.config['test settings'] = {
+        'fail psi' : 1500,
+        'time limit minutes' : 90,
+        'default pump' : 'PSI 2',
+        'project folder' : '',
+        }
+        with open('config.ini', 'w') as configfile:
+            self.config.write(configfile)
 
 
 def close_app():  # attempts to close all open ports, just in case
