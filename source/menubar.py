@@ -71,7 +71,7 @@ class MenuBar(tk.Frame):
             )
 
         if out is not "":
-            self.mainwin.project = os.path(out)
+            self.mainwin.project = os.path.normpath(out)
             self.config['test settings']['project folder'] = self.mainwin.project
             with open('config.ini', 'w') as configfile:
                 self.config.write(configfile)
