@@ -76,11 +76,14 @@ class MenuBar(tk.Frame):
             with open('config.ini', 'w') as configfile:
                 self.config.write(configfile)
                 print("Updated 'project folder' in config file")
+                print(f"Set project directory to\n{self.mainwin.project}")
             # make it the MainWindow title in a pretty way
-            p = out.split('\\')
-            pp = p[-2] + " - " + p[-1]
-            self.mainwin.winfo_toplevel().title(pp)
-            print(f"Set project directory to\n{self.mainwin.project}")
+            try:
+                p = out.split('\\')
+                pp = p[-2] + " - " + p[-1]
+                self.mainwin.winfo_toplevel().title(pp)
+            except IndexError:
+                self.mainwin.winfo_toplevel().title(self.mainwin.project)
 
     def manageconfig(self):
         ConfigManager(self)
