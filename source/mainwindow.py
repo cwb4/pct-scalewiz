@@ -33,12 +33,15 @@ class MainWindow(tk.Frame):
 
         self.plotpsi = tk.StringVar()
         self.plotpsi.set(self.config.get('test settings', 'default pump'))
-        self.project = self.config.get('test settings', 'last proj dir',
+        self.project = self.config.get('test settings', 'project folder',
             fallback=os.getcwd()
         )
-        p = self.project.split('\\')
-        pp = p[-2] + " - " + p[-1]
-        self.winfo_toplevel().title(pp)
+        try:
+            p = self.project.split('\\')
+            pp = p[-2] + " - " + p[-1]
+            self.winfo_toplevel().title(pp)
+        except IndexError:
+            self.winfo_toplevel().title(os.getcwd())
 
         self.plotstyle = self.config.get('plot settings', 'default style')
 
