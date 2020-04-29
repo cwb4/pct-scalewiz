@@ -4,8 +4,8 @@ import tkinter as tk  # GUI
 from tkinter import filedialog
 import os  # handling file paths
 
-# from plotter import Plotter
 from reporter import Reporter
+from config import ConfigManager
 
 
 class MenuBar(tk.Frame):
@@ -26,19 +26,36 @@ class MenuBar(tk.Frame):
             label="Set project folder",
             command=self.askdir
             )
+
         self.pltmenu = tk.Menu(master=self, tearoff=0)
+        self.pltmenu.add_command(
+            label="Make new report",
+            command=self.new_plot
+        )
+
         self.pltstylmenu = tk.Menu(master=self, tearoff=1)
         for style in self.plotstyle_list:
             self.pltstylmenu.add_command(
                 label=style,
                 command=lambda s = style: self.set_plotstyle(s)
-                )
-
-        self.pltmenu.add_command(label="Make new report", command=self.new_plot)
+            )
         # check the config to see if we want to show this label to the user
         if self.config.getboolean('plot settings', 'show style options'):
-            self.pltmenu.add_cascade(label="Set plot style", menu=self.pltstylmenu)
-        self.menubar.add_cascade(label="Report", menu=self.pltmenu)
+            self.pltmenu.add_cascade(
+                label="Set plot style",
+                menu=self.pltstylmenu
+            )
+
+        self.menubar.add_cascade(
+            label="Report",
+            menu=self.pltmenu
+        )
+
+        self.menubar.add_command(
+            label='Settings',
+            command=self.manageconfig
+        )
+
         self.mainwin.winfo_toplevel().config(menu=self.menubar)
 
     def askdir(self):
@@ -64,6 +81,9 @@ class MenuBar(tk.Frame):
             self.mainwin.winfo_toplevel().title(pp)
             print(f"Set project directory to\n{self.mainwin.project}")
 
+    def manageconfig(self):
+        ConfigManager(self)
+
     def set_plotstyle(self, style: str) -> None:
         """Sets the plot style for MainWindow"""
 
@@ -73,6 +93,6 @@ class MenuBar(tk.Frame):
 
     def new_plot(self):
         """Spawns a new Plotter window"""
-        
+
         print("Spawning a new Reporter")
-        self.mainwin.reporter = Reporter(self)
+        Reporter(self)

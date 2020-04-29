@@ -50,11 +50,11 @@ class Reporter(tk.Toplevel):
         self.pltbar.add_command(
             label="Save project",
             command=lambda: self.pickle_plot()
-            )
+        )
         self.pltbar.add_command(
             label="Load from project",
             command=lambda: self.unpickle_plot()
-            )
+        )
         self.pltbar.add_command(
             label='Export report',
             command=lambda: self.export_report()
@@ -70,7 +70,7 @@ class Reporter(tk.Toplevel):
                 "Series title:                        " +
                 "           Pressure to evaluate:"
                 )
-            )  # to hold all the SeriesEntries
+        )
         for _ in range(self.config.getint('report settings', 'max series')):
             SeriesEntry(self.entfrm).grid(padx=2)
         self.entfrm.grid(row=0, padx=2)
@@ -78,13 +78,12 @@ class Reporter(tk.Toplevel):
         # to hold the settings entries
         self.setfrm = tk.LabelFrame(master=self, text="Plot parameters")
 
-
         self.stylemenu = ttk.OptionMenu(
             self.setfrm,
             self.plotterstyle,
             self.config.get('plot settings', 'default style'),
             *self.config.get('plot settings', 'plot styles').split(',')
-            )
+        )
         if self.config.getboolean('plot settings', 'show style options'):
             tk.Label(
                 master=self.setfrm,
@@ -109,7 +108,7 @@ class Reporter(tk.Toplevel):
             self.loc,
             Reporter.LocsLst[1],
             *Reporter.LocsLst
-            )
+        )
         self.locsmenu.grid(row=1, column=1, sticky=tk.W, padx=(5, 10), pady=2)
 
         tk.Label(
@@ -117,7 +116,9 @@ class Reporter(tk.Toplevel):
             text="Max pressure (psi):"
             ).grid(row=1, column=2, sticky=tk.E, padx=5, pady=2)
         self.ylim = ttk.Entry(self.setfrm, width=14)
-        self.ylim.insert(0, self.config.get('test settings', 'fail psi'))
+        self.ylim.insert(0,
+            self.config.get('test settings', 'fail psi')
+        )
         self.ylim.grid(row=1, column=3, sticky=tk.W, padx=5, pady=2)
 
         tk.Label(
@@ -125,7 +126,9 @@ class Reporter(tk.Toplevel):
             text="Baseline pressure (psi):"
             ).grid(row=2, column=2, sticky=tk.E, padx=5, pady=2)
         self.baseline = ttk.Entry(self.setfrm, width=14)
-        self.baseline.insert(0, self.config.get('test settings', 'default baseline'))
+        self.baseline.insert(0,
+            self.config.get('test settings', 'default baseline')
+        )
         self.baseline.grid(row=2, column=3, sticky=tk.W, padx=5, pady=2)
 
         self.pltbtn = ttk.Button(
@@ -133,7 +136,7 @@ class Reporter(tk.Toplevel):
             text="Evaluate",
             width=30,
             command=lambda: self.make_plot(**self.prep_plot())
-            )
+        )
         self.pltbtn.grid(row=3, columnspan=4, pady=2)
 
         self.setfrm.grid(row=1, pady=2)

@@ -47,7 +47,7 @@ class MainWindow(tk.Frame):
 
     def build_window(self) -> None:
         """Make all the tkinter widgets"""
-        self.menu = MenuBar(self)
+        MenuBar(self)
         # build the main frame
         self.tstfrm = tk.Frame(self.core)
         self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
