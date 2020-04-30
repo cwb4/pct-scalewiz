@@ -22,6 +22,10 @@ Methods:
     * ConfigManager.as_dict(ConfigParser) -> dict : returns ConfigParser object
      as a dict
 
+Notes:
+    * tries to treat very long dict values as lists if they contain commas;
+     the contents are returned to string when writing to file. see line 146
+
 """
 
 
