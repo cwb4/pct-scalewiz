@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.2] 2020-4-30
 ### Changed
- - settings are now managed by the new confimanager
+ - settings are now managed by the new configmanager
 
 ## [0.5.1] 2020-4-29
 ### Added
