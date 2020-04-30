@@ -20,41 +20,21 @@ class ScaleWiz(tk.Frame):
         'plot settings': {
             'default style': 'bmh',
             'show style options': 'True',
-            'plot styles':"""bmh,
-            fivethirtyeight,
-            seaborn,
-            seaborn-colorblind,
-            seaborn-dark-palette,
-            seaborn-muted,
-            seaborn-notebook,
-            seaborn-paper,
-            seaborn-pastel,
-            tableau-colorblind10,
-            """,
-            'color cycle':"""orange,
-            blue,
-            red,
-            mediumseagreen,
-            darkgoldenrod,
-            indigo,
-            mediumvioletred,
-            darkcyan,
-            maroon,
-            darkslategrey,
-            """
-        },
+            'plot styles': """bmh, fivethirtyeight, seaborn, seaborn-colorblind, seaborn-dark-palette, seaborn-muted, seaborn-notebook, seaborn-paper, seaborn-pastel, tableau-colorblind10""",
+        'color cycle':"""orange, blue, red, mediumseagreen, darkgoldenrod, indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
+    },
         'report settings': {
-            'date format': '',
-            'template path': '',
-            'series per project': '10'
-        },
+        'date format': '',
+        'template path': '',
+        'series per project': '10'
+    },
         'test settings': {
-            'fail psi': '1500',
-            'time limit minutes': '90',
-            'default pump': 'PSI 2',
-            'project folder': '',
-        }
+        'fail psi': '1500',
+        'time limit minutes': '90',
+        'default pump': 'PSI 2',
+        'project folder': '',
     }
+}
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
@@ -66,7 +46,12 @@ class ScaleWiz(tk.Frame):
         else:
             print("Found config.ini")
             self.config.path = os.path.abspath('config.ini')
+
         self.config.read('config.ini')
+        default_sections = [i for i in ScaleWiz.DEFAULT_DICT.keys()]
+        if not self.config.sections() == default_sections:
+            print("The found config didn't have the right sections")
+            self.make_config()
 
         self.mainwin = MainWindow(self)
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
@@ -77,7 +62,6 @@ class ScaleWiz(tk.Frame):
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
             self.config.path = os.path.abspath('config.ini')
-
 
 def close_app():  # attempts to close all open ports, just in case
     # rlly should be no need for this ...
