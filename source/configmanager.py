@@ -26,12 +26,9 @@ Notes:
     * tries to treat very long dict values as lists if they contain commas;
      the contents are returned to string when writing to file. see line 146
 
-<<<<<<< HEAD
 Version: [0.1.0] - 2020-4-30
 Author: https://github.com/teauxfu
-Gist: 
-=======
->>>>>>> e851f35361545b7117a703bee0469f503939d110
+Gist:
 """
 
 
