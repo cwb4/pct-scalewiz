@@ -15,25 +15,12 @@ from mainwindow import MainWindow
 
 class ScaleWiz(tk.Frame):
     """Docstring"""
-    def __init__(self, parent, *args, **kwargs):
-        tk.Frame.__init__(self, parent, *args, **kwargs)
 
-        self.config = configparser.ConfigParser()
-        if not os.path.exists('config.ini'):
-            self.make_config()
-        else:
-            print("Found config.ini")
-        self.config.read('config.ini')
-
-        self.mainwin = MainWindow(self)
-        self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
-
-    def make_config(self):
-        print("Making new config.ini")
-        self.config['plot settings'] = {
-        'default style' : 'bmh',
-        'show style options' : 'True',
-        'plot styles' : """bmh,
+    DEFAULT_DICT = {
+        'plot settings': {
+            'default style': 'bmh',
+            'show style options': 'True',
+            'plot styles':"""bmh,
             fivethirtyeight,
             seaborn,
             seaborn-colorblind,
@@ -42,9 +29,9 @@ class ScaleWiz(tk.Frame):
             seaborn-notebook,
             seaborn-paper,
             seaborn-pastel,
-            tableau-colorblind10
+            tableau-colorblind10,
             """,
-        'color cycle' : """orange,
+            'color cycle':"""orange,
             blue,
             red,
             mediumseagreen,
@@ -53,23 +40,43 @@ class ScaleWiz(tk.Frame):
             mediumvioletred,
             darkcyan,
             maroon,
-            darkslategrey
-            """,
+            darkslategrey,
+            """
+        },
+        'report settings': {
+            'date format': '',
+            'template path': '',
+            'series per project': '10'
+        },
+        'test settings': {
+            'fail psi': '1500',
+            'time limit minutes': '90',
+            'default pump': 'PSI 2',
+            'project folder': '',
         }
-        self.config['report settings'] = {
-        'date format' : '',
-        'template path' : '',
-        'series per project' : 10,
-        }
+    }
 
-        self.config['test settings'] = {
-        'fail psi' : 1500,
-        'time limit minutes' : 90,
-        'default pump' : 'PSI 2',
-        'project folder' : '',
-        }
+    def __init__(self, parent, *args, **kwargs):
+        tk.Frame.__init__(self, parent, *args, **kwargs)
+
+        self.config = configparser.ConfigParser()
+        self.config.DEFAULT_DICT = ScaleWiz.DEFAULT_DICT
+        if not os.path.isfile('config.ini'):
+            self.make_config()
+        else:
+            print("Found config.ini")
+            self.config.path = os.path.abspath('config.ini')
+        self.config.read('config.ini')
+
+        self.mainwin = MainWindow(self)
+        self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
+
+    def make_config(self):
+        print("Making new config.ini")
+        self.config.read_dict(ScaleWiz.DEFAULT_DICT)
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
+            self.config.path = os.path.abspath('config.ini')
 
 
 def close_app():  # attempts to close all open ports, just in case

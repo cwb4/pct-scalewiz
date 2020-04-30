@@ -6,6 +6,7 @@ import os  # handling file paths
 
 from reporter import Reporter
 from config import ConfigManager
+# from configmanager import ConfigManager
 
 
 class MenuBar(tk.Frame):
@@ -87,6 +88,11 @@ class MenuBar(tk.Frame):
 
     def manageconfig(self):
         ConfigManager(self)
+        # ConfigManager(self,
+        #     configpath=self.config.path,
+        #     _title='Settings',
+        #     defaultdict=self.config.DEFAULT_DICT
+        # )
 
     def set_plotstyle(self, style: str) -> None:
         """Sets the plot style for MainWindow"""
