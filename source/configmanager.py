@@ -28,7 +28,7 @@ Notes:
 
 Version: [0.1.0] - 2020-4-30
 Author: https://github.com/teauxfu
-Gist:
+Gist: https://gist.github.com/teauxfu/bfe19a82381461771c87e2d1a4113355
 """
 
 
