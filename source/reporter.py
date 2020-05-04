@@ -446,6 +446,17 @@ class Reporter(tk.Toplevel):
         start = time.time()
 
         template_path = self.config.get('report settings', 'template path')
+        if not os.path.isfile(template_path):
+            tk.messagebox.showerror(
+                message=('No valid template file found.' +
+                'You can set the template path in Settings > Report Settings.'
+                )
+            )
+            return
+        if not hasattr(self, 'results_queue'):
+            tk.messagebox.showinfo(
+            message="You must evaulate a set of data before exporting a report."
+            )
         project = self.mainwin.project.split('\\')
         sample_point = project[-1].split('-')[0]
         customer = project[-2]
@@ -512,6 +523,8 @@ class Reporter(tk.Toplevel):
             ws[cell] = psi
         for (cell, score) in zip(protection_cells, result_values):
             ws[cell] = score
+
+        # note: may need to move contents up before deleting del_rows
 
         # del_rows = []
         # for i in range(19, 27):
