@@ -5,10 +5,10 @@ from tkinter import ttk, filedialog
 
 
 class SeriesEntry(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, defpsi, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.plotpump = tk.StringVar()
-        self.plotpump.set("PSI 2")
+        self.plotpump.set(defpsi)
         self.build()
 
     def build(self):

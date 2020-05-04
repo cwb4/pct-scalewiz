@@ -71,8 +71,9 @@ class Reporter(tk.Toplevel):
                 "           Pressure to evaluate:"
                 )
         )
+        defpsi = self.config.get('test settings', 'default pump')
         for _ in range(self.config.getint('report settings', 'series per project')):
-            SeriesEntry(self.entfrm).grid(padx=2)
+            SeriesEntry(self.entfrm, defpsi).grid(padx=2)
         self.entfrm.grid(row=0, padx=2)
 
         # to hold the settings entries
