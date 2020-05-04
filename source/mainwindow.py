@@ -33,11 +33,14 @@ class MainWindow(tk.Frame):
 
         self.plotpsi = tk.StringVar()
         self.plotpsi.set(self.config.get('test settings', 'default pump'))
-        self.project = self.config.get('test settings', 'project folder',
-            fallback=os.path.normpath(os.getcwd())
+        self.project = os.path.normpath(
+            self.config.get('test settings', 'project folder',
+            fallback=os.getcwd()
+            )
         )
         try:
-            p = self.project.split('/')
+            p = self.project.split('\\')
+            print(p)
             pp = p[-2] + " - " + p[-1]
             self.winfo_toplevel().title(pp)
         except IndexError:

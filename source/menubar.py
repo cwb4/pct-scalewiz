@@ -74,7 +74,7 @@ class MenuBar(tk.Frame):
                 print(f"Set project directory to\n{self.mainwin.project}")
             # make it the MainWindow title in a pretty way
             try:
-                p = out.split('/')
+                p = out.split('\\')
                 pp = p[-2] + " - " + p[-1]
                 self.mainwin.winfo_toplevel().title(pp)
             except IndexError:
