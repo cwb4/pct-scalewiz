@@ -24,7 +24,6 @@ class ScaleWiz(tk.Frame):
         'color cycle':"""orange, blue, red, mediumseagreen, darkgoldenrod, indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
     },
         'report settings': {
-        'date format': '',
         'template path': '',
         'series per project': '10'
     },
