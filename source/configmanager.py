@@ -64,7 +64,7 @@ class ConfigManager(tk.Toplevel):
              uses a demo dict for defaults if one isn't passed.
         """
         tk.Toplevel.__init__(self, parent)
-        self.parent = parent
+        self.core = parent
         self.minsize(400, 370)  # big enough to hold the DEFAULT_DICT
         self.configpath = configpath  # to config.ini
         if not self.configpath is None:
