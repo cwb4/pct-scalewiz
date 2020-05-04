@@ -15,7 +15,7 @@ class Experiment(tk.Frame):
         """Collects all the user data from the MainWindow widgets"""
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.core = parent.parent
+        self.core = parent.core
 
         print("Disabling MainWindow parameter entries")
         for child in self.parent.entfrm.winfo_children():
@@ -93,13 +93,13 @@ class Experiment(tk.Frame):
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
 
-        print("Starting the test")
+        self.to_log("Starting the test")
         self.core.thread_pool_executor.submit(self.take_reading)
 
     def take_reading(self) -> None:
         """Loop to be handled by the thread_pool_executor"""
 
-        self.to_log("Starting the test...")
+
         for pump in (self.pump1, self.pump2):
             pump.write('ru'.encode())
         # let the pumps warm up before we start recording data
