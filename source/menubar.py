@@ -52,6 +52,11 @@ class MenuBar(tk.Frame):
             command=self.manageconfig
         )
 
+        self.menubar.add_command(
+            label='Help',
+            command=self.show_help
+        )
+
         self.mainwin.winfo_toplevel().config(menu=self.menubar)
 
     def askdir(self):
@@ -68,7 +73,7 @@ class MenuBar(tk.Frame):
         if out is not "":
             self.mainwin.project = os.path.normpath(out)
             self.config['test settings']['project folder'] = self.mainwin.project
-            with open('config.ini', 'w') as configfile:
+            with open('scalewiz.ini', 'w') as configfile:
                 self.config.write(configfile)
                 print("Updated 'project folder' in config file")
                 print(f"Set project directory to\n{self.mainwin.project}")
@@ -81,7 +86,7 @@ class MenuBar(tk.Frame):
                 self.mainwin.winfo_toplevel().title(self.mainwin.project)
 
     def manageconfig(self):
-        ConfigManager(self,
+        ConfigManager(self.core,
             configpath=self.config.path,
             _title='Settings',
             defaultdict=self.config.DEFAULT_DICT
@@ -98,4 +103,25 @@ class MenuBar(tk.Frame):
         """Spawns a new Plotter window"""
 
         print("Spawning a new Reporter")
-        Reporter(self)
+        Reporter(self.core)
+
+    def show_help(self):
+        tk.messagebox.showinfo(
+        parent=self,
+        title="Help: using ScaleWiz",
+        message=f"""
+When you start the program, the pumps should connect automatically.
+Clicking the 'COM Ports' label will attempt to reconnect to the pumps.
+
+Set project folder: Sets the folder to put data files in.
+
+Make new report: Opens a new Report Generator window.
+
+Set plot style: Changes the plot style for the plot in the main window (only visible if 'Show Style Options' in settings is set to True)
+
+Settings: Opens a menu to modify the current settings file ('scalewiz.ini') in the directory the program runs out of
+
+Version: {self.core.VERSION}
+Website: https://github.com/teauxfu/pct-scalewiz
+"""
+        )

@@ -34,8 +34,8 @@ class Reporter(tk.Toplevel):
 
     def __init__(self, parent, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
-        self.mainwin = parent.mainwin
-        self.core = parent.mainwin.core
+        self.core = parent
+        self.mainwin = self.core.mainwin
         self.config = self.core.config
         self.plotterstyle = tk.StringVar()
         self.loc = tk.StringVar()
@@ -59,6 +59,11 @@ class Reporter(tk.Toplevel):
             label='Export report',
             command=lambda: self.export_report()
         )
+        self.pltbar.add_command(
+            label='Help',
+            command=self.show_help
+        )
+
         self.winfo_toplevel().configure(menu=self.pltbar)
 
         # a LabelFrame to hold the SeriesEntry widgets
@@ -142,12 +147,11 @@ class Reporter(tk.Toplevel):
 
         self.setfrm.grid(row=1, pady=2)
 
-    def prep_plot(self) -> "dict":
-        """Returns a dict of
-            paths - paths of original datafiles
-            this_data - a tuple of pandas dataframes of the original data
-            series_titles - str tuple of original series titles
-            plotpumps - tuple of bools whether to plot 'PSI 1'
+    def prep_plot(self) -> dict:
+        """Returns a dict of tuples
+            paths - str paths of original datafiles
+            titles - str tuple of original series titles
+            plotpumps - str tuple which pump's pressure to evaluate
             plot_params - a tuple of (str, int, int, (floats,))
                         last arg optional
         """
@@ -193,16 +197,11 @@ class Reporter(tk.Toplevel):
 
         plot_params = (self.plotterstyle.get(), xlim, ylim, baseline)
 
-        _paths = [i for i in paths]
-        _titles = [i for i in titles]
-        _plotpumps = [i for i in plotpumps]
-        _plot_params = plot_params
-
         _plt = {
-                'paths' : _paths,
-                'titles' : _titles,
-                'plotpumps' : _plotpumps,
-                'plot_params' : _plot_params
+                'paths' : paths,
+                'titles' : titles,
+                'plotpumps' : plotpumps,
+                'plot_params' : plot_params
                 }
         return _plt
 
@@ -227,8 +226,8 @@ class Reporter(tk.Toplevel):
             ylim = int(self.mainwin.failpsi.get())
 
         with plt.style.context(style):
-            colors = self.config.get('plot settings', 'color cycle')
-            colors = [i.strip() for i in colors.split(',')]
+            colors = self.config.get('plot settings', 'color cycle').split(',')
+            colors = [i.strip() for i in colors]
             mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color = colors)
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             self.ax.set_xlabel("Time (min)")
@@ -293,6 +292,9 @@ class Reporter(tk.Toplevel):
                 short_proj = project[-1]
                 image = f"{short_proj}.png"
                 image_path = os.path.join(self.mainwin.project, image)
+                while os.path.isfile(image_path):
+                    image_path = image_path[:-4]
+                    image_path += ' - copy.png'
                 self.fig.savefig(image_path)
                 print(f"Saved plot image to\n{image_path}")
 
@@ -436,9 +438,12 @@ class Reporter(tk.Toplevel):
             e.grid(row=i, column=1, sticky='W')
 
         print(f"Finished evaluation in {round(time.time() - self.start, 2)}")
+        print()
 
     def export_report(self):
-        """ Part of reporter """
+        """Exports the reporter's results_queue to an .xlsx file designated
+        as the template in the config file
+        """
 
         print("Preparing export")
         start = time.time()
@@ -470,7 +475,7 @@ class Reporter(tk.Toplevel):
         _path = os.path.join(self.mainwin.project, _img)
         print("Making temp resized plot image")
         img = PIL.Image.open(_path)
-        img = img.resize((667, 267))
+        img = img.resize((700, 265))
         _path = _path[:-4]
         _path += "- temp.png"
         img.save(_path)
@@ -479,6 +484,10 @@ class Reporter(tk.Toplevel):
 
         report_name = f"{short_proj}.xlsx"
         report_path = os.path.join(self.mainwin.project, report_name)
+        while os.path.isfile(report_path):
+            report_path = report_path[:-5]
+            report_path += ' - copy.xlsx'
+
         print(f"Copying report template to\n{report_path}")
         shutil.copyfile(template_path, report_path)
 
@@ -495,6 +504,7 @@ class Reporter(tk.Toplevel):
         ylim = self.results_queue[5]
         max_psis = self.results_queue[6]
 
+        # # TODO:  move this mapping into the config somehow
         ws['C4'] = customer
         ws['C7'] = sample_point
         ws['I7'] = f"{date.today()}"
@@ -526,20 +536,38 @@ class Reporter(tk.Toplevel):
 
         # note: may need to move contents up before deleting del_rows
 
-        # del_rows = []
-        # for i in range(19, 27):
-        #     if ws[f'A{i}'].value is None:
-        #         del_rows.append(i)
-        # if len(del_rows) is 0: pass
-        # elif len(del_rows) is 1: ws.delete_rows(del_rows[0])
-        # else: ws.delete_rows(del_rows[0], del_rows[-1])
+        del_rows = []
+        for i in range(19, 27):
+            if ws[f'A{i}'].value is None:
+                del_rows.append(i)
+        if len(del_rows) is 0: pass
+        for row in del_rows:
+            ws.row_dimensions[row].hidden = True
 
         print(f"Saving file")
         wb.save(filename=report_path)
         print("Removing temp files")
         os.remove(_path)
-        print(f"Finished in {round(time.time() - start, 2)} s")
+        print(f"Finished export in {round(time.time() - start, 2)} s")
         tk.messagebox.showinfo(
             parent=self,
             message=f"Report exported to\n{report_path}"
             )
+
+    def show_help(self):
+        """Shows a help dialog to the user"""
+        tk.messagebox.showinfo(
+        parent=self,
+        title="Help: Using the report generator",
+        message="""
+Clicking on a 'File path' field will prompt you to select the .csv file of the data you want to plot. You may change the default 'Series title' to appear on the plot.
+
+Including the word 'blank' in a series title will designate it as such for the purposes of calculations, and will set the data to plot as a dashed line. You must select at least one blank and one non-blank set of data to evaluate results.
+
+Save project: Saves the current Report Generator form to a .pct file
+
+Load project: Repopulates the Report Generator form from a .pct file
+
+Export report: Makes a copy of the file at 'Template Path' (see Report Settings) and populates it with the results of the evaluation.
+"""
+        )
