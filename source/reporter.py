@@ -272,22 +272,19 @@ class Reporter(tk.Toplevel):
             # some tests to validate user input
             if len(blanks) is 0 and len(trials) is 0:
                 tk.messagebox.showwarning(
-                master=self,
+                parent=self,
                 title="No data selected",
                 message="Click a 'File path:' entry to select a data file")
-                self.lift()
             elif len(blanks) is 0:
                 tk.messagebox.showwarning(
-                master=self,
+                parent=self,
                 title="No series designated as blank",
                 message="At least one series title must contain 'blank'")
-                self.lift()
             elif len(trials) is 0:
                 tk.messagebox.showwarning(
-                master=self,
+                parent=self,
                 title="No trial data selected",
                 message="At least one trial not titled 'blank' must be selected")
-                self.lift()
             else:
                 self.evaluate(blanks, trials, baseline, xlim, ylim)
                 self.fig.show()
@@ -310,9 +307,10 @@ class Reporter(tk.Toplevel):
             print(f"Pickling project to\n{_path}")
             pickle.dump(self.prep_plot(), file=p)
         tk.messagebox.showinfo(
+            parent=self,
+            title="Saved successfully",
             message=f"Project data saved to\n{_path}"
             )
-        self.lift()
 
     def unpickle_plot(self) -> None:
         """Unpickles/unpacks a list of string 3-tuples and puts those values
@@ -442,21 +440,27 @@ class Reporter(tk.Toplevel):
     def export_report(self):
         """ Part of reporter """
 
-        print("Exporting report to file")
+        print("Preparing export")
         start = time.time()
 
-        template_path = self.config.get('report settings', 'template path')
+        template_path = os.path.normpath(
+            self.config.get('report settings', 'template path')
+        )
         if not os.path.isfile(template_path):
             tk.messagebox.showerror(
+                parent=self,
                 message=('No valid template file found.' +
-                'You can set the template path in Settings > Report Settings.'
+                ' You can set the template path in Settings > Report Settings.'
                 )
             )
             return
         if not hasattr(self, 'results_queue'):
             tk.messagebox.showinfo(
+            parent=self,
             message="You must evaulate a set of data before exporting a report."
             )
+            return
+
         project = self.mainwin.project.split('\\')
         sample_point = project[-1].split('-')[0]
         customer = project[-2]
@@ -483,17 +487,13 @@ class Reporter(tk.Toplevel):
         ws = wb.active
         ws._images[1] = img
 
-        try:
-            blank_times = self.results_queue[0]
-            result_titles = self.results_queue[1]
-            result_values = self.results_queue[2]
-            durations = self.results_queue[3]
-            baseline = self.results_queue[4]
-            ylim = self.results_queue[5]
-            max_psis = self.results_queue[6]
-        except AttributeError:
-            # messagebox saying no data selected?
-            pass
+        blank_times = self.results_queue[0]
+        result_titles = self.results_queue[1]
+        result_values = self.results_queue[2]
+        durations = self.results_queue[3]
+        baseline = self.results_queue[4]
+        ylim = self.results_queue[5]
+        max_psis = self.results_queue[6]
 
         ws['C4'] = customer
         ws['C7'] = sample_point
@@ -540,5 +540,6 @@ class Reporter(tk.Toplevel):
         os.remove(_path)
         print(f"Finished in {round(time.time() - start, 2)} s")
         tk.messagebox.showinfo(
+            parent=self,
             message=f"Report exported to\n{report_path}"
             )
