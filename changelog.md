@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.3] 2020-5-4
+### Added
+ - info/error messageboxes to guide user while using Report Generator
+ - a 'Help' option on the Report Generator menu
+ - a 'Help' option on the main window menu
+### Fixed
+ - plot images in exported reports are centered and no longer squashed on printing
+### Changed
+ - the main window's menu is now flat; no more nested controls
+### Removed
+ - removed unused 'date format' from settings
+
 ## [0.5.2] 2020-4-30
 ### Changed
  - settings are now managed by the new configmanager
