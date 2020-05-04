@@ -40,7 +40,6 @@ class MainWindow(tk.Frame):
         )
         try:
             p = self.project.split('\\')
-            print(p)
             pp = p[-2] + " - " + p[-1]
             self.winfo_toplevel().title(pp)
         except IndexError:
@@ -53,6 +52,7 @@ class MainWindow(tk.Frame):
 
     def build_window(self) -> None:
         """Make all the tkinter widgets"""
+
         MenuBar(self)
         # build the main frame
         self.tstfrm = tk.Frame(self.core)

@@ -10,10 +10,10 @@ import time  # sleeping
 from winsound import Beep  # beeping when the test ends
 
 
-class Experiment(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+class Experiment(tk.Frame):  # probably don't need to super Frame TBH
+    def __init__(self, parent):
         """Collects all the user data from the MainWindow widgets"""
-        tk.Frame.__init__(self, parent, *args, **kwargs)
+        tk.Frame.__init__(self, parent)
         self.parent = parent
         self.core = parent.core
 
@@ -27,7 +27,7 @@ class Experiment(tk.Frame):
 
         # clear the text widget
         self.parent.dataout['state'] = 'normal'
-        self.parent.dataout.delete(1.0, tk.END)
+        self.parent.dataout.delete(1.0, 'end')
         self.parent.dataout['state'] = 'disabled'
 
         self.port1 = self.parent.port1.get()
@@ -99,7 +99,6 @@ class Experiment(tk.Frame):
     def take_reading(self) -> None:
         """Loop to be handled by the thread_pool_executor"""
 
-
         for pump in (self.pump1, self.pump2):
             pump.write('ru'.encode())
         # let the pumps warm up before we start recording data
@@ -139,7 +138,9 @@ class Experiment(tk.Frame):
                 print(e)
 
             nums = (self.elapsed/60, self.psi1, self.psi2)
-            this_reading = (f"{self.elapsed/60:.2f} min, {self.psi1} psi, {self.psi2} psi")
+            this_reading = (
+                f"{self.elapsed/60:.2f} min, {self.psi1} psi, {self.psi2} psi"
+            )
             self.to_log(this_reading)
 
             # make sure we have flow - consecutive 0 readings alert user
@@ -147,13 +148,10 @@ class Experiment(tk.Frame):
             pressures['PSI 1'].pop(-1)
             pressures['PSI 2'].insert(0, self.psi2)
             pressures['PSI 2'].pop(-1)
-
             for list in (pressures['PSI 1'], pressures['PSI 2']):
                 if list.count(0) is 3: Beep(750, 500)
-            # print(f'pre sleep: {round(time.time() - start, 4)}')
-            time.sleep(1 - (time.time() - start))
-            # print(f'post sleep: {round(time.time() - start, 4)}')
 
+            time.sleep(1 - (time.time() - start))
             # end of while loop
 
         print("Test went to completion; ending test")
