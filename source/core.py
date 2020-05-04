@@ -16,6 +16,8 @@ from mainwindow import MainWindow
 class ScaleWiz(tk.Frame):
     """Docstring"""
 
+    VERSION = '[0.5.3]'
+
     DEFAULT_DICT = {
         'plot settings': {
             'default style': 'bmh',
@@ -41,13 +43,13 @@ class ScaleWiz(tk.Frame):
 
         self.config = configparser.ConfigParser()
         self.config.DEFAULT_DICT = ScaleWiz.DEFAULT_DICT
-        if not os.path.isfile('config.ini'):
+        if not os.path.isfile('scalewiz.ini'):
             self.make_config()
         else:
-            print("Found config.ini")
-            self.config.path = os.path.abspath('config.ini')
+            print("Found scalewiz.ini")
+            self.config.path = os.path.abspath('scalewiz.ini')
 
-        self.config.read('config.ini')
+        self.config.read('scalewiz.ini')
         default_sections = [i for i in ScaleWiz.DEFAULT_DICT.keys()]
         if not self.config.sections() == default_sections:
             print("The found config didn't have the right sections")
@@ -57,11 +59,11 @@ class ScaleWiz(tk.Frame):
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
     def make_config(self):
-        print("Making new config.ini")
+        print("Making new scalewiz.ini")
         self.config.read_dict(ScaleWiz.DEFAULT_DICT)
-        with open('config.ini', 'w') as configfile:
+        with open('scalewiz.ini', 'w') as configfile:
             self.config.write(configfile)
-            self.config.path = os.path.abspath('config.ini')
+            self.config.path = os.path.abspath('scalewiz.ini')
 
 def close_app():  # attempts to close all open ports, just in case
     # rlly should be no need for this ...
