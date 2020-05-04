@@ -15,9 +15,10 @@ class MenuBar(tk.Frame):
         self.mainwin = parent
         self.core = parent.core
         self.config = self.mainwin.core.config
-        self.plotstyle_list = self.config.get(
+        plotstyle_list = self.config.get(
             'plot settings', 'plot styles'
             ).split(',')
+        self.plotstyle_list = [i.strip() for i in plotstyle_list]
         self.build()
 
     def build(self):
@@ -91,7 +92,7 @@ class MenuBar(tk.Frame):
 
         print(f"Changing MainWindow plot style to {style}")
         self.mainwin.plotstyle = style
-        self.mainwin.pltfrm.configure(text=(f"Style: {self.plotstyle}"))
+        self.mainwin.pltfrm.configure(text=(f"Style: {self.mainwin.plotstyle}"))
 
     def new_plot(self):
         """Spawns a new Plotter window"""
