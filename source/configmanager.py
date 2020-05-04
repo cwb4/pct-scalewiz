@@ -137,7 +137,7 @@ class ConfigManager(tk.Toplevel):
                 ).grid(row=idx, column=0, padx=2, pady=2, sticky='e')
 
                 # the length of this particular value
-                val_len = len(self.parser_dict[section][section_key])
+                val_len = len(f'{self.parser_dict[section][section_key]}')
                 # if the key has a long value put it in a scrolledtext
                 if val_len >= self.max_entry_length:
                     ent = tk.scrolledtext.ScrolledText(frm,
