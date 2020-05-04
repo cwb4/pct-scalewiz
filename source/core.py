@@ -30,6 +30,7 @@ class ScaleWiz(tk.Frame):
     },
         'test settings': {
         'fail psi': '1500',
+        'default baseline' : 75,
         'time limit minutes': '90',
         'default pump': 'PSI 2',
         'project folder': '',
@@ -71,7 +72,10 @@ def close_app():  # attempts to close all open ports, just in case
             if serial.Serial(i).is_open:
                 serial.Serial(i).write('st'.encode())
                 print(f"Closing {i}")
-                serial.Serial(i).close
+                try:
+                    serial.Serial(i).close
+                except SerialException:
+                    pass
                 # serial exception here if test running -
                 # call to end_test also?
     print("Destroying root")
