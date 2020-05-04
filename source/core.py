@@ -24,19 +24,19 @@ class ScaleWiz(tk.Frame):
             'show style options': 'True',
             'plot styles': """bmh, fivethirtyeight, seaborn, seaborn-colorblind, seaborn-dark-palette, seaborn-muted, seaborn-notebook, seaborn-paper, seaborn-pastel, tableau-colorblind10""",
         'color cycle':"""orange, blue, red, mediumseagreen, darkgoldenrod, indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
-    },
+        },
         'report settings': {
-        'template path': '',
-        'series per project': '10'
-    },
+            'template path': '',
+            'series per project': '10'
+        },
         'test settings': {
-        'fail psi': '1500',
-        'default baseline' : 75,
-        'time limit minutes': '90',
-        'default pump': 'PSI 2',
-        'project folder': '',
+            'fail psi': '1500',
+            'default baseline' : 75,
+            'time limit minutes': '90',
+            'default pump': 'PSI 2',
+            'project folder': '',
+        }
     }
-}
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
