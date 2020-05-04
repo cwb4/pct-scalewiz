@@ -26,10 +26,9 @@ class MenuBar(tk.Frame):
         self.menubar.add_command(
             label="Set project folder",
             command=self.askdir
-            )
+        )
 
-        self.pltmenu = tk.Menu(master=self, tearoff=0)
-        self.pltmenu.add_command(
+        self.menubar.add_command(
             label="Make new report",
             command=self.new_plot
         )
@@ -42,15 +41,10 @@ class MenuBar(tk.Frame):
             )
         # check the config to see if we want to show this label to the user
         if self.config.getboolean('plot settings', 'show style options'):
-            self.pltmenu.add_cascade(
+            self.menubar.add_cascade(
                 label="Set plot style",
                 menu=self.pltstylmenu
             )
-
-        self.menubar.add_cascade(
-            label="Report",
-            menu=self.pltmenu
-        )
 
         self.menubar.add_command(
             label='Settings',
