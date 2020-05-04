@@ -34,10 +34,10 @@ class MainWindow(tk.Frame):
         self.plotpsi = tk.StringVar()
         self.plotpsi.set(self.config.get('test settings', 'default pump'))
         self.project = self.config.get('test settings', 'project folder',
-            fallback=os.getcwd()
+            fallback=os.path.normpath(os.getcwd())
         )
         try:
-            p = self.project.split('\\')
+            p = self.project.split('/')
             pp = p[-2] + " - " + p[-1]
             self.winfo_toplevel().title(pp)
         except IndexError:
@@ -63,38 +63,38 @@ class MainWindow(tk.Frame):
         self.port1 = ttk.Entry(
             master=self.entfrm,
             width=14,
-            justify=tk.CENTER
+            justify='center'
             )
         self.port2 = ttk.Entry(
             master=self.entfrm,
             width=14,
-            justify=tk.CENTER
+            justify='center'
             )
         self.timelim = ttk.Entry(
             master=self.entfrm,
             width=30,
-            justify=tk.CENTER,
+            justify='center'
             )
         self.failpsi = ttk.Entry(
             master=self.entfrm,
             width=30,
-            justify=tk.CENTER,
+            justify='center'
             )
         self.chem = ttk.Entry(
             master=self.entfrm,
             width=30,
-            justify=tk.CENTER,
+            justify='center'
             )
         self.chem.focus_set()  # move the cursor here for convenience
         self.conc = ttk.Entry(
             master=self.entfrm,
             width=30,
-            justify=tk.CENTER,
+            justify='center'
             )
         self.strtbtn = ttk.Button(
             master=self.entfrm,
             text="Start",
-            command= lambda: self.init_test()
+            command=self.init_test
             )
 
         # default values for convenience (maybe store in config file instead)
@@ -235,7 +235,7 @@ class MainWindow(tk.Frame):
             print("Disabling start button")
             self.strtbtn['state'] = ['disable']
         else:
-            print("Successfully connected to COM ports")
+            print(f"Successfully connected to COM ports {useports}")
             print("Enabling start button")
             self.strtbtn['state'] = ['enable']
 
