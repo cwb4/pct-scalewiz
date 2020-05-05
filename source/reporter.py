@@ -558,7 +558,7 @@ class Reporter(tk.Toplevel):
         """Shows a help dialog to the user"""
         tk.messagebox.showinfo(
         parent=self,
-        title="Help: Using the report generator",
+        title="Help: Using the Report Generator",
         message="""
 Clicking on a 'File path' field will prompt you to select the .csv file of the data you want to plot. You may change the default 'Series title' to appear on the plot.
 
