@@ -142,7 +142,8 @@ class ConfigManager(tk.Toplevel):
                 if val_len >= self.max_entry_length:
                     ent = tk.scrolledtext.ScrolledText(frm,
                         width=self.text_width,
-                        height=self.text_height
+                        height=self.text_height,
+                        wrap='word'
                     )
                     ent.grid(row=idx, column=1, padx=2, pady=2, sticky='e')
                     the_key = self.parser_dict[section][section_key]
