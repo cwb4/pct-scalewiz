@@ -14,7 +14,7 @@ from mainwindow import MainWindow
 
 
 class ScaleWiz(tk.Frame):
-    """Docstring"""
+    """This class """
 
     VERSION = '[0.5.3]'
 
@@ -40,7 +40,6 @@ class ScaleWiz(tk.Frame):
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-
         self.config = configparser.ConfigParser()
         self.config.DEFAULT_DICT = ScaleWiz.DEFAULT_DICT
         if not os.path.isfile('scalewiz.ini'):
@@ -59,14 +58,15 @@ class ScaleWiz(tk.Frame):
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
     def make_config(self):
-        print("Making new scalewiz.ini")
+        """Creates a default scalewiz.ini in the current working directory"""
+
+        print("Making new scalewiz.ini file in \n" + f"{os.getcwd()}")
         self.config.read_dict(ScaleWiz.DEFAULT_DICT)
         with open('scalewiz.ini', 'w') as configfile:
             self.config.write(configfile)
             self.config.path = os.path.abspath('scalewiz.ini')
 
 def close_app():  # attempts to close all open ports, just in case
-    # rlly should be no need for this ...
     list = serial.tools.list_ports.comports()
     ports = [i.device for i in list]
     for i in ports:
@@ -75,10 +75,10 @@ def close_app():  # attempts to close all open ports, just in case
                 print(f"Closing {i}")
                 try:
                     serial.Serial(i).close
-                except SerialException:
-                    pass
-                # serial exception here if test running -
-                # call to end_test also?
+                except SerialException as e:
+                    print(e)
+                    print("Couldn't close COM port; is a dupe process running?")
+
     print("Destroying root")
     root.destroy()
     sys.exit()

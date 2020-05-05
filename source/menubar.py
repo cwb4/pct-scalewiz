@@ -60,9 +60,10 @@ class MenuBar(tk.Frame):
         self.mainwin.winfo_toplevel().config(menu=self.menubar)
 
     def askdir(self):
-        """Creates a prompt to ask user for a project folder,
-         then sets that as the window title.
-         The project variable is a string used to make output file paths later
+        """Creates a prompt to ask user for a project folder
+        Then sets that as the window title.
+        The project variable is a string used to make output file paths later
+
          """
 
         out = filedialog.askdirectory(
@@ -100,9 +101,9 @@ class MenuBar(tk.Frame):
         self.mainwin.pltfrm.configure(text=(f"Style: {self.mainwin.plotstyle}"))
 
     def new_plot(self):
-        """Spawns a new Plotter window"""
+        """Spawns a new Report Generator window"""
 
-        print("Spawning a new Reporter")
+        print("Spawning a new Report Generator")
         Reporter(self.core)
 
     def show_help(self):

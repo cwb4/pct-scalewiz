@@ -26,9 +26,10 @@ Notes:
     * tries to treat very long dict values as lists if they contain commas;
      the contents are returned to string when writing to file. see line 146
 
-Version: [0.1.0] - 2020-4-30
+Version: [0.1.1] - 2020-5-4
 Author: https://github.com/teauxfu
 Gist: https://gist.github.com/teauxfu/bfe19a82381461771c87e2d1a4113355
+
 """
 
 
@@ -56,12 +57,14 @@ class ConfigManager(tk.Toplevel):
         self, parent,
         configpath=None, _title=' ', defaultdict=None
     ):
-        """Initializes a new ConfigManager.
+        """
+        Initializes a new ConfigManager.
             * parent: should be a Tkinter object
             * configpath =  an absolute path to the config file
             * _title: optional, the Toplevel's title
             * defaultdict: dict to use when resetting defaults
              uses a demo dict for defaults if one isn't passed.
+
         """
         tk.Toplevel.__init__(self, parent)
         self.core = parent
@@ -97,10 +100,9 @@ class ConfigManager(tk.Toplevel):
 
     def build(self, parser_dict: dict) -> None:
         """Dynamically populates GUI from the contents of parser_dict"""
-        try:
+
+        if hasattr(self, self.container):
             self.container.destroy()
-        except AttributeError as e:
-            print("Tried to destroy the window's container before it was made")
 
         self.parser_dict = parser_dict
         self._fields = []  # list of the input widgets from every section
@@ -110,6 +112,7 @@ class ConfigManager(tk.Toplevel):
             self._section_keys.extend(self.parser_dict[section].keys())
 
         #----------------------------- Cosmetics ---------------------------
+
         self.winfo_toplevel().title(self.window_title)
         self.container = tk.Frame(self)
         self.canvas = tk.Canvas(self.container)
@@ -184,7 +187,8 @@ class ConfigManager(tk.Toplevel):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
         self.container.pack(fill="both", expand=True)
-# -------------------------------End Cosmetics---------------------------------
+
+        # ------------------------------End Cosmetics--------------------------
 
         # set bindings to enable scrolling
         self.scrollable_frame.bind(
@@ -202,11 +206,13 @@ class ConfigManager(tk.Toplevel):
 
     def reset_config(self):
         """Rebuilds the ConfigManager from the defaultdict."""
+
         print('Rebuilding form from defaultdict')
         self.build(self.defaultdict)
 
     def save_config(self):
         """Saves the contents of the form to configpath if one was passed."""
+
         # collect all the inputs
         all_inputs = []
         for child in self._fields:  # filter getting by widget class
@@ -245,6 +251,7 @@ class ConfigManager(tk.Toplevel):
         sections options as key : value pairs.
 
         https://stackoverflow.com/a/23944270
+
         """
         the_dict = {}
         for section in config.sections():

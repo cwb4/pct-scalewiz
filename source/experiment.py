@@ -10,10 +10,11 @@ import time  # sleeping
 from winsound import Beep  # beeping when the test ends
 
 
-class Experiment(tk.Frame):  # probably don't need to super Frame TBH
-    def __init__(self, parent):
+class Experiment(tk.Frame):
+    def __init__(self, parent, *args, **kwargs):
         """Collects all the user data from the MainWindow widgets"""
-        tk.Frame.__init__(self, parent)
+
+        tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         self.core = parent.core
 
@@ -29,23 +30,22 @@ class Experiment(tk.Frame):  # probably don't need to super Frame TBH
         self.parent.dataout['state'] = 'normal'
         self.parent.dataout.delete(1.0, 'end')
         self.parent.dataout['state'] = 'disabled'
-
+        # get user input from the main window
         self.port1 = self.parent.port1.get()
         self.port2 = self.parent.port2.get()
         self.timelimit = float(self.parent.timelim.get())
         self.failpsi = int(self.parent.failpsi.get())
         self.chem = self.parent.chem.get().strip().replace(' ', '_')
         self.conc = self.parent.conc.get().strip().replace(' ', '_')
-
-        self.outfile = f"{self.chem}_{self.conc}.csv"
-        self.savepath = self.parent.project
-        self.outpath = os.path.join(self.savepath, self.outfile)
+        # set up an output file
+        file_name = f"{self.chem}_{self.conc}.csv"
+        self.outpath = os.path.join(self.parent.project, file_name)
         # make sure we don't overwrite existing data
-        if os.path.isfile(self.outpath):
+        while os.path.isfile(self.outpath):  # we haven't made one yet
             self.to_log("A file with that name already exists",
-                        "making a copy instead")
+                        "Making a copy instead")
             self.outpath = self.outpath[0:-4]
-            self.outpath += r"- copy.csv"
+            self.outpath += r" - copy.csv"
         self.to_log(f"Creating output file at \n{self.outpath}")
         header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
         with open(self.outpath, "w") as f:
@@ -58,8 +58,8 @@ class Experiment(tk.Frame):  # probably don't need to super Frame TBH
             self.pump1 = serial.Serial(self.port1, timeout=0.01)
             self.pump2 = serial.Serial(self.port2, timeout=0.01)
         except serial.serialutil.SerialException:
-            self.to_log("Could not establish a connection to the pumps")
-            self.to_log("Try resetting the port connections")
+            self.to_log("Could not establish a connection to the pumps",
+                        "Try resetting the port connections")
             print("Disabling MainWindow test controls")
             for child in self.parent.cmdfrm.winfo_children():
                 child.configure(state="disabled")
@@ -68,7 +68,8 @@ class Experiment(tk.Frame):  # probably don't need to super Frame TBH
                 child.configure(state="normal")
 
     def to_log(self, *msgs) -> None:
-        """Logs a message to the Text widget in MainWindow's outfrm"""
+        """Passes str messages to the parent widget's to_log method"""
+
         self.parent.to_log(*msgs)
 
     def end_test(self) -> None:
@@ -79,10 +80,9 @@ class Experiment(tk.Frame):  # probably don't need to super Frame TBH
         for pump in (self.pump1, self.pump2):
             pump.write('st'.encode())
             pump.close()
+        self.to_log(f"The test finished in {self.elapsed/60:.2f} minutes")
 
-        msg = f"The test finished in {self.elapsed/60:.2f} minutes"
-        self.to_log(msg)
-
+        # TODO: try just disabling the frames instead, half the lines
         # re-enable the entries to let user start new test
         for child in self.parent.entfrm.winfo_children():
             child.configure(state="normal")
@@ -115,27 +115,22 @@ class Experiment(tk.Frame):  # probably don't need to super Frame TBH
          (self.psi1 < self.failpsi or self.psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
          ):
-            start = time.time()
+            reading_start = time.time()
             self.elapsed = (datetime.now() - starttime).seconds
             for pump in (self.pump1, self.pump2):
-                pump.write('cc'.encode())
+                pump.write('cc'.encode())  # get current conditions
             time.sleep(0.1)
             self.psi1 = int(self.pump1.readline().decode().split(',')[1])
             self.psi2 = int(self.pump2.readline().decode().split(',')[1])
             thisdata = [
                         time.strftime("%I:%M:%S", time.localtime()),
                         self.elapsed,  # as seconds
-                        # TODO: learn how to do this with a real f-string
                         f'{self.elapsed/60:.2f}',  # as minutes
                         self.psi1,
                         self.psi2
                         ]
-
-            try:
-                with open(self.outpath, "a", newline='') as f:
-                    csv.writer(f, delimiter=',').writerow(thisdata)
-            except Exception as e:
-                print(e)
+            with open(self.outpath, "a", newline='') as f:
+                csv.writer(f, delimiter=',').writerow(thisdata)
 
             nums = (self.elapsed/60, self.psi1, self.psi2)
             this_reading = (
@@ -151,10 +146,10 @@ class Experiment(tk.Frame):  # probably don't need to super Frame TBH
             for list in (pressures['PSI 1'], pressures['PSI 2']):
                 if list.count(0) is 3: Beep(750, 500)
 
-            time.sleep(1 - (time.time() - start))
+            time.sleep(1 - (time.time() - reading_start))  # 1 reading/s
             # end of while loop
 
-        print("Test went to completion; ending test")
+        print("Test complete; ending test")
         self.end_test()
         for i in range(3):
             Beep(750, 500)

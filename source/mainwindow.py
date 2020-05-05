@@ -48,7 +48,7 @@ class MainWindow(tk.Frame):
         self.plotstyle = self.config.get('plot settings', 'default style')
 
         self.build_window()
-        self.findcoms()
+        self.find_coms()
 
     def build_window(self) -> None:
         """Make all the tkinter widgets"""
@@ -100,7 +100,6 @@ class MainWindow(tk.Frame):
             command=self.init_test
             )
 
-        # default values for convenience (maybe store in config file instead)
         self.timelim.insert(0, self.config.get('test settings', 'time limit minutes'))
         self.failpsi.insert(0, self.config.get('test settings', 'fail psi'))
 
@@ -126,7 +125,7 @@ class MainWindow(tk.Frame):
 
         # widget bindings for user convenience
         self.conc.bind("<Return>", lambda _: self.init_test())
-        self.comlbl.bind("<Button-1>", lambda _: self.findcoms())
+        self.comlbl.bind("<Button-1>", lambda _: self.find_coms())
 
         # grid entries into self.entfrm
         self.port1.grid(row=0, column=1, sticky=tk.E, padx=(17, 1))
@@ -216,7 +215,7 @@ class MainWindow(tk.Frame):
         self.cmdfrm.grid(row=2, column=0, sticky=tk.NSEW, pady=2)
         self.tstfrm.grid(padx=3)
 
-    def findcoms(self) -> None:
+    def find_coms(self) -> None:
         """Looks for COM ports and disables the controls if two aren't found"""
 
         print("Finding COM ports")
@@ -224,10 +223,8 @@ class MainWindow(tk.Frame):
         useports = [i.device for i in list]
         if len(useports) < 2:
             self.to_log("Not enough COM ports found...",
-                "Click 'COM ports:' to try again."
-            )
+                        "Click 'COM ports:' to try again.")
             useports = ["??", "??"]
-
 
         self.port1.delete(0, tk.END)
         self.port2.delete(0, tk.END)
