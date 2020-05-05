@@ -55,8 +55,8 @@ class Experiment(tk.Frame):
 
         # the timeout values are an alternative to using TextIOWrapper
         try:
-            self.pump1 = serial.Serial(self.port1, timeout=0.01)
-            self.pump2 = serial.Serial(self.port2, timeout=0.01)
+            self.pump1 = serial.Serial(self.port1, timeout=0.05)
+            self.pump2 = serial.Serial(self.port2, timeout=0.05)
         except serial.serialutil.SerialException:
             self.to_log("Could not establish a connection to the pumps",
                         "Try resetting the port connections")
@@ -145,8 +145,15 @@ class Experiment(tk.Frame):
             pressures['PSI 2'].pop(-1)
             for list in (pressures['PSI 1'], pressures['PSI 2']):
                 if list.count(0) is 3: Beep(750, 500)
+<<<<<<< HEAD
 
             time.sleep(1 - (time.time() - reading_start))  # 1 reading/s
+=======
+            try:
+                time.sleep(1 - (time.time() - start))
+            except ValueError as e:  # sleep doesn't take args < 0
+                print(e)
+>>>>>>> fd0f417e09a283e302010fb4c1e2d3bea53485ac
             # end of while loop
 
         print("Test complete; ending test")

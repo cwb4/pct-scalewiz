@@ -80,7 +80,7 @@ class MenuBar(tk.Frame):
                 print(f"Set project directory to\n{self.mainwin.project}")
             # make it the MainWindow title in a pretty way
             try:
-                p = out.split('\\')
+                p = self.mainwin.project.split('\\')
                 pp = p[-2] + " - " + p[-1]
                 self.mainwin.winfo_toplevel().title(pp)
             except IndexError:
@@ -109,7 +109,7 @@ class MenuBar(tk.Frame):
     def show_help(self):
         tk.messagebox.showinfo(
         parent=self,
-        title="Help: using ScaleWiz",
+        title="Help: Using ScaleWiz",
         message=f"""
 When you start the program, the pumps should connect automatically.
 Clicking the 'COM Ports' label will attempt to reconnect to the pumps.
