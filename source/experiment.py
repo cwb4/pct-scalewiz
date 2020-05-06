@@ -52,6 +52,7 @@ class Experiment(tk.Frame):
             csv.writer(f, delimiter=',').writerow(header_row)
 
         # the timeout values are an alternative to using TextIOWrapper
+        # the values chosen were suggested by the pump's documentation
         try:
             self.pump1 = serial.Serial(self.port1, timeout=0.05)
             self.pump2 = serial.Serial(self.port2, timeout=0.05)
