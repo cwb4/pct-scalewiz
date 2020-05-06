@@ -292,9 +292,9 @@ class Reporter(tk.Toplevel):
                 short_proj = project[-1]
                 image = f"{short_proj}.png"
                 image_path = os.path.join(self.mainwin.project, image)
-                while os.path.isfile(image_path):
-                    image_path = image_path[:-4]
-                    image_path += ' - copy.png'
+                # while os.path.isfile(image_path):
+                #     image_path = image_path[:-4]
+                #     image_path += ' - copy.png'
                 self.fig.savefig(image_path)
                 print(f"Saved plot image to\n{image_path}")
 

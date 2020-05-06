@@ -54,8 +54,8 @@ class Experiment(tk.Frame):
         # the timeout values are an alternative to using TextIOWrapper
         # the values chosen were suggested by the pump's documentation
         try:
-            self.pump1 = serial.Serial(self.port1, timeout=0.05)
-            self.pump2 = serial.Serial(self.port2, timeout=0.05)
+            self.pump1 = serial.Serial(self.port1, timeout=0.01)
+            self.pump2 = serial.Serial(self.port2, timeout=0.01)
         except serial.serialutil.SerialException:
             self.to_log("Could not establish a connection to the pumps",
                         "Try resetting the port connections")
@@ -104,15 +104,13 @@ class Experiment(tk.Frame):
         # let the pumps warm up before we start recording data
         time.sleep(3)
 
-        starttime = datetime.now()
-
         # a dict to hold recent pressure readings
         pressures = {'PSI 1' : [1, 1, 1, 1, 1],
                      'PSI 2' : [1, 1, 1, 1, 1]
                     }
         psi1, psi2, self.elapsed = 0, 0, 0
         self.timeout_count = 0
-
+        starttime = datetime.now()
         while (
          (psi1 < self.failpsi or psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
@@ -121,7 +119,7 @@ class Experiment(tk.Frame):
             self.elapsed = (datetime.now() - starttime).seconds
             for pump in (self.pump1, self.pump2):
                 pump.write('cc'.encode())  # get current conditions
-            time.sleep(0.1)
+            time.sleep(0.01)  # give a moment to respond
             psi1 = int(self.pump1.readline().decode().split(',')[1])
             psi2 = int(self.pump2.readline().decode().split(',')[1])
             thisdata = [
@@ -134,7 +132,6 @@ class Experiment(tk.Frame):
             with open(self.outpath, "a", newline='') as f:
                 csv.writer(f, delimiter=',').writerow(thisdata)
 
-            nums = (self.elapsed/60, psi1, psi2)
             this_reading = (
                 f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
             )
