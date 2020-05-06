@@ -12,6 +12,7 @@ run.bat
 *.plt
 *.xlsx
 *.ini
+*.csv
 
 # Distribution / packaging
 .Python
