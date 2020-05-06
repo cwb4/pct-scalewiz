@@ -51,8 +51,6 @@ class Experiment(tk.Frame):
         with open(self.outpath, "w") as f:
             csv.writer(f, delimiter=',').writerow(header_row)
 
-        self.psi1, self.psi2, self.elapsed = 0, 0, 0
-        self.timeout_count = 0
         # the timeout values are an alternative to using TextIOWrapper
         try:
             self.pump1 = serial.Serial(self.port1, timeout=0.05)
@@ -110,9 +108,11 @@ class Experiment(tk.Frame):
         pressures = {'PSI 1' : [1, 1, 1, 1, 1],
                      'PSI 2' : [1, 1, 1, 1, 1]
                     }
+        psi1, psi2, self.elapsed = 0, 0, 0
+        self.timeout_count = 0
 
         while (
-         (self.psi1 < self.failpsi or self.psi2 < self.failpsi)
+         (psi1 < self.failpsi or psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
          ):
             reading_start = time.time()
@@ -120,41 +120,40 @@ class Experiment(tk.Frame):
             for pump in (self.pump1, self.pump2):
                 pump.write('cc'.encode())  # get current conditions
             time.sleep(0.1)
-            self.psi1 = int(self.pump1.readline().decode().split(',')[1])
-            self.psi2 = int(self.pump2.readline().decode().split(',')[1])
+            psi1 = int(self.pump1.readline().decode().split(',')[1])
+            psi2 = int(self.pump2.readline().decode().split(',')[1])
             thisdata = [
                         time.strftime("%I:%M:%S", time.localtime()),
                         self.elapsed,  # as seconds
                         f'{self.elapsed/60:.2f}',  # as minutes
-                        self.psi1,
-                        self.psi2
+                        psi1,
+                        psi2
                         ]
             with open(self.outpath, "a", newline='') as f:
                 csv.writer(f, delimiter=',').writerow(thisdata)
 
-            nums = (self.elapsed/60, self.psi1, self.psi2)
+            nums = (self.elapsed/60, psi1, psi2)
             this_reading = (
-                f"{self.elapsed/60:.2f} min, {self.psi1} psi, {self.psi2} psi"
+                f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
             )
             self.to_log(this_reading)
 
             # make sure we have flow - consecutive 0 readings alert user
-            pressures['PSI 1'].insert(0, self.psi1)
+            pressures['PSI 1'].insert(0, psi1)
             pressures['PSI 1'].pop(-1)
-            pressures['PSI 2'].insert(0, self.psi2)
+            pressures['PSI 2'].insert(0, psi2)
             pressures['PSI 2'].pop(-1)
             for list in (pressures['PSI 1'], pressures['PSI 2']):
                 if list.count(0) is 3: print('\a')
             try:
-                time.sleep(1 - (time.time() - start))
+                time.sleep(1 - (time.time() - reading_start))
             except ValueError as e:  # sleep doesn't take args < 0
                 print(e)
                 self.timeout_count += 1
 
             # end of while loop
 
-        print("Test complete; ending test")
-        print(f"{self.timeout_count} timeout errors occured")
+        print("Test complete")
         self.end_test()
         for i in range(3):
             print('\a')
