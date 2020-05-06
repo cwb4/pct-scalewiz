@@ -7,7 +7,7 @@ import os  # handling file paths
 import serial
 import tkinter as tk  # GUI
 import time  # sleeping
-from winsound import Beep  # beeping when the test ends
+# from winsound import Beep  # beeping when the test ends
 
 
 class Experiment(tk.Frame):
@@ -144,7 +144,7 @@ class Experiment(tk.Frame):
             pressures['PSI 2'].insert(0, self.psi2)
             pressures['PSI 2'].pop(-1)
             for list in (pressures['PSI 1'], pressures['PSI 2']):
-                if list.count(0) is 3: Beep(750, 500)
+                if list.count(0) is 3: print('\a')
             try:
                 time.sleep(1 - (time.time() - start))
             except ValueError as e:  # sleep doesn't take args < 0
@@ -157,5 +157,5 @@ class Experiment(tk.Frame):
         print(f"{self.timeout_count} timeout errors occured")
         self.end_test()
         for i in range(3):
-            Beep(750, 500)
+            print('\a')
             time.sleep(0.5)
