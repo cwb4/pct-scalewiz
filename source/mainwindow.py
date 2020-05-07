@@ -206,7 +206,7 @@ class MainWindow(tk.Frame):
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()
         self.canvas.get_tk_widget().pack()
-        interval = self.config.get('test settings', 'reading interval')
+        interval = self.config.getint('test settings', 'interval seconds')*1000
         self.ani = FuncAnimation(self.fig, self.animate, interval=interval)
 
         # grid stuff into self.tstfrm
