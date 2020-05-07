@@ -6,10 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased] 2020-5-6
-### Removed
-  - Winsound dependency (allows to run cross-platform)
 ### Added
   - more robust error handling and reporting during experiment loop
+### Changed
+  - added 'Reading Interval' to 'Test Settings' -- sets interval between measurements
+  - default Reading Interval set to 3 seconds
+  - updated the Reporter's math to acknowledge the reading interval when calculating results
+### Removed
+  - Winsound dependency (allows to run cross-platform)
+
 
 ## [0.5.3] 2020-5-4
 ### Added
