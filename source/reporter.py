@@ -353,13 +353,13 @@ class Reporter(tk.Toplevel):
         """Evaluates the data"""
 
         print("Evaluating data")
-
+        interval = self.config.get('test settings', 'reading interval')
         print(f"baseline: {baseline}")
-        print(f"xlim: {xlim*60}")
-        print(f"ylim: {ylim}")
+        print(f"xlim: {xlim*60} s")
+        print(f"ylim: {ylim} psi")
         print()
-        total_area = ylim*xlim*60
-        baseline_area = baseline*xlim*60
+        total_area = ylim*xlim*60/interval
+        baseline_area = baseline*xlim*60/interval
         avail_area = total_area - baseline_area
         print(f"total_area: {total_area}")
         print(f"baseline_area: {baseline_area}")
@@ -368,7 +368,7 @@ class Reporter(tk.Toplevel):
 
         blank_scores = []
         blank_times = []
-        interval = self.config.get('test settings', 'reading interval')
+
         for blank in blanks:
             blank_times.append(round(len(blank)*interval, 2))
             print(blank.name)
@@ -389,6 +389,7 @@ class Reporter(tk.Toplevel):
             print(trial.name)
             measures = len(trial)
             print(f"number of measurements: {measures}")
+            # all the area under the curve + ylim per would-be measure
             scale_area = int(trial.sum() + ylim*(xlim*60/interval - measures))
             print(f"scale area {scale_area}")
             score = 1 - (scale_area - baseline_area)/protectable_area
