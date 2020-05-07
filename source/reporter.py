@@ -292,9 +292,6 @@ class Reporter(tk.Toplevel):
                 short_proj = project[-1]
                 image = f"{short_proj}.png"
                 image_path = os.path.join(self.mainwin.project, image)
-                # while os.path.isfile(image_path):
-                #     image_path = image_path[:-4]
-                #     image_path += ' - copy.png'
                 self.fig.savefig(image_path)
                 print(f"Saved plot image to\n{image_path}")
 
@@ -371,8 +368,9 @@ class Reporter(tk.Toplevel):
 
         blank_scores = []
         blank_times = []
+        interval = self.config.get('test settings', 'reading interval')
         for blank in blanks:
-            blank_times.append(len(blank))
+            blank_times.append(round(len(blank)*interval, 2))
             print(blank.name)
             scale_area = blank.sum()
             print(f"scale area: {scale_area}")
@@ -390,10 +388,8 @@ class Reporter(tk.Toplevel):
         for trial in trials:
             print(trial.name)
             measures = len(trial)
-            # disregard data taken past the timelimit
-            if measures > xlim*60: measures = xlim*60
             print(f"number of measurements: {measures}")
-            scale_area = int(trial.sum() + ylim*(xlim*60 - measures))
+            scale_area = int(trial.sum() + ylim*(xlim*60/interval - measures))
             print(f"scale area {scale_area}")
             score = 1 - (scale_area - baseline_area)/protectable_area
             print(f"ratio used: {score:.2f}")
@@ -404,7 +400,7 @@ class Reporter(tk.Toplevel):
 
         result_titles = [f"{i}" for i in scores]
         result_values = [f"{scores[i]:.1f}%" for i in scores]
-        durations = [len(trial) for trial in trials]
+        durations = [round(len(trial)*interval, 2) for trial in trials]
         max_psis = [
                     int(trial.max())
                     if int(trial.max()) <= ylim
