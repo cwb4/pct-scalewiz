@@ -250,7 +250,7 @@ class MainWindow(tk.Frame):
         """Logs a message to the Text widget in MainWindow's outfrm"""
 
         for msg in msgs:
-            print(msg)
+            # print(msg)
             self.dataout['state'] = 'normal'
             self.dataout.insert('end', f"{msg}" + "\n")
             self.dataout['state'] = 'disabled'
