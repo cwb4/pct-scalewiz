@@ -109,10 +109,11 @@ class Experiment(tk.Frame):
                      'PSI 2' : [1, 1, 1, 1, 1]
                     }
         psi1, psi2, self.elapsed = 0, 0, 0
-        starttime = time.time()
         interval = self.core.config.getint(
             'test settings', 'interval seconds'
         )
+        starttime = time.time()
+    
         while (
          (psi1 < self.failpsi or psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
@@ -128,7 +129,7 @@ class Experiment(tk.Frame):
             psi2 = int(self.pump2.readline().decode().split(',')[1])
             thisdata = [
                         time.strftime("%I:%M:%S", time.localtime()),
-                        round(self.elapsed, 2),  # as seconds
+                        round(self.elapsed),  # as seconds
                         f"{self.elapsed/60:.2f}",  # as minutes
                         psi1,
                         psi2
