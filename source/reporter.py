@@ -208,7 +208,7 @@ class Reporter(tk.Toplevel):
     def make_plot(self, paths, titles, plotpumps, plot_params) -> None:
         """Makes a new plot from some tuples"""
 
-        print("Spawning a new plot")
+        print("Spawning a new plot \n")
         self.start = time.time()
         # reset the stylesheet
         plt.rcParams.update(plt.rcParamsDefault)
@@ -353,7 +353,7 @@ class Reporter(tk.Toplevel):
         """Evaluates the data"""
 
         print("Evaluating data")
-        interval = self.config.get('test settings', 'reading interval')
+        interval = self.config.getint('test settings', 'interval seconds')
         print(f"baseline: {baseline}")
         print(f"xlim: {xlim*60} s")
         print(f"ylim: {ylim} psi")
@@ -434,7 +434,7 @@ class Reporter(tk.Toplevel):
             e.configure(state='readonly', relief='flat')
             e.grid(row=i, column=1, sticky='W')
 
-        print(f"Finished evaluation in {round(time.time() - self.start, 2)}")
+        print(f"Finished evaluation in {round(time.time() - self.start, 2)} s")
         print()
 
     def export_report(self):
