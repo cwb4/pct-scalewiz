@@ -128,7 +128,7 @@ class Experiment(tk.Frame):
             psi2 = int(self.pump2.readline().decode().split(',')[1])
             thisdata = [
                         time.strftime("%I:%M:%S", time.localtime()),
-                        self.elapsed,  # as seconds
+                        round(self.elapsed, 2),  # as seconds
                         f"{self.elapsed/60:.2f}",  # as minutes
                         psi1,
                         psi2
