@@ -68,6 +68,7 @@ class ConfigManager(tk.Toplevel):
         """
         tk.Toplevel.__init__(self, parent)
         self.core = parent
+        self.protocol("WM_DELETE_WINDOW", self.update_settings)
         self.minsize(400, 370)  # big enough to hold the DEFAULT_DICT
         self.configpath = configpath  # to config.ini
         if not self.configpath is None:
@@ -260,6 +261,10 @@ class ConfigManager(tk.Toplevel):
             for key, val in config.items(section):
                 the_dict[section][key] = val
         return the_dict
+
+    def update_settings(self):
+        self.core.config.read(self.configpath)
+        self.destroy()
 
 
 if __name__ == '__main__':
