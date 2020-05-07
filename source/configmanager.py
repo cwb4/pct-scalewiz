@@ -101,7 +101,7 @@ class ConfigManager(tk.Toplevel):
     def build(self, parser_dict: dict) -> None:
         """Dynamically populates GUI from the contents of parser_dict"""
 
-        if hasattr(self, self.container):
+        if hasattr(self, 'container'):
             self.container.destroy()
 
         self.parser_dict = parser_dict
