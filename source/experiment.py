@@ -80,7 +80,6 @@ class Experiment(tk.Frame):
             pump.write('st'.encode())
             pump.close()
         self.to_log(f"The test finished in {self.elapsed/60:.2f} minutes")
-        self.to_log(f"{self.timeout_count} timeout errors occured")
 
         # TODO: try just disabling the frames instead, half the lines
         # re-enable the entries to let user start new test
@@ -113,7 +112,7 @@ class Experiment(tk.Frame):
             'test settings', 'interval seconds'
         )
         starttime = time.time()
-    
+
         while (
          (psi1 < self.failpsi or psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
