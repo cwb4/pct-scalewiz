@@ -318,7 +318,7 @@ class Reporter(tk.Toplevel):
         fil = filedialog.askopenfilename(
             initialdir="C:\"",
             title="Select data to plot:",
-            filetypes=[("Plot settings", "*.pct")]
+            filetypes=[("ScaleWiz project files", "*.pct")]
             )
 
         # this puts data paths into their original entries
