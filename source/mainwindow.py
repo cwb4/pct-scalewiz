@@ -97,7 +97,7 @@ class MainWindow(tk.Frame):
         self.strtbtn = ttk.Button(
             master=self.entfrm,
             text="Start",
-            command=self.init_test
+            command= lambda: self.init_test()
             )
 
         self.timelim.insert(0, self.config.get('test settings', 'time limit minutes'))
