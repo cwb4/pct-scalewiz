@@ -216,12 +216,12 @@ class Reporter(tk.Toplevel):
         # give names to plot parameters
         style = plot_params[0]
         if plot_params[1] is not '':
-            xlim = int(plot_params[1])
+            xlim = plot_params[1]
         else:
             xlim = int(self.mainwin.timelim.get())
 
         if plot_params[2] is not '':
-            ylim = int(plot_params[2])
+            ylim = plot_params[2]
         else:
             ylim = int(self.mainwin.failpsi.get())
 
@@ -364,6 +364,7 @@ class Reporter(tk.Toplevel):
         print(f"total_area: {total_area}")
         print(f"baseline_area: {baseline_area}")
         print(f"avail_area: {avail_area}")
+        print(f"max measures: {xlim*60/interval}")
         print()
 
         blank_scores = []
@@ -389,6 +390,7 @@ class Reporter(tk.Toplevel):
             print(trial.name)
             measures = len(trial)
             print(f"number of measurements: {measures}")
+            print(f"total trial area: {trial.sum()}")
             # all the area under the curve + ylim per would-be measure
             scale_area = int(trial.sum() + ylim*(xlim*60/interval - measures))
             print(f"scale area {scale_area}")
