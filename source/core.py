@@ -33,6 +33,7 @@ class ScaleWiz(tk.Frame):
             'fail psi': '1500',
             'default baseline' : 75,
             'time limit minutes': '90',
+            'interval seconds' : '3',
             'default pump': 'PSI 2',
             'project folder': '',
         }
