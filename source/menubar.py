@@ -87,6 +87,7 @@ class MenuBar(tk.Frame):
                 self.mainwin.winfo_toplevel().title(self.mainwin.project)
 
     def manageconfig(self):
+        self.config.read(self.config.path)
         ConfigManager(self.core,
             configpath=self.config.path,
             _title='Settings',
