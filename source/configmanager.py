@@ -26,7 +26,7 @@ Notes:
     * tries to treat very long dict values as lists if they contain commas;
      the contents are returned to string when writing to file. see line 146
 
-Version: [0.1.1] - 2020-5-4
+Version: [0.1.2] - 2020-5-4
 Author: https://github.com/teauxfu
 Gist: https://gist.github.com/teauxfu/bfe19a82381461771c87e2d1a4113355
 
