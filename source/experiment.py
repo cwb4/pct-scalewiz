@@ -109,23 +109,27 @@ class Experiment(tk.Frame):
                      'PSI 2' : [1, 1, 1, 1, 1]
                     }
         psi1, psi2, self.elapsed = 0, 0, 0
-        self.timeout_count = 0
-        starttime = datetime.now()
+        starttime = time.time()
+        interval = self.core.config.getint(
+            'test settings', 'interval seconds'
+        )
         while (
          (psi1 < self.failpsi or psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
          ):
             reading_start = time.time()
-            self.elapsed = (datetime.now() - starttime).seconds
+            # if not readings == 0:
+            #     self.to_log(f"elapsed: {round(self.elapsed, 3)}  readings: {readings}  ratio: {round(self.elapsed/readings, 3)}")
+
             for pump in (self.pump1, self.pump2):
                 pump.write('cc'.encode())  # get current conditions
-            time.sleep(0.01)  # give a moment to respond
+            time.sleep(0.1)  # give a moment to respond
             psi1 = int(self.pump1.readline().decode().split(',')[1])
             psi2 = int(self.pump2.readline().decode().split(',')[1])
             thisdata = [
                         time.strftime("%I:%M:%S", time.localtime()),
                         self.elapsed,  # as seconds
-                        f'{self.elapsed/60:.2f}',  # as minutes
+                        f"{self.elapsed/60:.2f}",  # as minutes
                         psi1,
                         psi2
                         ]
@@ -144,12 +148,12 @@ class Experiment(tk.Frame):
             pressures['PSI 2'].pop(-1)
             for list in (pressures['PSI 1'], pressures['PSI 2']):
                 if list.count(0) is 3: print('\a')
-            try:
-                time.sleep(1 - (time.time() - reading_start))
-            except ValueError as e:  # sleep doesn't take args < 0
-                print(e)
-                self.timeout_count += 1
 
+            # readings += 1
+            # self.to_log(f"leftover: {round(3 - (time.time() - reading_start), 3)}")
+            time.sleep(interval - (time.time() - reading_start))
+            # self.to_log(f"total: {round((time.time() - reading_start), 3)}")
+            self.elapsed = time.time() - starttime
             # end of while loop
 
         print("Test complete")
