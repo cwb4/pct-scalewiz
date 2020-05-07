@@ -280,10 +280,10 @@ class MainWindow(tk.Frame):
             y = data[self.plotpsi.get()]
             x = data['Minutes']
             if self.chem.get() == "" and self.conc.get() == "":
-                 datalabel = " "
+                label = " "
             else:
-                datalabel = f"{self.chem.get()} {self.conc.get()}".strip()
-            self.ax.plot(x, y, label=datalabel)
+                label = f"{self.chem.get().strip()} {self.conc.get().strip()}"
+            self.ax.plot(x, y, label=label)
 
             self.ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
             self.ax.set_facecolor('w')
