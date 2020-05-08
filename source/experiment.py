@@ -14,7 +14,6 @@ class Experiment():
     def __init__(self, parent, port1, port2, timelimit, failpsi, chem, conc):
         """Collects all the user data from the MainWindow widgets"""
 
-        # tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         self.core = parent.core
         self.port1 = port1
