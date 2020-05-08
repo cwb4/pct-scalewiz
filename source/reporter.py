@@ -478,7 +478,7 @@ class Reporter(tk.Toplevel):
         img_filename = f"{short_proj}.png"
         img_path = os.path.join(self.mainwin.project, img_filename)
         print("Making temp resized plot image")
-        img = PIL.Image.open(_path)
+        img = PIL.Image.open(img_path)
         # img = img.resize((700, 265))
         img = img.resize((667, 257))
         img_path = _path[:-4]
