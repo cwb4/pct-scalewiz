@@ -10,14 +10,14 @@ import time  # sleeping
 # from winsound import Beep  # beeping when the test ends
 
 
-class Experiment(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+class Experiment():
+    def __init__(self, parent, port1, port2, timelimit, failpsi, chem, conc):
         """Collects all the user data from the MainWindow widgets"""
 
-        tk.Frame.__init__(self, parent, *args, **kwargs)
+        # tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         self.core = parent.core
-        self.port1 = port2
+        self.port1 = port1
         self.port2 = port2
         self.timelimit = timelimit
         self.failpsi = failpsi
