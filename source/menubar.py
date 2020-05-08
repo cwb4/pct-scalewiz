@@ -34,7 +34,7 @@ class MenuBar(tk.Frame):
         )
 
         self.menubar.add_command(
-            label="Calculate treating volume"
+            label="Calculate treating volume",
             command=lambda: ConcCalc(self.core)
         )
 
