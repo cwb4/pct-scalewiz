@@ -22,6 +22,7 @@ class Experiment():
         self.failpsi = failpsi
         self.chem = chem
         self.conc = conc
+        self.running = False
 
         print("Disabling MainWindow parameter entries")
         for child in self.parent.entfrm.winfo_children():
@@ -82,7 +83,7 @@ class Experiment():
             pump.write('st'.encode())
             pump.close()
         self.to_log(f"The test finished in {self.elapsed/60:.2f} minutes")
-
+        self.running = False
         # TODO: try just disabling the frames instead, half the lines
         # re-enable the entries to let user start new test
         for child in self.parent.entfrm.winfo_children():
@@ -93,9 +94,10 @@ class Experiment():
 
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
-
-        self.to_log("Starting the test")
-        self.core.thread_pool_executor.submit(self.take_reading)
+        if not self.running:
+            self.to_log("Starting the test")
+            self.core.thread_pool_executor.submit(self.take_reading)
+            self.running = True
 
     def take_reading(self) -> None:
         """Loop to be handled by the thread_pool_executor"""
