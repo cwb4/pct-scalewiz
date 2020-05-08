@@ -9,7 +9,8 @@ from configmanager import ConfigManager
 
 
 class MenuBar(tk.Frame):
-    """Docstring"""
+    """The menu bar for the main window"""
+
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.mainwin = parent
@@ -22,16 +23,18 @@ class MenuBar(tk.Frame):
         self.build()
 
     def build(self):
+        """Makes the Tkinter widgets for the menu bar"""
+
         self.menubar = tk.Menu(self)
         # self.filemenu = tk.Menu(self, tearoff=0)
         self.menubar.add_command(
             label="Set project folder",
-            command=self.askdir
+            command=lambda: self.askdir()
         )
 
         self.menubar.add_command(
             label="Make new report",
-            command=self.new_plot
+            command=lambda: self.new_plot()
         )
 
         self.pltstylmenu = tk.Menu(master=self, tearoff=1)
@@ -49,12 +52,12 @@ class MenuBar(tk.Frame):
 
         self.menubar.add_command(
             label='Settings',
-            command=self.manageconfig
+            command=lambda: self.manageconfig()
         )
 
         self.menubar.add_command(
             label='Help',
-            command=self.show_help
+            command=lambda: self.show_help()
         )
 
         self.mainwin.winfo_toplevel().config(menu=self.menubar)
