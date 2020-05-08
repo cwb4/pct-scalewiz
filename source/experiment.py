@@ -54,8 +54,8 @@ class Experiment(tk.Frame):
         # the timeout values are an alternative to using TextIOWrapper
         # the values chosen were suggested by the pump's documentation
         try:
-            self.pump1 = serial.Serial(self.port1, timeout=0.01)
-            self.pump2 = serial.Serial(self.port2, timeout=0.01)
+            self.pump1 = serial.Serial(self.port1, timeout=0.05)
+            self.pump2 = serial.Serial(self.port2, timeout=0.05)
         except serial.serialutil.SerialException:
             self.to_log("Could not establish a connection to the pumps",
                         "Try resetting the port connections")
@@ -112,18 +112,18 @@ class Experiment(tk.Frame):
             'test settings', 'interval seconds'
         )
         starttime = time.time()
-
+        readings = 0
         while (
          (psi1 < self.failpsi or psi2 < self.failpsi)
          and self.elapsed < self.timelimit*60
          ):
             reading_start = time.time()
-            # if not readings == 0:
-            #     self.to_log(f"elapsed: {round(self.elapsed, 3)}  readings: {readings}  ratio: {round(self.elapsed/readings, 3)}")
+            if not readings == 0:
+                print(f" avg s/reading: {round(self.elapsed/readings, 4)}")
 
             for pump in (self.pump1, self.pump2):
                 pump.write('cc'.encode())  # get current conditions
-            time.sleep(0.1)  # give a moment to respond
+            time.sleep(0.05)  # give a moment to respond
             psi1 = int(self.pump1.readline().decode().split(',')[1])
             psi2 = int(self.pump2.readline().decode().split(',')[1])
             thisdata = [
@@ -140,6 +140,7 @@ class Experiment(tk.Frame):
                 f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
             )
             self.to_log(this_reading)
+            readings += 1
 
             # make sure we have flow - consecutive 0 readings alert user
             pressures['PSI 1'].insert(0, psi1)
@@ -149,10 +150,9 @@ class Experiment(tk.Frame):
             for list in (pressures['PSI 1'], pressures['PSI 2']):
                 if list.count(0) is 3: print('\a')
 
-            # readings += 1
-            # self.to_log(f"leftover: {round(3 - (time.time() - reading_start), 3)}")
+            # print(f"leftover: {round(3 - (time.time() - reading_start), 3)}")
             time.sleep(interval - (time.time() - reading_start))
-            # self.to_log(f"total: {round((time.time() - reading_start), 3)}")
+            # print(f"total: {round((time.time() - reading_start), 3)}")
             self.elapsed = time.time() - starttime
             # end of while loop
 
