@@ -71,7 +71,7 @@ class MenuBar(tk.Frame):
             title="Select data output directory:"
             )
 
-        if out is not "":
+        if out != "":
             self.mainwin.project = os.path.normpath(out)
             self.config['test settings']['project folder'] = self.mainwin.project
             with open('scalewiz.ini', 'w') as configfile:
@@ -81,8 +81,8 @@ class MenuBar(tk.Frame):
             # make it the MainWindow title in a pretty way
             try:
                 p = self.mainwin.project.split('\\')
-                pp = p[-2] + " - " + p[-1]
-                self.mainwin.winfo_toplevel().title(pp)
+                self.mainwin.title = p[-2] + " - " + p[-1]
+                self.mainwin.winfo_toplevel().title(self.mainwin.title)
             except IndexError:
                 self.mainwin.winfo_toplevel().title(self.mainwin.project)
 

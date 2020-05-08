@@ -40,8 +40,8 @@ class MainWindow(tk.Frame):
         )
         try:
             p = self.project.split('\\')
-            pp = p[-2] + " - " + p[-1]
-            self.winfo_toplevel().title(pp)
+            self.title = p[-2] + " - " + p[-1]
+            self.winfo_toplevel().title(self.title)
         except IndexError:
             self.winfo_toplevel().title(os.getcwd())
 
