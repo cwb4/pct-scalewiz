@@ -14,8 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Report Generator now properly inserts results as numbers, not text
 ### Changed
   - updated the Report Generator's math to acknowledge the reading interval when calculating results
+  - internal code review and formatting
 ### Removed
   - Winsound dependency (allows to run cross-platform)
+### Notes
+  - Reading Interval added to maintain consistency in data structure across computers; lower-end hardware seems unable to faithfully record one reading per second
 
 
 ## [0.5.3] 2020-5-4
