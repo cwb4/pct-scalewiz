@@ -6,6 +6,7 @@ import os  # handling file paths
 
 from reporter import Reporter
 from configmanager import ConfigManager
+from concentrations import ConcCalc
 
 
 class MenuBar(tk.Frame):
@@ -33,8 +34,13 @@ class MenuBar(tk.Frame):
         )
 
         self.menubar.add_command(
+            label="Calculate treating volume"
+            command=lambda: ConcCalc(self.core)
+        )
+
+        self.menubar.add_command(
             label="Make new report",
-            command=lambda: self.new_plot()
+            command=lambda: Reporter(self.core)
         )
 
         self.pltstylmenu = tk.Menu(master=self, tearoff=1)
@@ -106,12 +112,6 @@ class MenuBar(tk.Frame):
         print(f"Changing MainWindow plot style to {style}")
         self.mainwin.plotstyle = style
         self.mainwin.pltfrm.configure(text=(f"Style: {self.mainwin.plotstyle}"))
-
-    def new_plot(self):
-        """Spawns a new Report Generator window"""
-
-        print("Spawning a new Report Generator")
-        Reporter(self.core)
 
     def show_help(self):
         tk.messagebox.showinfo(

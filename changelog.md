@@ -7,12 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] 2020-5-6
 ### Added
+  - Concentration Calculator tool
   - more robust error handling and reporting during experiment loop
   - added 'Reading Interval' to 'Test Settings' -- sets interval between measurements
     (default is one reading per three seconds)
 ### Fixed
   - Report Generator now properly inserts results as number values, not text
 ### Changed
+  - moved the Report Generator's math into its own file
   - updated the Report Generator's math to acknowledge the reading interval when calculating results
   - internal code review and formatting
 ### Removed
