@@ -256,13 +256,13 @@ class Reporter(tk.Toplevel):
                     self.ax.plot(df['Minutes'], df[plotpump],
                         label=title,
                         linestyle=('-.')
-                        )
+                    )
                     blanks.append(Series(df[plotpump], name=title))
 
                 else:  # plot using default line style
                     self.ax.plot(df['Minutes'], df[plotpump],
                         label=title
-                        )
+                    )
                     trials.append(Series(df[plotpump], name=title))
 
             self.ax.legend(loc=self.loc.get())
@@ -311,7 +311,7 @@ class Reporter(tk.Toplevel):
             parent=self,
             title="Saved successfully",
             message=f"Project data saved to\n{_path}"
-            )
+        )
 
     def unpickle_plot(self) -> None:
         """Unpickles/unpacks a list of string 3-tuples and puts those values
@@ -321,7 +321,7 @@ class Reporter(tk.Toplevel):
             initialdir="C:\"",
             title="Select data to plot:",
             filetypes=[("ScaleWiz project files", "*.pct")]
-            )
+        )
 
         # this puts data paths into their original entries
         if fil != '':
@@ -475,16 +475,16 @@ class Reporter(tk.Toplevel):
         customer = project[-2]
         short_proj = project[-1]
 
-        _img = f"{short_proj}.png"
-        _path = os.path.join(self.mainwin.project, _img)
+        img_filename = f"{short_proj}.png"
+        img_path = os.path.join(self.mainwin.project, img_filename)
         print("Making temp resized plot image")
         img = PIL.Image.open(_path)
         # img = img.resize((700, 265))
         img = img.resize((667, 257))
-        _path = _path[:-4]
-        _path += "- temp.png"
-        img.save(_path)
-        img = openpyxl.drawing.image.Image(_path)
+        img_path = _path[:-4]
+        img_path += "- temp.png"
+        img.save(img_path)
+        img = openpyxl.drawing.image.Image(img_path)
         img.anchor = 'A28'
 
         file = f"#-# {short_proj} Calcium Carbonate Scale Block Analysis.xlsx"
@@ -561,6 +561,7 @@ class Reporter(tk.Toplevel):
 
     def show_help(self):
         """Shows a help dialog to the user"""
+
         tk.messagebox.showinfo(
         parent=self,
         title="Help: Using the Report Generator",
