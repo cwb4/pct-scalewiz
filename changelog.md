@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - added 'Reading Interval' to 'Test Settings' -- sets interval between measurements
     (default is one reading per three seconds)
 ### Fixed
-  - Report Generator now properly inserts results as numbers, not text
+  - Report Generator now properly inserts results as number values, not text
 ### Changed
   - updated the Report Generator's math to acknowledge the reading interval when calculating results
   - internal code review and formatting
