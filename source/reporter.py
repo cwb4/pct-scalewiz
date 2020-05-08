@@ -15,6 +15,7 @@ import tkinter as tk  # GUI
 from tkinter import ttk, filedialog, messagebox
 
 from seriesentry import SeriesEntry
+from evaluator import evaluate
 
 
 class Reporter(tk.Toplevel):
@@ -158,7 +159,6 @@ class Reporter(tk.Toplevel):
         """
 
         print("Preparing plot from Reporter fields")
-
         paths = tuple(
             [
             child.path.get()
@@ -286,7 +286,7 @@ class Reporter(tk.Toplevel):
                 title="No trial data selected",
                 message="At least one trial not titled 'blank' must be selected")
             else:
-                self.evaluate(blanks, trials, baseline, xlim, ylim)
+                self.get_results(blanks, trials, baseline, xlim, ylim)
                 self.fig.show()
 
                 project = self.mainwin.project.split('\\')
@@ -351,93 +351,31 @@ class Reporter(tk.Toplevel):
         # raise the settings window
         self.lift()
 
-    def evaluate(self, blanks, trials, baseline, xlim, ylim):
+    def get_results(self, blanks, trials, baseline, xlim, ylim):
         """Evaluates the data"""
 
-        start=time.time()
         print("Evaluating data")
         interval = self.config.getint('test settings', 'interval seconds')
-        print(f"baseline: {baseline} psi")
-        print(f"xlim: {xlim*60} s")
-        print(f"ylim: {ylim} psi")
-        print()
-        total_area = ylim*xlim*60/interval
-        baseline_area = baseline*xlim*60/interval
-        avail_area = total_area - baseline_area
-        print(f"total_area: {total_area} psi")
-        print(f"baseline_area: {baseline_area} psi")
-        print(f"avail_area: {avail_area} psi")
-        print(f"max measures: {xlim*60/interval}")
-        print()
-
-        blank_scores = []
-        blank_times = []
-
-        for blank in blanks:
-            blank_times.append(round(len(blank)*interval, 2))
-            print(blank.name)
-            scale_area = blank.sum()
-            print(f"scale area: {scale_area} psi")
-            area_over_blank = ylim*len(blank) - scale_area
-            print(f"area over blank: {area_over_blank} psi")
-            protectable_area = avail_area - area_over_blank
-            print(f"protectable_area: {protectable_area} psi")
-            blank_scores.append(protectable_area)
-            print()
-        protectable_area = int(DataFrame(blank_scores).mean())
-        print(f"avg protectable_area: {protectable_area} psi")
-        print()
-
-        scores = {}
-        for trial in trials:
-            print(trial.name)
-            measures = len(trial)
-            print(f"number of measurements: {measures}")
-            print(f"total trial area: {trial.sum()} psi")
-            # all the area under the curve + ylim per would-be measure
-            scale_area = int(trial.sum() + ylim*(xlim*60/interval - measures))
-            print(f"scale area {scale_area} psi")
-            score = (1 - (scale_area - baseline_area)/protectable_area)*100
-            print(f"score: {score:.2f}%")
-            if score > 100:
-                print("Reducing score to 100%")
-                score = 100
-            scores[trial.name] = score
-            print()
-
-        result_titles = [f"{i}" for i in scores]
-        result_values = [f"{scores[i]:.1f}%" for i in scores]
-        durations = [round(len(trial)*interval, 2) for trial in trials]
-        max_psis = [
-                    int(trial.max())
-                    if int(trial.max()) <= ylim
-                    else ylim
-                    for trial in trials
-                   ]
-
-        self.results_queue = (
-                blank_times,
-                result_titles,
-                result_values,
-                durations,
-                baseline,
-                ylim,
-                max_psis
+        self.results_queue = evaluate(
+            blanks, trials, baseline, xlim, ylim, interval
         )
 
         result_window = tk.Toplevel(self)
         result_window.attributes('-topmost', 'true')
         result_window.title("Results")
         def_bg = result_window.cget('bg')
-        for i, title in enumerate(result_titles):
-            e = tk.Label(result_window, text=title)
-            e.grid(row=i, column=0, padx=(45))
+        tk.Label(result_window, text="Trial").grid(row=0, column=0)
+        tk.Label(result_window, text="% protection").grid(row=0, column=1)
 
-        for i, value in enumerate(result_values):
+        for i, title in enumerate(self.results_queue[1]):
+            e = tk.Label(result_window, text=title)
+            e.grid(row=i+1, column=0, padx=45)
+
+        for i, value in enumerate(self.results_queue[2]):
             e = tk.Entry(result_window, bg=def_bg, width=10)
             e.insert(0, value)
             e.configure(state='readonly', relief='flat')
-            e.grid(row=i, column=1, sticky='W')
+            e.grid(row=i+1, column=1, sticky='W')
 
         print(f"Finished evaluation in {round(time.time() - start, 2)} s")
         print()
