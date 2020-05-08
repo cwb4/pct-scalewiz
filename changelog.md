@@ -8,10 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] 2020-5-6
 ### Added
   - more robust error handling and reporting during experiment loop
+  - added 'Reading Interval' to 'Test Settings' -- sets interval between measurements (default is one reading per three seconds)
+### Fixed
+  - Report Generator now properly inserts results as numbers, not text
 ### Changed
-  - added 'Reading Interval' to 'Test Settings' -- sets interval between measurements
-  - default Reading Interval set to 3 seconds
-  - updated the Reporter's math to acknowledge the reading interval when calculating results
+  - updated the Report Generator's math to acknowledge the reading interval when calculating results
 ### Removed
   - Winsound dependency (allows to run cross-platform)
 
