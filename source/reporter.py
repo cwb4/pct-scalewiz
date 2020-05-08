@@ -180,17 +180,17 @@ class Reporter(tk.Toplevel):
         )
 
         # look for empty entries in the form
-        if self.xlim.get() is not '':
+        if self.xlim.get() != '':
             xlim = int(self.xlim.get())
         else:
             xlim = self.config.getint('test settings', 'time limit minutes')
 
-        if self.ylim.get() is not '':
+        if self.ylim.get() != '':
             ylim = int(self.ylim.get())
         else:
             ylim = self.config.getint('test settings', 'fail psi')
 
-        if self.baseline.get() is not '':
+        if self.baseline.get() != '':
             baseline = int(self.baseline.get())
         else:
             baseline = self.config.getint('test settings', 'default baseline')
@@ -209,18 +209,18 @@ class Reporter(tk.Toplevel):
         """Makes a new plot from some tuples"""
 
         print("Spawning a new plot \n")
-        self.start = time.time()
+        start = time.time()
         # reset the stylesheet
         plt.rcParams.update(plt.rcParamsDefault)
 
         # give names to plot parameters
         style = plot_params[0]
-        if plot_params[1] is not '':
+        if plot_params[1] != '':
             xlim = plot_params[1]
         else:
             xlim = int(self.mainwin.timelim.get())
 
-        if plot_params[2] is not '':
+        if plot_params[2] != '':
             ylim = plot_params[2]
         else:
             ylim = int(self.mainwin.failpsi.get())
@@ -237,7 +237,7 @@ class Reporter(tk.Toplevel):
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
             self.ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
             self.ax.set_facecolor('w')
-            self.fig.canvas.set_window_title("")
+            self.fig.canvas.set_window_title(self.mainwin.title)
             plt.tight_layout()
 
             blanks = []
@@ -250,7 +250,7 @@ class Reporter(tk.Toplevel):
                 else:
                     df = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
                 # if the trial is a blank run change the line style
-                if title is "": pass
+                if title == "": pass
                 elif "blank" in str(title).lower():
                     self.ax.plot(df['Minutes'], df[plotpump],
                         label=title,
@@ -269,17 +269,17 @@ class Reporter(tk.Toplevel):
             baseline = plot_params[3]
 
             # some tests to validate user input
-            if len(blanks) is 0 and len(trials) is 0:
+            if len(blanks) == 0 and len(trials) == 0:
                 tk.messagebox.showwarning(
                 parent=self,
                 title="No data selected",
                 message="Click a 'File path:' entry to select a data file")
-            elif len(blanks) is 0:
+            elif len(blanks) == 0:
                 tk.messagebox.showwarning(
                 parent=self,
                 title="No series designated as blank",
                 message="At least one series title must contain 'blank'")
-            elif len(trials) is 0:
+            elif len(trials) == 0:
                 tk.messagebox.showwarning(
                 parent=self,
                 title="No trial data selected",
@@ -294,6 +294,7 @@ class Reporter(tk.Toplevel):
                 image_path = os.path.join(self.mainwin.project, image)
                 self.fig.savefig(image_path)
                 print(f"Saved plot image to\n{image_path}")
+                print(f"Finished plotting in {round(time.time() - start, 2)} s")
 
     def pickle_plot(self) -> None:
         """Pickles a list to a file in the project directory"""
@@ -322,7 +323,7 @@ class Reporter(tk.Toplevel):
             )
 
         # this puts data paths into their original entries
-        if fil is not '':
+        if fil != '':
             print(f"Unpickling project file\n{fil}")
             with open(fil, 'rb') as p:
                 _plt = pickle.load(p)
@@ -352,18 +353,19 @@ class Reporter(tk.Toplevel):
     def evaluate(self, blanks, trials, baseline, xlim, ylim):
         """Evaluates the data"""
 
+        start=time.time()
         print("Evaluating data")
         interval = self.config.getint('test settings', 'interval seconds')
-        print(f"baseline: {baseline}")
+        print(f"baseline: {baseline} psi")
         print(f"xlim: {xlim*60} s")
         print(f"ylim: {ylim} psi")
         print()
         total_area = ylim*xlim*60/interval
         baseline_area = baseline*xlim*60/interval
         avail_area = total_area - baseline_area
-        print(f"total_area: {total_area}")
-        print(f"baseline_area: {baseline_area}")
-        print(f"avail_area: {avail_area}")
+        print(f"total_area: {total_area} psi")
+        print(f"baseline_area: {baseline_area} psi")
+        print(f"avail_area: {avail_area} psi")
         print(f"max measures: {xlim*60/interval}")
         print()
 
@@ -374,15 +376,15 @@ class Reporter(tk.Toplevel):
             blank_times.append(round(len(blank)*interval, 2))
             print(blank.name)
             scale_area = blank.sum()
-            print(f"scale area: {scale_area}")
+            print(f"scale area: {scale_area} psi")
             area_over_blank = ylim*len(blank) - scale_area
-            print(f"area over blank: {area_over_blank}")
+            print(f"area over blank: {area_over_blank} psi")
             protectable_area = avail_area - area_over_blank
-            print(f"protectable_area: {protectable_area}")
+            print(f"protectable_area: {protectable_area} psi")
             blank_scores.append(protectable_area)
             print()
         protectable_area = int(DataFrame(blank_scores).mean())
-        print(f"avg protectable_area: {protectable_area}")
+        print(f"avg protectable_area: {protectable_area} psi")
         print()
 
         scores = {}
@@ -390,14 +392,15 @@ class Reporter(tk.Toplevel):
             print(trial.name)
             measures = len(trial)
             print(f"number of measurements: {measures}")
-            print(f"total trial area: {trial.sum()}")
+            print(f"total trial area: {trial.sum()} psi")
             # all the area under the curve + ylim per would-be measure
             scale_area = int(trial.sum() + ylim*(xlim*60/interval - measures))
-            print(f"scale area {scale_area}")
-            score = 1 - (scale_area - baseline_area)/protectable_area
-            print(f"ratio used: {score:.2f}")
-            if score*100 > 100: score = 100
-            else: score = score*100
+            print(f"scale area {scale_area} psi")
+            score = (1 - (scale_area - baseline_area)/protectable_area)*100
+            print(f"score: {score:.2f}%")
+            if score > 100:
+                print("Reducing score to 100%")
+                score = 100
             scores[trial.name] = score
             print()
 
@@ -409,7 +412,7 @@ class Reporter(tk.Toplevel):
                     if int(trial.max()) <= ylim
                     else ylim
                     for trial in trials
-                    ]
+                   ]
 
         self.results_queue = (
                 blank_times,
@@ -436,7 +439,7 @@ class Reporter(tk.Toplevel):
             e.configure(state='readonly', relief='flat')
             e.grid(row=i, column=1, sticky='W')
 
-        print(f"Finished evaluation in {round(time.time() - self.start, 2)} s")
+        print(f"Finished evaluation in {round(time.time() - start, 2)} s")
         print()
 
     def export_report(self):
@@ -454,7 +457,7 @@ class Reporter(tk.Toplevel):
             tk.messagebox.showerror(
                 parent=self,
                 message=('No valid template file found.' +
-                ' You can set the template path in Settings > Report Settings.'
+                '\nYou can set the template path in Settings > Report Settings.'
                 )
             )
             return
@@ -474,15 +477,16 @@ class Reporter(tk.Toplevel):
         _path = os.path.join(self.mainwin.project, _img)
         print("Making temp resized plot image")
         img = PIL.Image.open(_path)
-        img = img.resize((700, 265))
+        # img = img.resize((700, 265))
+        img = img.resize((667, 257))
         _path = _path[:-4]
         _path += "- temp.png"
         img.save(_path)
         img = openpyxl.drawing.image.Image(_path)
         img.anchor = 'A28'
 
-        report_name = f"{short_proj}.xlsx"
-        report_path = os.path.join(self.mainwin.project, report_name)
+        file = f"#-# {short_proj} Calcium Carbonate Scale Block Analysis.xlsx"
+        report_path = os.path.join(self.mainwin.project, file)
         while os.path.isfile(report_path):
             report_path = report_path[:-5]
             report_path += ' - copy.xlsx'
@@ -521,25 +525,25 @@ class Reporter(tk.Toplevel):
         chem_concs = [" ".join(title.split(' ')[1:2]) for title in result_titles]
 
         for (cell, blank_time) in zip(blank_time_cells, blank_times):
-            ws[cell] = round(blank_time/60, 2)
+            ws[cell] = float(round(blank_time/60, 2))
         for (cell, name) in zip(chem_name_cells, chem_names):
             ws[cell] = name
         for (cell, conc) in zip(chem_conc_cells, chem_concs):
-            ws[cell] = conc
+            ws[cell] = int(conc)
         for (cell, duration) in zip(duration_cells, durations):
-            ws[cell] = round(duration/60, 2)
+            ws[cell] = float(round(duration/60, 2))
         for (cell, psi) in zip(max_psi_cells, max_psis):
-            ws[cell] = psi
+            ws[cell] = int(psi)
         for (cell, score) in zip(protection_cells, result_values):
-            ws[cell] = score
+            ws[cell] = float(score)
 
         # note: may need to move contents up before deleting del_rows
 
         del_rows = []
         for i in range(19, 27):
-            if ws[f'A{i}'].value is None:
+            if ws[f'A{i}'].value == None:
                 del_rows.append(i)
-        if len(del_rows) is 0: pass
+        if len(del_rows) == 0: pass
         for row in del_rows:
             ws.row_dimensions[row].hidden = True
 
