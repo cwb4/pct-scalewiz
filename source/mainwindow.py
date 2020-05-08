@@ -241,10 +241,18 @@ class MainWindow(tk.Frame):
             self.strtbtn['state'] = ['enable']
 
     def init_test(self) -> None:
-        """init an Experiment object as an attribute of MainWindow"""
+        """Scrape form for user input, then init an Experiment object"""
 
+        port1 = self.port1.get()
+        port2 = self.port2.get()
+        timelimit = float(self.timelim.get())
+        failpsi = int(self.failpsi.get())
+        chem = self.chem.get().strip().replace(' ', '_')
+        conc = self.conc.get().strip().replace(' ', '_')
         print("Spawning a new Experiment")
-        self.test = Experiment(self)
+        self.test = Experiment(
+        self, port1, port2, timelimit, failpsi, chem, conc
+        )
 
     def to_log(self, *msgs) -> None:
         """Logs a message to the Text widget in MainWindow's outfrm"""

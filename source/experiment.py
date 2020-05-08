@@ -17,6 +17,12 @@ class Experiment(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         self.core = parent.core
+        self.port1 = port2
+        self.port2 = port2
+        self.timelimit = timelimit
+        self.failpsi = failpsi
+        self.chem = chem
+        self.conc = conc
 
         print("Disabling MainWindow parameter entries")
         for child in self.parent.entfrm.winfo_children():
@@ -31,12 +37,7 @@ class Experiment(tk.Frame):
         self.parent.dataout.delete(1.0, 'end')
         self.parent.dataout['state'] = 'disabled'
         # get user input from the main window
-        self.port1 = self.parent.port1.get()
-        self.port2 = self.parent.port2.get()
-        self.timelimit = float(self.parent.timelim.get())
-        self.failpsi = int(self.parent.failpsi.get())
-        self.chem = self.parent.chem.get().strip().replace(' ', '_')
-        self.conc = self.parent.conc.get().strip().replace(' ', '_')
+
         # set up an output file
         file_name = f"{self.chem}_{self.conc}.csv"
         self.outpath = os.path.join(self.parent.project, file_name)
@@ -47,6 +48,8 @@ class Experiment(tk.Frame):
             self.outpath = self.outpath[0:-4]
             self.outpath += r" - copy.csv"
         self.to_log(f"Creating output file at \n{self.outpath}")
+        print(f"Creating output file at \n{self.outpath}")
+
         header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
         with open(self.outpath, "w") as f:
             csv.writer(f, delimiter=',').writerow(header_row)
