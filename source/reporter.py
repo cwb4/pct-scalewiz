@@ -30,7 +30,7 @@ class Reporter(tk.Toplevel):
         "lower center",
         "upper center",
         "center"
-        ]
+    ]
 
     def __init__(self, parent, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
@@ -44,6 +44,7 @@ class Reporter(tk.Toplevel):
 
     def build(self)  -> None:
         """Makes the widgets"""
+
         self.winfo_toplevel().title("Report Generator")
 
         self.pltbar = tk.Menu(self)
@@ -61,7 +62,7 @@ class Reporter(tk.Toplevel):
         )
         self.pltbar.add_command(
             label='Help',
-            command=self.show_help
+            command=lambda: self.show_help()
         )
 
         self.winfo_toplevel().configure(menu=self.pltbar)
@@ -337,10 +338,10 @@ class Reporter(tk.Toplevel):
 
             print("Populating Reporter fields")
             for path, title, plotpump, widget in into_widgets:
-                widget.path.delete(0, tk.END)
+                widget.path.delete(0, 'end')
                 widget.path.insert(0, path)
                 self.after(150, widget.path.xview_moveto, 1)
-                widget.title.delete(0, tk.END)
+                widget.title.delete(0, 'end')
                 widget.title.insert(0, title)
                 self.after(150, widget.title.xview_moveto, 1)
                 widget.plotpump.set(plotpump)
@@ -426,7 +427,6 @@ class Reporter(tk.Toplevel):
 
         result_window = tk.Toplevel(self)
         result_window.attributes('-topmost', 'true')
-        ## TODO: figure out how this works !!
         result_window.title("Results")
         def_bg = result_window.cget('bg')
         for i, title in enumerate(result_titles):
@@ -445,6 +445,7 @@ class Reporter(tk.Toplevel):
     def export_report(self):
         """Exports the reporter's results_queue to an .xlsx file designated
         as the template in the config file
+
         """
 
         print("Preparing export")
@@ -461,6 +462,7 @@ class Reporter(tk.Toplevel):
                 )
             )
             return
+
         if not hasattr(self, 'results_queue'):
             tk.messagebox.showinfo(
             parent=self,
