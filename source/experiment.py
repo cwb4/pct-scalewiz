@@ -121,8 +121,9 @@ class Experiment(tk.Frame):
          and self.elapsed < self.timelimit*60
          ):
             reading_start = time.time()
-            if not readings == 0:
-                print(f" avg s/reading: {round(self.elapsed/readings, 4)}")
+            if not readings == 0 and self.elapsed/readings - interval > 0.01:
+                print('\a')
+                print(f"avg s/reading: {round(self.elapsed/readings, 4)}")
 
             for pump in (self.pump1, self.pump2):
                 pump.write('cc'.encode())  # get current conditions
