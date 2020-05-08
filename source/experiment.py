@@ -152,7 +152,9 @@ class Experiment(tk.Frame):
             pressures['PSI 2'].insert(0, psi2)
             pressures['PSI 2'].pop(-1)
             for list in (pressures['PSI 1'], pressures['PSI 2']):
-                if list.count(0) is 3: print('\a')
+                if list.count(0) is 3:
+                    print(f"{list.count(0)} null values in the past 5 readings")
+                    print('\a')
 
             # print(f"leftover: {round(3 - (time.time() - reading_start), 3)}")
             time.sleep(interval - (time.time() - reading_start))
