@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<<<<<<< HEAD
 ## Unreleased
+=======
+## Unrealeased
+>>>>>>> 01e74bd7b10cc8b8c9b538cb47bbe41c67065553
 ### Added
  - expanding logging functionality to the Reporter Generator; now outputs a calculation log with each data evaluation
 
