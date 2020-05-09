@@ -7,16 +7,15 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     print("Evaluating data")
     print(f"baseline: {baseline} psi")
     print(f"xlim: {xlim*60} s")
-    print(f"ylim: {ylim} psi")
-    print()
+    print(f"ylim: {ylim} psi\n")
+
     total_area = ylim*xlim*60/interval
     baseline_area = baseline*xlim*60/interval
     avail_area = total_area - baseline_area
     print(f"total_area: {total_area} psi")
     print(f"baseline_area: {baseline_area} psi")
     print(f"avail_area: {avail_area} psi")
-    print(f"max measures: {xlim*60/interval}")
-    print()
+    print(f"max measures: {xlim*60/interval}\n")
 
     blank_scores = []
     blank_times = []
@@ -32,9 +31,8 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
         print(f"protectable_area: {protectable_area} psi")
         blank_scores.append(protectable_area)
         print()
-    protectable_area = int(DataFrame(blank_scores).mean())
-    print(f"avg protectable_area: {protectable_area} psi")
-    print()
+    protectable_area = round(DataFrame(blank_scores).mean())
+    print(f"avg protectable_area: {protectable_area} psi\n")
 
     scores = {}
     for trial in trials:
@@ -57,8 +55,8 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     result_values = [f"{scores[i]:.1f}%" for i in scores]
     durations = [round(len(trial)*interval, 2) for trial in trials]
     max_psis = [
-                int(trial.max())
-                if int(trial.max()) <= ylim
+                round(trial.max())
+                if round(trial.max()) <= ylim
                 else ylim
                 for trial in trials
                ]
