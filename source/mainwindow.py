@@ -38,12 +38,13 @@ class MainWindow(tk.Frame):
             fallback=os.getcwd()
             )
         )
+
         try:
             p = self.project.split('\\')
             self.title = p[-2] + " - " + p[-1]
-            self.winfo_toplevel().title(self.title)
         except IndexError:
-            self.winfo_toplevel().title(os.getcwd())
+            self.title=os.getcwd()
+        self.winfo_toplevel().title(self.title)
 
         self.plotstyle = self.config.get('plot settings', 'default style')
 
