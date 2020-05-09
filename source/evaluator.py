@@ -1,4 +1,4 @@
-"""Docstring"""
+"""Analyses the data and returns a tuple of results"""
 
 def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     """Evaluates the data"""
