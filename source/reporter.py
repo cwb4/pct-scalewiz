@@ -354,11 +354,17 @@ class Reporter(tk.Toplevel):
     def get_results(self, blanks, trials, baseline, xlim, ylim):
         """Evaluates the data"""
 
-        print("Evaluating data")
+        print("Getting results from evaluator")
         interval = self.config.getint('test settings', 'interval seconds')
-        self.results_queue = evaluate(
+        (self.results_queue, self.log) = evaluate(
             blanks, trials, baseline, xlim, ylim, interval
         )
+
+        stamp = round(time.time())
+        log_file = os.path.join(self.mainwin.project, f"calc_log_{stamp}.txt")
+        with open(log_file, 'w') as f:
+            f.write('\n'.join(self.log))
+        print(f"Wrote calculations log to \n{log_file}\n")
 
         result_window = tk.Toplevel(self)
         result_window.attributes('-topmost', 'true')
@@ -376,9 +382,6 @@ class Reporter(tk.Toplevel):
             e.insert(0, value)
             e.configure(state='readonly', relief='flat')
             e.grid(row=i+1, column=1, sticky='W')
-
-        print(f"Finished evaluation in {round(time.time() - start, 2)} s")
-        print()
 
     def export_report(self):
         """Exports the reporter's results_queue to an .xlsx file designated

@@ -1,55 +1,64 @@
 """Analyses the data and returns a tuple of results"""
 
+import time
+from pandas import DataFrame, Series
+
 def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     """Evaluates the data"""
 
+    log = []
+    def to_log(*msgs):
+        for msg in msgs:
+            print(f"{msg}")
+            log.append(f"{msg}")
+
+    to_log("\nBeginning evaluation\n")
     start=time.time()
-    print("Evaluating data")
-    print(f"baseline: {baseline} psi")
-    print(f"xlim: {xlim*60} s")
-    print(f"ylim: {ylim} psi\n")
+    to_log(f"baseline: {baseline} psi")
+    to_log(f"xlim: {xlim*60} s")
+    to_log(f"ylim: {ylim} psi\n")
 
     total_area = ylim*xlim*60/interval
     baseline_area = baseline*xlim*60/interval
     avail_area = total_area - baseline_area
-    print(f"total_area: {total_area} psi")
-    print(f"baseline_area: {baseline_area} psi")
-    print(f"avail_area: {avail_area} psi")
-    print(f"max measures: {xlim*60/interval}\n")
+    to_log(f"total_area: {total_area} psi")
+    to_log(f"baseline_area: {baseline_area} psi")
+    to_log(f"avail_area: {avail_area} psi")
+    to_log(f"max measures: {xlim*60/interval}\n")
 
     blank_scores = []
     blank_times = []
 
     for blank in blanks:
         blank_times.append(round(len(blank)*interval, 2))
-        print(blank.name)
+        to_log(blank.name)
         scale_area = blank.sum()
-        print(f"scale area: {scale_area} psi")
+        to_log(f"scale area: {scale_area} psi")
         area_over_blank = ylim*len(blank) - scale_area
-        print(f"area over blank: {area_over_blank} psi")
+        to_log(f"area over blank: {area_over_blank} psi")
         protectable_area = round(avail_area - area_over_blank)
-        print(f"protectable_area: {protectable_area} psi")
+        to_log(f"protectable_area: {protectable_area} psi")
         blank_scores.append(protectable_area)
-        print()
-    protectable_area = round(DataFrame(blank_scores).mean())
-    print(f"avg protectable_area: {protectable_area} psi\n")
+        to_log()
+    protectable_area = float(DataFrame(blank_scores).mean())
+    to_log(f"avg protectable_area: {protectable_area} psi\n")
 
     scores = {}
     for trial in trials:
-        print(trial.name)
+        to_log(trial.name)
         measures = len(trial)
-        print(f"number of measurements: {measures}")
-        print(f"total trial area: {round(trial.sum())} psi")
+        to_log(f"number of measurements: {measures}")
+        to_log(f"total trial area: {trial.sum()} psi")
         # all the area under the curve + ylim per would-be measure
         scale_area = round(trial.sum() + ylim*(xlim*60/interval - measures))
-        print(f"scale area {scale_area} psi")
-        score = (1 - (scale_area - baseline_area)/protectable_area)*100
-        print(f"score: {score:.2f}%")
+        to_log(f"scale area {scale_area} psi")
+        score = float((1 - (scale_area - baseline_area)/protectable_area)*100)
         if score > 100:
-            print("Reducing score to 100%")
+            to_log("Reducing score to 100%")
             score = 100
+        to_log(f"score: {score:.2f}%\n")
         scores[trial.name] = score
-        print()
+        to_log()
 
     result_titles = [f"{i}" for i in scores]
     result_values = [f"{scores[i]:.1f}%" for i in scores]
@@ -71,5 +80,5 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
             max_psis
     )
 
-    print(f"Finished evaluation in {round(time.time() - start, 2)} s\n")
-    return results_queue
+    to_log(f"\nFinished evaluation in {round(time.time() - start, 2)} s\n")
+    return results_queue, log
