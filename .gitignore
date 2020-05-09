@@ -13,6 +13,7 @@ run.bat
 *.xlsx
 *.ini
 *.csv
+calc_log_*.txt
 
 # Distribution / packaging
 .Python
