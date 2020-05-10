@@ -370,18 +370,28 @@ class Reporter(tk.Toplevel):
         result_window.attributes('-topmost', 'true')
         result_window.title("Results")
         def_bg = result_window.cget('bg')
-        tk.Label(result_window, text="Trial").grid(row=0, column=0)
-        tk.Label(result_window, text="% protection").grid(row=0, column=1)
+        tk.Label(
+            master=result_window,
+            text="Trial",
+            anchor='w'
+            ).grid(row=0, column=0, sticky='w', padx=35, pady=3)
+        tk.Label(
+            master=result_window,
+            text="% protection",
+            anchor='w'
+            ).grid(row=0, column=1, sticky='w', padx=35, pady=3)
 
         for i, title in enumerate(self.results_queue[1]):
-            e = tk.Label(result_window, text=title)
-            e.grid(row=i+1, column=0, padx=45)
+            e = tk.Entry(result_window, bg=def_bg, width=len(title))
+            e.insert(0, title)
+            e.configure(state='readonly', relief='flat')
+            e.grid(row=i+1, column=0, sticky='W', padx=35, pady=3)
 
         for i, value in enumerate(self.results_queue[2]):
             e = tk.Entry(result_window, bg=def_bg, width=10)
             e.insert(0, value)
             e.configure(state='readonly', relief='flat')
-            e.grid(row=i+1, column=1, sticky='W')
+            e.grid(row=i+1, column=1, sticky='W', padx=35, pady=3)
 
     def export_report(self):
         """Exports the reporter's results_queue to an .xlsx file designated
