@@ -21,10 +21,11 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     to_log(f"ylim: {round(ylim)} psi")
     to_log(f"interval: {interval} s/reading ")
 
-    total_area = round(ylim*xlim*60/interval)
-    baseline_area = round(baseline*xlim*60/interval)
-    avail_area = total_area - baseline_area
     max_measures = round(xlim*60/interval)
+    total_area = round(ylim*max_measures)
+    baseline_area = round(baseline*max_measures)
+    avail_area = total_area - baseline_area
+
     to_log(f"total area: {total_area} psi")
     to_log(f"baseline area: {baseline_area} psi")
     to_log(f"avail area: {avail_area} psi")
