@@ -2,20 +2,18 @@
 
 import csv  # logging the data
 from datetime import datetime  # logging the data
-
 import os  # handling file paths
 import serial
-import tkinter as tk  # GUI
+# import tkinter as tk  # GUI
 import time  # sleeping
-# from winsound import Beep  # beeping when the test ends
 
 
 class Experiment():
     def __init__(self, parent, port1, port2, timelimit, failpsi, chem, conc):
         """Collects all the user data from the MainWindow widgets"""
 
-        self.parent = parent
-        self.core = parent.core
+        self.mainwin = parent
+        self.core = self.mainwin.core
         self.port1 = port1
         self.port2 = port2
         self.timelimit = timelimit
@@ -25,22 +23,22 @@ class Experiment():
         self.running = False
 
         print("Disabling MainWindow parameter entries")
-        for child in self.parent.entfrm.winfo_children():
+        for child in self.mainwin.entfrm.winfo_children():
             child.configure(state="disabled")
 
         print("Enabling MainWindow test controls")
-        for child in self.parent.cmdfrm.winfo_children():
+        for child in self.mainwin.cmdfrm.winfo_children():
             child.configure(state="normal")
 
         # clear the text widget
-        self.parent.dataout['state'] = 'normal'
-        self.parent.dataout.delete(1.0, 'end')
-        self.parent.dataout['state'] = 'disabled'
+        self.mainwin.dataout['state'] = 'normal'
+        self.mainwin.dataout.delete(1.0, 'end')
+        self.mainwin.dataout['state'] = 'disabled'
         # get user input from the main window
 
         # set up an output file
         file_name = f"{self.chem}_{self.conc}.csv"
-        self.outpath = os.path.join(self.parent.project, file_name)
+        self.outpath = os.path.join(self.mainwin.project, file_name)
         # make sure we don't overwrite existing data
         while os.path.isfile(self.outpath):  # we haven't made one yet
             self.to_log("A file with that name already exists",
@@ -63,16 +61,16 @@ class Experiment():
             self.to_log("Could not establish a connection to the pumps",
                         "Try resetting the port connections")
             print("Disabling MainWindow test controls")
-            for child in self.parent.cmdfrm.winfo_children():
+            for child in self.mainwin.cmdfrm.winfo_children():
                 child.configure(state="disabled")
             print("Enabling MainWindow parameter entries")
-            for child in self.parent.entfrm.winfo_children():
+            for child in self.mainwin.entfrm.winfo_children():
                 child.configure(state="normal")
 
     def to_log(self, *msgs) -> None:
         """Passes str messages to the parent widget's to_log method"""
 
-        self.parent.to_log(*msgs)
+        self.mainwin.to_log(*msgs)
 
     def end_test(self) -> None:
         """Stops the pumps and closes their COM ports, then swaps the button
@@ -86,10 +84,10 @@ class Experiment():
         self.running = False
         # TODO: try just disabling the frames instead, half the lines
         # re-enable the entries to let user start new test
-        for child in self.parent.entfrm.winfo_children():
+        for child in self.mainwin.entfrm.winfo_children():
             child.configure(state="normal")
         # disable the run/end buttons until a new test is started
-        for child in self.parent.cmdfrm.winfo_children():
+        for child in self.mainwin.cmdfrm.winfo_children():
             child.configure(state="disabled")
 
     def run_test(self) -> None:
