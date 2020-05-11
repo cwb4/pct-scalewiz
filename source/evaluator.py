@@ -8,6 +8,7 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
 
     log = []
     def to_log(*msgs):
+        """Appends strings to a list to be returned with the results_queue"""
         for msg in msgs:
             print(f"{msg}")
             log.append(f"{msg}")
