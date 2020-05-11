@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
- - expanding logging functionality to the Reporter Generator; now outputs a calculation log with each data evaluation
+ - expand logging functionality in the the Reporter Generator to output a calculation log with each data evaluation
 
 ## [0.6.0] 2020-5-8
 ### Added
