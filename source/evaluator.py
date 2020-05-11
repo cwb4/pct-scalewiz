@@ -40,6 +40,7 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
         measures = len(blank)
         to_log(f"blank duration: {round(measures*interval/60, 2)} min")
         to_log(f"number of measurements: {measures}")
+        to_log(f"max psi: {round(blank.max())}")
         scale_area = blank.sum()
         to_log(f"scale area: {scale_area} psi")
         area_over_blank = ylim*len(blank) - scale_area
@@ -58,6 +59,7 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
         to_log(f"trial duration: {round(measures*interval/60, 2)} min")
         to_log(f"number of measurements: {measures}")
         scale_area = round(trial.sum())
+        to_log(f"max psi: {round(trial.max())}")
         to_log(f"scale area: {scale_area} psi")
         if measures < max_measures:
             to_log(f"Trial length {measures} measures is less than expected " +
