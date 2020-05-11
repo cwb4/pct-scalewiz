@@ -16,7 +16,7 @@ from mainwindow import MainWindow
 class ScaleWiz(tk.Frame):
     """This class """
 
-    VERSION = '[0.5.3]'
+    VERSION = '[0.6.1]'
 
     DEFAULT_DICT = {
         'plot settings': {
