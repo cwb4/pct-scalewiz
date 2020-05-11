@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
  - better handling of row sizes when exporting reports (row width scales with number of trials)
  - improved header information auto-fill
+### Changed
+ - internal code review / quality assurance
 
 ## [0.6.0] 2020-5-8
 ### Added
