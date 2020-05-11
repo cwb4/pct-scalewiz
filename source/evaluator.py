@@ -38,6 +38,7 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
         blank_times.append(round(len(blank)*interval, 2))
         to_log(blank.name)
         measures = len(blank)
+        to_log(f"blank duration: {round(measures*interval/60, 2)} min")
         to_log(f"number of measurements: {measures}")
         scale_area = blank.sum()
         to_log(f"scale area: {scale_area} psi")
@@ -54,6 +55,7 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     for trial in trials:
         to_log(trial.name)
         measures = len(trial)
+        to_log(f"trial duration: {round(measures*interval/60, 2)} min")
         to_log(f"number of measurements: {measures}")
         scale_area = round(trial.sum())
         to_log(f"scale area: {scale_area} psi")
