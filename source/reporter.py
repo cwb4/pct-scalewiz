@@ -422,17 +422,22 @@ class Reporter(tk.Toplevel):
             return
 
         project = self.mainwin.project.split('\\')
-        sample_point = project[-1].split('-')[0]
-        customer = project[-2]
-        short_proj = project[-1]
+        company = project[-1].split('-')[0].strip()
+        sample_point = project[-1].split('-')[1].strip()
+        customer = project[-2].strip()
+        short_proj = project[-1].strip()
 
         img_filename = f"{short_proj}.png"
         img_path = os.path.join(self.mainwin.project, img_filename)
         print("Making temp resized plot image")
-        img = PIL.Image.open(img_path)
-        # img = img.resize((700, 265))
+        try:
+            img = PIL.Image.open(img_path)
+            # img = img.resize((700, 265))
+        except FileNotFoundError:
+            print("Couldn't find the plot image file, aborting export")
+            return
         img = img.resize((667, 257))
-        img_path = _path[:-4]
+        img_path = img_filename[:-4]
         img_path += "- temp.png"
         img.save(img_path)
         img = openpyxl.drawing.image.Image(img_path)
@@ -462,6 +467,7 @@ class Reporter(tk.Toplevel):
 
         # # TODO:  move this mapping into the config somehow
         ws['C4'] = customer
+        ws['C6'] = company
         ws['C7'] = sample_point
         ws['I7'] = f"{date.today()}"
         ws['D11'] = f"{baseline} psi"
@@ -488,22 +494,32 @@ class Reporter(tk.Toplevel):
         for (cell, psi) in zip(max_psi_cells, max_psis):
             ws[cell] = int(psi)
         for (cell, score) in zip(protection_cells, result_values):
-            ws[cell] = float(score)
+            score = score[:-1]
+            ws[cell] = float(score)/100  # cell format in template set to %
 
-        # note: may need to move contents up before deleting del_rows
+        # note: may need to move contents up before deleting hide_rows
 
-        del_rows = []
-        for i in range(19, 27):
+        rows_with_data = [16, 17, *range(19, 27)]
+        hide_rows = []
+        resize_rows = []
+
+        for i in rows_with_data:
             if ws[f'A{i}'].value == None:
-                del_rows.append(i)
-        if len(del_rows) == 0: pass
-        for row in del_rows:
+                hide_rows.append(i)
+            else:
+                resize_rows.append(i)
+
+        row_width = 200/len(resize_rows)
+        for row in resize_rows:
+            ws.row_dimensions[row].height = row_width
+
+        for row in hide_rows:
             ws.row_dimensions[row].hidden = True
 
         print(f"Saving file")
         wb.save(filename=report_path)
         print("Removing temp files")
-        os.remove(_path)
+        os.remove(img_path)
         print(f"Finished export in {round(time.time() - start, 2)} s")
         tk.messagebox.showinfo(
             parent=self,
