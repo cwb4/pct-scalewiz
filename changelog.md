@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.6.1] 2020-5-11
 ### Added
  - expand logging functionality in the the Reporter Generator to output a calculation log with each data evaluation
+ - experiment handler can dynamically adjust reading interval to better compensate for slow system time and help maintain accuracy
 ### Fixed
- - better handling of row sizes when exporting reports
+ - better handling of row sizes when exporting reports (row width scales with number of trials)
  - improved header information auto-fill
 
 ## [0.6.0] 2020-5-8
