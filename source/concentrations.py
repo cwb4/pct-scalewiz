@@ -7,7 +7,7 @@ class ConcCalc(tk.Toplevel):
         self.winfo_toplevel().title('Concentration Calculator')
         self.conc = tk.IntVar()
         self.conc.trace('w', self.calc)
-        
+
         self.vol = tk.IntVar()
         self.vol.trace('w', self.calc)
 
@@ -19,20 +19,20 @@ class ConcCalc(tk.Toplevel):
     def build(self):
         """Makes the widgets"""
 
-        tk.Label(self, text="Treating conc. (ppm): ", anchor='w').grid(row=0, column=0, padx=10, pady=3, sticky='w')
-        tk.Label(self, text="Sample volume (mL): ", anchor='w').grid(row=1, column=0, padx=10, pady=3, sticky='w')
-        tk.Label(self, text="Treating volume: ", anchor='w').grid(row=2, column=0, padx=10, pady=3, sticky='w')
+        tk.Label(self, text="Treating conc. (ppm): ", anchor='w').grid(row=0, column=0, padx=15, pady=3, sticky='w')
+        tk.Label(self, text="Sample volume (mL): ", anchor='w').grid(row=1, column=0, padx=15, pady=3, sticky='w')
+        tk.Label(self, text="Treating volume: ", anchor='w').grid(row=2, column=0, padx=15, pady=3, sticky='w')
 #         tk.Label(self, text="Treating volume: ", anchor='w').grid(row=3, column=0, padx=10, pady=3, sticky='w')
 
         self.conc_ent = ttk.Entry(self, textvariable=self.conc)
         self.vol_ent = ttk.Entry(self, textvariable=self.vol)
-        self.conc_ent.grid(row=0, column=1, padx=10, pady=3, sticky='w')
-        self.vol_ent.grid(row=1, column=1, padx=10, pady=3, sticky='w')
+        self.conc_ent.grid(row=0, column=1, padx=15, pady=3, sticky='w')
+        self.vol_ent.grid(row=1, column=1, padx=15, pady=3, sticky='w')
 
         mL = tk.Label(self, textvariable=self.mL, anchor='w')
         uL = tk.Label(self, textvariable=self.uL, anchor='w')
-        mL.grid(row=2, column=1, padx=10, pady=3, sticky='w')
-        uL.grid(row=3, column=1, padx=10, pady=3, sticky='w')
+        mL.grid(row=2, column=1, padx=15, pady=3, sticky='w')
+        uL.grid(row=3, column=1, padx=15, pady=3, sticky='w')
 
         self.conc.set(100)
         self.vol.set(1000)
