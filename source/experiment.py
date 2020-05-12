@@ -122,7 +122,7 @@ class Experiment():
          ):
             reading_start = time.time()
             if not readings == 0 and self.elapsed/readings - interval > 0.01:
-                # print('\a') 
+                # print('\a')
                 print(f"avg s/reading: {round(self.elapsed/readings, 4)}")
 
             for pump in (self.pump1, self.pump2):
