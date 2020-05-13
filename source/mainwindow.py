@@ -22,6 +22,7 @@ from tkinter import ttk, scrolledtext
 
 
 from experiment import Experiment
+# from experiment_ import Experiment
 from menubar import MenuBar
 
 
@@ -74,16 +75,6 @@ class MainWindow(tk.Frame):
             width=14,
             justify='center'
             )
-        self.timelim = ttk.Entry(
-            master=self.entfrm,
-            width=30,
-            justify='center'
-            )
-        self.failpsi = ttk.Entry(
-            master=self.entfrm,
-            width=30,
-            justify='center'
-            )
         self.chem = ttk.Entry(
             master=self.entfrm,
             width=30,
@@ -101,27 +92,18 @@ class MainWindow(tk.Frame):
             command= lambda: self.init_test()
             )
 
-        self.timelim.insert(0, self.config.get('test settings', 'time limit minutes'))
-        self.failpsi.insert(0, self.config.get('test settings', 'fail psi'))
-
         # grid entry labels into self.entfrm
         self.comlbl = ttk.Label(master=self.entfrm, text="COM ports:")
         self.comlbl.grid(row=0, sticky=tk.E)
         ttk.Label(
             master=self.entfrm,
-            text="Time limit (min):"
-            ).grid(row=1, sticky=tk.E)
-        ttk.Label(
-            master=self.entfrm,
-            text="Failing pressure (psi):"
-            ).grid(row=2, sticky=tk.E)
-        ttk.Label(
-            master=self.entfrm,
-            text="Chemical:"
+            text="Chemical:",
+            anchor='e'
             ).grid(row=3, sticky=tk.E)
         ttk.Label(
             master=self.entfrm,
-            text="Concentration:"
+            text="Concentration:",
+            anchor='e'
             ).grid(row=4, sticky=tk.E)
 
         # widget bindings for user convenience
@@ -129,12 +111,10 @@ class MainWindow(tk.Frame):
         self.comlbl.bind("<Button-1>", lambda _: self.find_coms())
 
         # grid entries into self.entfrm
-        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(17, 1))
-        self.port2.grid(row=0, column=2, sticky=tk.W, padx=(5, 3))
-        self.timelim.grid(row=1, column=1, columnspan=3, pady=1)
-        self.failpsi.grid(row=2, column=1, columnspan=3, pady=1)
-        self.chem.grid(row=3, column=1, columnspan=3, pady=1)
-        self.conc.grid(row=4, column=1, columnspan=3, pady=1)
+        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(0,3))
+        self.port2.grid(row=0, column=2, sticky=tk.W, padx=(3,0))
+        self.chem.grid(row=3, column=1, columnspan=2, pady=1)
+        self.conc.grid(row=4, column=1, columnspan=2, pady=1)
         self.strtbtn.grid(row=5, column=1, columnspan=2, pady=1)
         cols = self.entfrm.grid_size()[0]
         for col in range(cols):
@@ -246,12 +226,12 @@ class MainWindow(tk.Frame):
 
         print("Initializing a new Experiment")
         params = {
-            'port1' : self.port1.get().strip(),
-            'port2' : self.port2.get().strip(),
-            'timelimit' : int(self.timelim.get().strip()),
-            'failpsi' : int(self.failpsi.get().strip()),
-            'chem' : self.chem.get().strip().replace(' ', '_'),
-            'conc' : self.conc.get().strip().replace(' ', '_')
+            'port1': self.port1.get().strip(),
+            'port2': self.port2.get().strip(),
+            'timelimit': self.config.getint('test settings', 'time limit minutes'),
+            'failpsi': self.config.getint('test settings', 'fail psi'),
+            'chem': self.chem.get().strip().replace(' ', '_'),
+            'conc': self.conc.get().strip().replace(' ', '_')
         }
         self.test = Experiment(self, **params)
 
@@ -282,7 +262,7 @@ class MainWindow(tk.Frame):
             self.ax.clear()
             self.ax.set_xlabel("Time (min)")
             self.ax.set_ylabel("Pressure (psi)")
-            self.ax.set_ylim(top=int(self.failpsi.get()))
+            self.ax.set_ylim(top=self.config.getint('test settings', 'fail psi'))
             self.ax.yaxis.set_major_locator(MultipleLocator(100))
             self.ax.set_xlim((0, None), auto=True)
             self.ax.margins(0)
