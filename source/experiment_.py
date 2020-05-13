@@ -1,6 +1,7 @@
 """A class to handle the logic for running the test"""
 
 import csv  # logging the data
+from concurrent.futures import ThreadPoolExecutor  # handling the test loop
 from datetime import datetime  # logging the data
 import os  # handling file paths
 import serial
@@ -94,77 +95,89 @@ class Experiment():
         """Submits a test loop to the thread_pool_executor"""
         if not self.running:
             self.to_log("Starting the test")
-            self.core.thread_pool_executor.submit(self.take_reading)
             self.running = True
+            with self.core.thread_pool_executor as executor:
+                this_test = executor.submit(self.take_reading)
+                for future in concurrent.futures.as_completed(this_test):
+                    print(repr(future.exception()))
 
     def take_reading(self) -> None:
         """Loop to be handled by the thread_pool_executor"""
 
-        for pump in (self.pump1, self.pump2):
-            pump.write('ru'.encode())
-        # let the pumps warm up before we start recording data
-        time.sleep(3)
 
         # a dict to hold recent pressure readings
         pressures = {
                     'PSI 1' : [1, 1, 1, 1, 1],
                     'PSI 2' : [1, 1, 1, 1, 1]
                     }
-        psi1, psi2, self.elapsed = 0, 0, 0
+        self.psi1, self.psi1, self.elapsed = 0, 0, 0
         interval = self.core.config.getint(
             'test settings', 'interval seconds'
         )
-        starttime = time.time()
-        readings = 0
+        self.starttime = time.time()
+        last_reading = time.time()
+        self.reads = 0
+
+        for pump in (self.pump1, self.pump2):
+            pump.write('ru'.encode())
+        # let the pumps warm up before we start recording data
+        time.sleep(3)
+
         while (
-         (psi1 < self.failpsi or psi2 < self.failpsi)
+         (self.psi1 < self.failpsi or self.psi1 < self.failpsi)
          and self.elapsed < self.timelimit*60
-         and readings < self.timelimit*60/interval
+         and self.reads < self.timelimit*60/interval
          ):
-            reading_start = time.time()
-            if not readings == 0 and self.elapsed/readings - interval > 0.01:
-                # print('\a')
-                print(f"avg s/reading: {round(self.elapsed/readings, 4)}")
+            print("checking ...")
+            if time.time() - last_reading >= interval:
+                print("reading ...")
+                last_reading = time.time()
+                try:
+                    self.read()
+                except Exception as e:
+                    raise e
+                self.reads += 1
+                self.elapsed = time.time() - self.starttime
+                print(f"finished reading at {round(self.elapsed)}")
 
-            for pump in (self.pump1, self.pump2):
-                pump.write('cc'.encode())  # get current conditions
-            time.sleep(0.05)  # give a moment to respond
-            psi1 = int(self.pump1.readline().decode().split(',')[1])
-            psi2 = int(self.pump2.readline().decode().split(',')[1])
-            thisdata = [
-                        time.strftime("%I:%M:%S", time.localtime()),
-                        round(self.elapsed),  # as seconds
-                        f"{self.elapsed/60:.2f}",  # as minutes
-                        psi1,
-                        psi2
-                        ]
-            with open(self.outpath, "a", newline='') as f:
-                csv.writer(f, delimiter=',').writerow(thisdata)
+            # if self.reads != 0 and self.elapsed/self.reads - interval > 0.01:
+            #     print(f"avg s/reading: {round(self.elapsed/self.reads, 4)}")
 
-            this_reading = (
-                f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
-            )
-            self.to_log(this_reading)
-            readings += 1
-
-            # make sure we have flow - consecutive 0 readings alert user
-            pressures['PSI 1'].insert(0, psi1)
-            pressures['PSI 1'].pop(-1)
-            pressures['PSI 2'].insert(0, psi2)
-            pressures['PSI 2'].pop(-1)
-            for list in (pressures['PSI 1'], pressures['PSI 2']):
-                if list.count(0) >= 3:
-                    print(f"{list.count(0)} null values in the past 5 readings")
-                    print('\a')
-
-            # print(f"leftover: {round(3 - (time.time() - reading_start), 3)}")
-            time.sleep(interval - (time.time() - reading_start))
-            # print(f"total: {round((time.time() - reading_start), 3)}")
-            self.elapsed = time.time() - starttime
-            # end of while loop
-
+        # end of while loop
         print("Test complete")
         self.end_test()
         for i in range(3):
             print('\a')
             time.sleep(0.5)
+
+    def read(self):
+
+        for pump in (self.pump1, self.pump2):
+            pump.write('cc'.encode())  # get current conditions
+        time.sleep(0.05)  # give a moment to respond
+        self.psi1 = int(self.pump1.readline().decode().split(',')[1])
+        self.psi1 = int(self.pump2.readline().decode().split(',')[1])
+        thisdata = [
+                    time.strftime("%I:%M:%S", time.localtime()),
+                    round(self.elapsed),  # as seconds
+                    f"{self.elapsed/60:.2f}",  # as minutes
+                    self.psi1,
+                    self.psi1
+                    ]
+        with open(self.outpath, "a", newline='') as f:
+            csv.writer(f, delimiter=',').writerow(thisdata)
+
+        this_reading = (
+            f"{self.elapsed/60:.2f} min, {self.psi1} psi, {self.psi1} psi"
+        )
+        self.to_log(this_reading)
+
+        # make sure we have flow - consecutive 0 readings alert user
+        pressures['PSI 1'].insert(0, self.psi1)
+        pressures['PSI 1'].pop(-1)
+        pressures['PSI 2'].insert(0, self.psi1)
+        pressures['PSI 2'].pop(-1)
+        for list in (pressures['PSI 1'], pressures['PSI 2']):
+            if list.count(0) >= 3:
+                print(f"{list.count(0)} null values in the past 5 readings")
+                print('\a')
