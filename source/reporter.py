@@ -473,6 +473,10 @@ class Reporter(tk.Toplevel):
         ws['D11'] = f"{baseline} psi"
         ws['G16'] = f"{ylim}"
 
+        print(f"customer: {customer}")
+        print(f"company: {company}")
+        print(f"well / sample point: {sample_point}")
+
         blank_time_cells = [f"E{i}" for i in range(16, 18)]
         chem_name_cells = [f"A{i}" for i in range(19, 27)]
         chem_conc_cells = [f"D{i}" for i in range(19, 27)]
@@ -481,7 +485,7 @@ class Reporter(tk.Toplevel):
         protection_cells = [f"H{i}" for i in range(19, 27)]
 
         chem_names = [title.split(' ')[0] for title in result_titles]
-        chem_concs = [" ".join(title.split(' ')[1:2]) for title in result_titles]
+        chem_concs = [" ".join(title.split(' ')[-2:-1]) for title in result_titles]
 
         for (cell, blank_time) in zip(blank_time_cells, blank_times):
             ws[cell] = float(round(blank_time/60, 2))
@@ -510,13 +514,13 @@ class Reporter(tk.Toplevel):
                 resize_rows.append(i)
 
         row_width = 200/len(resize_rows)
+        if row_width >= 30: row_width = 30
         for row in resize_rows:
             ws.row_dimensions[row].height = row_width
-
         for row in hide_rows:
             ws.row_dimensions[row].hidden = True
 
-        print(f"Saving file")
+        print(f"Saving report to\n{report_path}")
         wb.save(filename=report_path)
         print("Removing temp files")
         os.remove(img_path)
