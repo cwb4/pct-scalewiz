@@ -83,7 +83,6 @@ class Experiment():
             pump.close()
         self.to_log(f"The test finished in {self.elapsed/60:.2f} minutes")
         self.running = False
-        # TODO: try just disabling the frames instead, half the lines
         # re-enable the entries to let user start new test
         for child in self.mainwin.entfrm.winfo_children():
             child.configure(state="normal")
@@ -97,9 +96,9 @@ class Experiment():
             self.to_log("Starting the test")
             self.running = True
             with self.core.thread_pool_executor as executor:
-                this_test = executor.submit(self.take_reading)
-                for future in concurrent.futures.as_completed(this_test):
-                    print(repr(future.exception()))
+                executor.submit(self.take_reading)
+                # for future in concurrent.futures.as_completed(this_test):
+                #     print(repr(future.exception()))
 
     def take_reading(self) -> None:
         """Loop to be handled by the thread_pool_executor"""
@@ -133,7 +132,10 @@ class Experiment():
                 print("reading ...")
                 last_reading = time.time()
                 try:
-                    self.read()
+                    (this_data, this_reading) = self.read()
+                    self.to_log(this_reading)
+                    with open(self.outpath, "a", newline='') as f:
+                        csv.writer(f, delimiter=',').writerow(this_data)
                 except Exception as e:
                     raise e
                 self.reads += 1
@@ -157,20 +159,20 @@ class Experiment():
         time.sleep(0.05)  # give a moment to respond
         self.psi1 = int(self.pump1.readline().decode().split(',')[1])
         self.psi1 = int(self.pump2.readline().decode().split(',')[1])
-        thisdata = [
+        this_data = [
                     time.strftime("%I:%M:%S", time.localtime()),
                     round(self.elapsed),  # as seconds
                     f"{self.elapsed/60:.2f}",  # as minutes
                     self.psi1,
                     self.psi1
                     ]
-        with open(self.outpath, "a", newline='') as f:
-            csv.writer(f, delimiter=',').writerow(thisdata)
+        # with open(self.outpath, "a", newline='') as f:
+        #     csv.writer(f, delimiter=',').writerow(this_data)
 
         this_reading = (
             f"{self.elapsed/60:.2f} min, {self.psi1} psi, {self.psi1} psi"
         )
-        self.to_log(this_reading)
+        # self.to_log(this_reading)
 
         # make sure we have flow - consecutive 0 readings alert user
         pressures['PSI 1'].insert(0, self.psi1)
@@ -181,3 +183,4 @@ class Experiment():
             if list.count(0) >= 3:
                 print(f"{list.count(0)} null values in the past 5 readings")
                 print('\a')
+        return this_data, this_reading
