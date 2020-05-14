@@ -3,7 +3,7 @@
 import time
 from pandas import DataFrame, Series
 
-def evaluate(blanks, trials, baseline, xlim, ylim, interval):
+def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
     """Evaluates the data"""
 
     log = []
@@ -14,7 +14,7 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
             log.append(f"{msg}")
 
     line = '\n' + '-'*75 + '\n'
-    to_log("\nBeginning evaluation" + line*2)
+    to_log(f"\nBeginning evaluation of {proj}" + line*2)
     start=time.time()
     to_log(f"baseline: {round(baseline)} psi")
     to_log(f"time limit: {round(xlim*60)} s")
@@ -27,7 +27,7 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     avail_area = total_area - baseline_area
 
     to_log(f"total area =  {ylim} * {max_measures}: {total_area} psi")
-    to_log(f"baseline area = {max_measures} * {ylim}: {baseline_area} psi")
+    to_log(f"baseline area = {baseline} * {max_measures}: {baseline_area} psi")
     to_log(f"avail area = total area - baseline area: {avail_area} psi")
     to_log(f"max measures = {round(xlim*60)} / {interval}: {max_measures}")
     to_log(line)
@@ -36,10 +36,11 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     blank_times = []
 
     for blank in blanks:
+        blank = blank.dropna()
         blank_times.append(round(len(blank)*interval, 2))
         to_log(blank.name)
         measures = len(blank)
-        to_log(f"blank duration: {round(measures*interval/60, 2)} min")
+        to_log(f"blank duration: {round(measures*interval/60, 3)} min")
         to_log(f"number of measurements: {measures}")
         to_log(f"max psi: {round(blank.max())}")
         scale_area = blank.sum()
@@ -54,10 +55,14 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
     to_log(f"avg protectable area: {protectable} psi" + line)
 
     scores = {}
+    durations = []
+
     for trial in trials:
+        trial = trial.dropna()
         to_log(trial.name)
         measures = len(trial)
-        to_log(f"trial duration: {round(measures*interval/60, 2)} min")
+        durations.append(measures)
+        to_log(f"trial duration: {round(measures*interval/60, 3)} min")
         to_log(f"number of measurements: {measures}")
         scale_area = round(trial.sum())
         to_log(f"max psi: {round(trial.max())}")
@@ -86,7 +91,7 @@ def evaluate(blanks, trials, baseline, xlim, ylim, interval):
 
     result_titles = [f"{i}" for i in scores]
     result_values = [f"{scores[i]:.1f}%" for i in scores]
-    durations = [round(len(trial)*interval, 2) for trial in trials]  #minutes
+    # durations = [round(len(trial)*interval, 2) for trial in trials]  #minutes
     max_psis = [
                 round(trial.max())
                 if round(trial.max()) <= ylim
