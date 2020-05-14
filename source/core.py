@@ -68,21 +68,13 @@ class ScaleWiz(tk.Frame):
             self.config.path = os.path.abspath('scalewiz.ini')
 
 def close_app():  # attempts to close all open ports, just in case
-    list = serial.tools.list_ports.comports()
-    ports = [i.device for i in list]
-    for i in ports:
-            if serial.Serial(i).is_open:
-                serial.Serial(i).write('st'.encode())
-                print(f"Closing {i}")
-                try:
-                    serial.Serial(i).close
-                except SerialException as e:
-                    print(e)
-                    print("Couldn't close COM port; is a dupe process running?")
+    if hasattr(ScaleWiz, 'mainwin.test'):
+        if Scalewiz.mainwin.test.running:
+            print("Can't close the application while a test is running")
+    else:
+        print("Destroying root")
+        root.destroy()
 
-    print("Destroying root")
-    root.destroy()
-    sys.exit()
 
 if __name__ == "__main__":
     root = tk.Tk()
