@@ -356,8 +356,9 @@ class Reporter(tk.Toplevel):
 
         print("Getting results from evaluator")
         interval = self.config.getint('test settings', 'interval seconds')
+        proj = self.mainwin.title
         (self.results_queue, self.log) = evaluate(
-            blanks, trials, baseline, xlim, ylim, interval
+            proj, blanks, trials, baseline, xlim, ylim, interval
         )
 
         stamp = round(time.time())
@@ -471,7 +472,7 @@ class Reporter(tk.Toplevel):
         ws['C7'] = sample_point
         ws['I7'] = f"{date.today()}"
         ws['D11'] = f"{baseline} psi"
-        ws['G16'] = f"{ylim}"
+        ws['G16'] = int(ylim)
 
         print(f"customer: {customer}")
         print(f"company: {company}")
@@ -484,13 +485,13 @@ class Reporter(tk.Toplevel):
         max_psi_cells = [f"G{i}" for i in range (19, 27)]
         protection_cells = [f"H{i}" for i in range(19, 27)]
 
-        chem_names = [title.split(' ')[0] for title in result_titles]
+        chem_names = [" ".join(title.split(' ')[:-2]) for title in result_titles]
         chem_concs = [" ".join(title.split(' ')[-2:-1]) for title in result_titles]
 
         for (cell, blank_time) in zip(blank_time_cells, blank_times):
             ws[cell] = float(round(blank_time/60, 2))
         for (cell, name) in zip(chem_name_cells, chem_names):
-            ws[cell] = name
+            ws[cell] = f"{name}"
         for (cell, conc) in zip(chem_conc_cells, chem_concs):
             ws[cell] = int(conc)
         for (cell, duration) in zip(duration_cells, durations):
