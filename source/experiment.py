@@ -164,6 +164,7 @@ class Experiment():
             # end of while loop
 
         print("Test complete")
+        print(f"Took {readings} readings in {self.elapsed/60} min")
         self.end_test()
         for i in range(3):
             print('\a')
