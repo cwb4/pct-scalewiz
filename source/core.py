@@ -68,7 +68,7 @@ class ScaleWiz(tk.Frame):
             self.config.path = os.path.abspath('scalewiz.ini')
 
 def close_app():  # attempts to close all open ports, just in case
-    if hasattr(ScaleWiz, 'mainwin.test'):
+    if hasattr(app, 'mainwin.test'):
         if Scalewiz.mainwin.test.running:
             print("Can't close the application while a test is running")
     else:
@@ -81,5 +81,7 @@ if __name__ == "__main__":
     root.title("Scale Block Wizard")
     root.resizable(0, 0)
     root.protocol("WM_DELETE_WINDOW", close_app)
-    ScaleWiz(root).pack(side="top", fill="both", expand=True)
+    app = ScaleWiz(root)
+    app.pack(side="top", fill="both", expand=True)
+    # ScaleWiz(root).pack(side="top", fill="both", expand=True)
     root.mainloop()
