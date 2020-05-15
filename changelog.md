@@ -6,12 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+ - more convenient keybindings to main menu (hitting enter in an input field moves to next field, or starts test if all full)
 ### Changed
  - calculaion steps in the calc logs are now more verbose and easier to follow
 ### Removed
  - removed the "Time Limit" and "Fail PSI" fields from mainmenu - these had no use as those settings are managed by the settings menu now
 ### Fixed
  - fixed a bug where empty cells in the csv file were sometimes counted as measurements (due to how Excel handles csv files with empty values)
+ - fixed a bug causing some numerical data to be exported to report as text
 
 ## [0.6.1] 2020-5-11
 ### Added
