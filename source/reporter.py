@@ -495,7 +495,7 @@ class Reporter(tk.Toplevel):
         for (cell, conc) in zip(chem_conc_cells, chem_concs):
             ws[cell] = int(conc)
         for (cell, duration) in zip(duration_cells, durations):
-            ws[cell] = float(round(duration/60, 2))
+            ws[cell] = float(round(duration, 2))
         for (cell, psi) in zip(max_psi_cells, max_psis):
             ws[cell] = int(psi)
         for (cell, score) in zip(protection_cells, result_values):
