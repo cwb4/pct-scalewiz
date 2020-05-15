@@ -118,8 +118,10 @@ class Experiment():
         readings = 0
         while (
          (psi1 < self.failpsi or psi2 < self.failpsi)
-         and self.elapsed < self.timelimit*60
-         and readings < self.timelimit*60/interval
+         and (
+             self.elapsed <= self.timelimit*60
+             or readings <= self.timelimit*60/interval
+             )
          ):
             reading_start = time.time()
             if not readings == 0 and self.elapsed/readings - interval > 0.01:
