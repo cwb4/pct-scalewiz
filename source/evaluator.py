@@ -42,7 +42,7 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         measures = len(blank)
         to_log(f"blank duration: {round(measures*interval/60, 3)} min")
         to_log(f"number of measurements: {measures}")
-        to_log(f"max psi: {round(blank.max())}")
+        to_log(f"max psi: {int(round(blank.max()))}")
         scale_area = blank.sum()
         to_log(f"scale area = sum of all pressure readings: {scale_area} psi")
         over_blank = ylim*len(blank) - scale_area
@@ -61,11 +61,16 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         trial = trial.dropna()
         to_log(trial.name)
         measures = len(trial)
-        durations.append(measures)
-        to_log(f"trial duration: {round(measures*interval/60, 3)} min")
+        duration = round(measures*interval/60, 3)
+        if duration > xlim:
+            to_log(f"Trial duration {duration} is longer than {xlim}")
+            to_log(f"Truncating duration to {xlim} (does not affect score)")
+            duration = xlim
+        durations.append(duration)
+        to_log(f"trial duration: {duration} min")
         to_log(f"number of measurements: {measures}")
         scale_area = round(trial.sum())
-        to_log(f"max psi: {round(trial.max())}")
+        to_log(f"max psi: {int(round(trial.max()))}")
         to_log(f"scale area = sum of all pressure readings: {scale_area} psi")
         if measures < max_measures:
             to_log(f"Trial length {measures} measures <= {max_measures} expected "+
@@ -90,7 +95,12 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         scores[trial.name] = score
 
     result_titles = [f"{i}" for i in scores]
-    result_values = [f"{scores[i]:.1f}%" for i in scores]
+    result_values = [
+                    f"{scores[i]:.1f}%"
+                    if scores[i] < 100  # say 100% not 100.0%
+                    else f"{scores[i]}%"
+                    for i in scores
+                    ]
     # durations = [round(len(trial)*interval, 2) for trial in trials]  #minutes
     max_psis = [
                 round(trial.max())
