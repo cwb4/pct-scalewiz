@@ -107,7 +107,11 @@ class MainWindow(tk.Frame):
             ).grid(row=4, sticky=tk.E)
 
         # widget bindings for user convenience
-        self.conc.bind("<Return>", lambda _: self.init_test())
+        def focus_run_btn():
+            self.init_test()
+            self.runbtn.focus_set()
+
+        self.conc.bind("<Return>", lambda _: focus_run_btn())
         self.comlbl.bind("<Button-1>", lambda _: self.find_coms())
 
         # grid entries into self.entfrm
@@ -149,6 +153,9 @@ class MainWindow(tk.Frame):
         self.runbtn.grid(row=1, column=1, padx=5, pady=2, sticky=tk.W)
         self.endbtn.grid(row=1, column=2, padx=5, pady=2, sticky=tk.E)
 
+        # let enter key start tests
+        self.runbtn.bind('<Return>', lambda _: self.test.run_test())
+        # NOTE: will this throw an exception if not hasattr ? ^
         # a pair of Radiobuttons to choose which column of data to plot
         tk.Label(
             master=self.cmdfrm,
