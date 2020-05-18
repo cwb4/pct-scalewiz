@@ -15,10 +15,10 @@ from pandas import DataFrame, read_csv  # reading data from csv
 import os  # handling file paths
 import serial  # talking to the pumps
 import serial.tools.list_ports
-# from serial import SerialException
+from serial import SerialException
 import sys  # handling file paths
 import tkinter as tk  # GUI
-from tkinter import ttk, scrolledtext
+from tkinter import ttk, scrolledtext, font
 
 
 from experiment import Experiment
@@ -56,53 +56,70 @@ class MainWindow(tk.Frame):
         """Make all the tkinter widgets"""
 
         MenuBar(self)
+
+        def_font = font.nametofont("TkDefaultFont")
+        bold_font = font.Font(font=def_font)
+        bold_font.config(weight='bold')
+
         # build the main frame
         self.tstfrm = tk.Frame(self.core)
-        self.entfrm = tk.LabelFrame(self.tstfrm, text="Test parameters")
+        self.entfrm = tk.LabelFrame(self.tstfrm,
+            text="Test parameters",
+            font=bold_font
+        )
         # this spacing is to avoid using multiple labels
         self.outfrm = tk.LabelFrame(self.tstfrm,
-            text="Elapsed,            Pump1,             Pump2")
-        self.cmdfrm = tk.LabelFrame(self.tstfrm, text="Test controls")
-
+            text="Elapsed,            Pump1,             Pump2",
+            font=bold_font
+        )
+        self.cmdfrm = tk.LabelFrame(self.tstfrm,
+            text="Test controls",
+            font=bold_font
+        )
         # define the self.entfrm entries
         self.port1 = ttk.Entry(
             master=self.entfrm,
             width=14,
             justify='center'
-            )
+        )
         self.port2 = ttk.Entry(
             master=self.entfrm,
             width=14,
             justify='center'
-            )
+        )
         self.chem = ttk.Entry(
             master=self.entfrm,
             width=30,
             justify='center'
-            )
+        )
         self.chem.focus_set()  # move the cursor here for convenience
         self.conc = ttk.Entry(
             master=self.entfrm,
             width=30,
             justify='center'
-            )
+        )
         self.strtbtn = ttk.Button(
             master=self.entfrm,
             text="Start",
             command= lambda: self.init_test()
-            )
+        )
 
         # grid entry labels into self.entfrm
-        self.comlbl = ttk.Label(master=self.entfrm, text="COM ports:")
+        self.comlbl = ttk.Label(self.entfrm,
+            text="COM ports:",
+            # font=bold_font
+        )
         self.comlbl.grid(row=0, sticky=tk.E)
         ttk.Label(
             master=self.entfrm,
             text="Chemical:",
+            # font=bold_font,
             anchor='e'
             ).grid(row=3, sticky=tk.E)
         ttk.Label(
             master=self.entfrm,
             text="Concentration:",
+            # font=bold_font,
             anchor='e'
             ).grid(row=4, sticky=tk.E)
 
@@ -115,8 +132,8 @@ class MainWindow(tk.Frame):
         self.comlbl.bind("<Button-1>", lambda _: self.find_coms())
 
         # grid entries into self.entfrm
-        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(0,3))
-        self.port2.grid(row=0, column=2, sticky=tk.W, padx=(3,0))
+        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(0,3), pady=1)
+        self.port2.grid(row=0, column=2, sticky=tk.W, padx=(3,0), pady=1)
         self.chem.grid(row=3, column=1, columnspan=2, pady=1)
         self.conc.grid(row=4, column=1, columnspan=2, pady=1)
         self.strtbtn.grid(row=5, column=1, columnspan=2, pady=1)
@@ -184,7 +201,7 @@ class MainWindow(tk.Frame):
             text=" "
         )
         if self.config.getboolean('plot settings', 'show style options'):
-            self.pltfrm.configure(text=(f"Style: {self.plotstyle}"))
+            self.pltfrm.configure(text=(f"Plot style: {self.plotstyle}"))
 
         # matplotlib objects
         self.fig, self.ax = plt.subplots(figsize=(7.5, 4), dpi=100)
@@ -224,6 +241,9 @@ class MainWindow(tk.Frame):
             print("Disabling start button")
             self.strtbtn['state'] = ['disable']
         else:
+            self.dataout['state'] = 'normal'
+            self.dataout.delete(1.0, 'end')
+            self.dataout['state'] = 'disabled'
             print(f"Successfully connected to COM ports {useports}")
             print("Enabling start button")
             self.strtbtn['state'] = ['enable']
