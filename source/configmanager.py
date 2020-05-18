@@ -69,7 +69,7 @@ class ConfigManager(tk.Toplevel):
         tk.Toplevel.__init__(self, parent)
         self.core = parent
         self.protocol("WM_DELETE_WINDOW", self.update_settings)
-        self.minsize(400, 370)  # big enough to hold the DEFAULT_DICT
+        self.minsize(400, 500)  # big enough to hold the DEFAULT_DICT
         self.configpath = configpath  # to config.ini
         if not self.configpath is None:
             self.configpath = os.path.normpath(configpath)
