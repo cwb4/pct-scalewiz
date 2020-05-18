@@ -5,7 +5,6 @@ from datetime import datetime  # logging the data
 import os  # handling file paths
 import serial
 from serial import SerialException
-# import tkinter as tk  # GUI
 import time  # sleeping
 
 
@@ -35,7 +34,6 @@ class Experiment():
         self.mainwin.dataout['state'] = 'normal'
         self.mainwin.dataout.delete(1.0, 'end')
         self.mainwin.dataout['state'] = 'disabled'
-        # get user input from the main window
 
         # set up an output file
         file_name = f"{self.chem}_{self.conc}.csv"
@@ -58,7 +56,7 @@ class Experiment():
         try:
             self.pump1 = serial.Serial(self.port1, timeout=0.05)
             self.pump2 = serial.Serial(self.port2, timeout=0.05)
-        except serial.serialutil.SerialException:
+        except SerialException:
             self.to_log("Could not establish a connection to the pumps",
                         "Try resetting the port connections")
             print("Disabling MainWindow test controls")
@@ -159,7 +157,7 @@ class Experiment():
             print("Failed to send stop/close order to pump")
             print(e)
 
-        max_measures = self.elapsed/self.interval  # for this particular run
+        max_measures = round(self.elapsed/self.interval)  # for this particular run
         self.to_log(f"Took {self.readings}/{max_measures} expected readings in {self.elapsed/60:.2f} min")
         completion_rate = round(self.readings/max_measures*100)
         self.to_log(f"Dataset is {completion_rate}% complete")
