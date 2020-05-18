@@ -4,6 +4,7 @@ import csv  # logging the data
 from datetime import datetime  # logging the data
 import os  # handling file paths
 import serial
+from serial import SerialException
 # import tkinter as tk  # GUI
 import time  # sleeping
 
@@ -72,26 +73,9 @@ class Experiment():
 
         self.mainwin.to_log(*msgs)
 
-    def end_test(self) -> None:
-        """Stops the pumps and closes their COM ports, then swaps the button
-        states for the entfrm and cmdfrm widgets"""
-
-        print("Ending the test")
-        for pump in (self.pump1, self.pump2):
-            pump.write('st'.encode())
-            pump.close()
-        self.to_log(f"The test finished in {self.elapsed/60:.2f} minutes")
-        self.running = False
-        # TODO: try just disabling the frames instead, half the lines
-        # re-enable the entries to let user start new test
-        for child in self.mainwin.entfrm.winfo_children():
-            child.configure(state="normal")
-        # disable the run/end buttons until a new test is started
-        for child in self.mainwin.cmdfrm.winfo_children():
-            child.configure(state="disabled")
-
     def run_test(self) -> None:
         """Submits a test loop to the thread_pool_executor"""
+
         if not self.running:
             self.to_log("Starting the test")
             self.core.thread_pool_executor.submit(self.take_reading)
@@ -111,63 +95,79 @@ class Experiment():
                     'PSI 2' : [1, 1, 1, 1, 1]
                     }
         psi1, psi2, self.elapsed = 0, 0, 0
-        interval = self.core.config.getint(
+        self.interval = self.core.config.getint(
             'test settings', 'interval seconds'
         )
         starttime = time.time()
-        readings = 0
+        self.readings = 0
+        reading_start = time.time()
         while (
          (psi1 < self.failpsi or psi2 < self.failpsi)
          and (
              self.elapsed <= self.timelimit*60
-             or readings <= self.timelimit*60/interval
+             or self.readings <= self.timelimit*60/self.interval
              )
          ):
-            reading_start = time.time()
-            if not readings == 0 and self.elapsed/readings - interval > 0.01:
-                # print('\a')
-                print(f"avg s/reading: {round(self.elapsed/readings, 4)}")
 
-            for pump in (self.pump1, self.pump2):
-                pump.write('cc'.encode())  # get current conditions
-            time.sleep(0.05)  # give a moment to respond
-            psi1 = int(self.pump1.readline().decode().split(',')[1])
-            psi2 = int(self.pump2.readline().decode().split(',')[1])
-            thisdata = [
-                        time.strftime("%I:%M:%S", time.localtime()),
-                        round(self.elapsed),  # as seconds
-                        f"{self.elapsed/60:.2f}",  # as minutes
-                        psi1,
-                        psi2
-                        ]
-            with open(self.outpath, "a", newline='') as f:
-                csv.writer(f, delimiter=',').writerow(thisdata)
+            if time.time() - reading_start >= self.interval:
+                if self.readings != 0 and self.elapsed/self.readings - self.interval > 0.01:
+                    print(f"avg s/reading: {round(self.elapsed/self.readings, 4)}")
 
-            this_reading = (
-                f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
-            )
-            self.to_log(this_reading)
-            readings += 1
+                reading_start = time.time()
+                try:
+                    for pump in (self.pump1, self.pump2):
+                        pump.write('cc'.encode())  # get current conditions
+                    time.sleep(0.05)  # give a moment to respond
+                    psi1 = int(self.pump1.readline().decode().split(',')[1])
+                    psi2 = int(self.pump2.readline().decode().split(',')[1])
+                except SerialException as e:
+                    self.to_log(e)
 
-            # make sure we have flow - consecutive 0 readings alert user
-            pressures['PSI 1'].insert(0, psi1)
-            pressures['PSI 1'].pop(-1)
-            pressures['PSI 2'].insert(0, psi2)
-            pressures['PSI 2'].pop(-1)
-            for list in (pressures['PSI 1'], pressures['PSI 2']):
-                if list.count(0) >= 3:
-                    print(f"{list.count(0)} null values in the past 5 readings")
-                    print('\a')
-
-            # print(f"leftover: {round(3 - (time.time() - reading_start), 3)}")
-            time.sleep(interval - (time.time() - reading_start))
-            # print(f"total: {round((time.time() - reading_start), 3)}")
-            self.elapsed = time.time() - starttime
-            # end of while loop
+                thisdata = [
+                            time.strftime("%I:%M:%S", time.localtime()),
+                            round(self.elapsed),  # as seconds
+                            f"{self.elapsed/60:.2f}",  # as minutes
+                            psi1,
+                            psi2
+                            ]
+                with open(self.outpath, "a", newline='') as f:
+                    csv.writer(f, delimiter=',').writerow(thisdata)
+                this_reading = (
+                    f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
+                )
+                self.to_log(this_reading)
+                self.readings += 1
+                self.elapsed = time.time() - starttime
+                # end of while loop
 
         print("Test complete")
-        print(f"Took {readings} readings in {self.elapsed/60} min")
         self.end_test()
         for i in range(3):
             print('\a')
             time.sleep(0.5)
+
+    def end_test(self) -> None:
+        """Stops the pumps and closes their COM ports, then swaps the button
+        states for the entfrm and cmdfrm widgets"""
+
+        print("Ending the test")
+        try:
+            for pump in (self.pump1, self.pump2):
+                pump.write('st'.encode())
+                pump.close()
+        except SerialException as e:
+            print("Failed to send stop/close order to pump")
+            print(e)
+
+        max_measures = self.elapsed/self.interval  # for this particular run
+        self.to_log(f"Took {self.readings}/{max_measures} expected readings in {self.elapsed/60:.2f} min")
+        completion_rate = round(self.readings/max_measures*100)
+        self.to_log(f"Dataset is {completion_rate}% complete")
+
+        self.running = False
+        # re-enable the entries to let user start new test
+        for child in self.mainwin.entfrm.winfo_children():
+            child.configure(state="normal")
+        # disable the run/end buttons until a new test is started
+        for child in self.mainwin.cmdfrm.winfo_children():
+            child.configure(state="disabled")
