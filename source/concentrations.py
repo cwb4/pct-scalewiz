@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
-
+from tkinter import ttk, font
 class ConcCalc(tk.Toplevel):
     def __init__(self, parent, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
@@ -18,9 +17,13 @@ class ConcCalc(tk.Toplevel):
 
     def build(self):
         """Makes the widgets"""
-
         tk.Label(self, text="Treating conc. (ppm): ", anchor='w').grid(row=0, column=0, padx=15, pady=3, sticky='w')
         tk.Label(self, text="Sample volume (mL): ", anchor='w').grid(row=1, column=0, padx=15, pady=3, sticky='w')
+
+        def_font = font.nametofont("TkDefaultFont")
+        bold_font = font.Font(font=def_font)
+        bold_font.config(weight='bold')
+
         tk.Label(self, text="Treating volume: ", anchor='w').grid(row=2, column=0, padx=15, pady=3, sticky='w')
 #         tk.Label(self, text="Treating volume: ", anchor='w').grid(row=3, column=0, padx=10, pady=3, sticky='w')
 
@@ -29,8 +32,8 @@ class ConcCalc(tk.Toplevel):
         self.conc_ent.grid(row=0, column=1, padx=15, pady=3, sticky='w')
         self.vol_ent.grid(row=1, column=1, padx=15, pady=3, sticky='w')
 
-        mL = tk.Label(self, textvariable=self.mL, anchor='w')
-        uL = tk.Label(self, textvariable=self.uL, anchor='w')
+        mL = tk.Label(self, textvariable=self.mL, font=bold_font, anchor='w')
+        uL = tk.Label(self, textvariable=self.uL, font=bold_font, anchor='w')
         mL.grid(row=2, column=1, padx=15, pady=3, sticky='w')
         uL.grid(row=3, column=1, padx=15, pady=3, sticky='w')
 
@@ -44,7 +47,7 @@ class ConcCalc(tk.Toplevel):
         try:
             conc = int(self.conc_ent.get())
             vol = int(self.vol_ent.get())
-            self.mL.set(f"{conc*vol/1000/1000:.3f} mL, or")
+            self.mL.set(f"{conc*vol/1000/1000:.4f} mL, or")
             self.uL.set(f"{conc*vol/1000:.2f} μL")
         except ValueError:
             pass
