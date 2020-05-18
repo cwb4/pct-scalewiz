@@ -23,7 +23,7 @@ class Experiment():
         self.conc = conc
         self.running = False
 
-        print("Disabling MainWindow parameter entries")
+        print("Disabling MainWindow test parameter entries")
         for child in self.mainwin.entfrm.winfo_children():
             child.configure(state="disabled")
 
