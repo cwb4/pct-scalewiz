@@ -78,6 +78,7 @@ class Experiment():
             self.to_log("Starting the test")
             self.core.thread_pool_executor.submit(self.take_reading)
             self.running = True
+            self.core.root.protocol("WM_DELETE_WINDOW", lambda: self.close_app())
 
     def take_reading(self) -> None:
         """Loop to be handled by the thread_pool_executor"""
@@ -101,10 +102,11 @@ class Experiment():
         reading_start = time.time()
         while (
          (psi1 < self.failpsi or psi2 < self.failpsi)
-         and (
+        and (
              self.elapsed <= self.timelimit*60
              or self.readings <= self.timelimit*60/self.interval
              )
+        and self.running
          ):
 
             if time.time() - reading_start >= self.interval:
@@ -149,13 +151,14 @@ class Experiment():
         states for the entfrm and cmdfrm widgets"""
 
         print("Ending the test")
-        try:
-            for pump in (self.pump1, self.pump2):
-                pump.write('st'.encode())
-                pump.close()
-        except SerialException as e:
-            print("Failed to send stop/close order to pump")
-            print(e)
+        if self.running:
+            try:
+                for pump in (self.pump1, self.pump2):
+                    pump.write('st'.encode())
+                    pump.close()
+            except SerialException as e:
+                print("Failed to send stop/close order to pump")
+                print(e)
 
         max_measures = round(self.elapsed/self.interval)  # for this particular run
         self.to_log(f"Took {self.readings}/{max_measures} expected readings in {self.elapsed/60:.2f} min")
@@ -169,3 +172,11 @@ class Experiment():
         # disable the run/end buttons until a new test is started
         for child in self.mainwin.cmdfrm.winfo_children():
             child.configure(state="disabled")
+
+    def close_app(self):
+
+        if self.running:
+            print("Can't close the application while a test is running")
+        else:
+            print("Destroying root")
+            self.core.root.destroy()
