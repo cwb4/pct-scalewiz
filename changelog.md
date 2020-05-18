@@ -5,14 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.6.2] 2020-5-18
 ### Added
- - more convenient keybindings to main menu (hitting enter in an input field moves to next field, or starts test if all full)
+ - more convenient keybindings to main menu (hitting enter in an input field moves to next field, or starts test after the last field)
+ - completing a test gives a brief summary of the that trial's data
 ### Changed
  - calculaion steps in the calc logs are now more verbose and easier to follow
+ - GUI improvements such as bolding important text in main menu and dosage calculator
+ - style options for plot generation are now hidden by default
 ### Removed
- - removed the "Time Limit" and "Fail PSI" fields from mainmenu - these had no use as those settings are managed by the settings menu now
+ - removed the "Time Limit" and "Fail PSI" fields from main menu - these had no use as those settings are managed by the settings menu and don't often change
 ### Fixed
+ - improved the experiment loop timer to be much less susceptible to drift, even on lower end hardware
+ - fixed a bug that prevented data from being recorded if any errors occured while talking with the pumps
  - fixed a bug where empty cells in the csv file were sometimes counted as measurements (due to how Excel handles csv files with empty values)
  - fixed a bug causing some numerical data to be exported to report as text
 
