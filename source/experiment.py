@@ -78,7 +78,6 @@ class Experiment():
             self.to_log("Starting the test")
             self.core.thread_pool_executor.submit(self.take_reading)
             self.running = True
-            self.core.root.protocol("WM_DELETE_WINDOW", lambda: self.close_app())
 
     def take_reading(self) -> None:
         """Loop to be handled by the thread_pool_executor"""
@@ -172,11 +171,3 @@ class Experiment():
         # disable the run/end buttons until a new test is started
         for child in self.mainwin.cmdfrm.winfo_children():
             child.configure(state="disabled")
-
-    def close_app(self):
-
-        if self.running:
-            print("Can't close the application while a test is running")
-        else:
-            print("Destroying root")
-            self.core.root.destroy()

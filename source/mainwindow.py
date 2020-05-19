@@ -30,6 +30,7 @@ class MainWindow(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.core = parent
+        self.core.root.protocol("WM_DELETE_WINDOW", self.close_app)
         self.config = self.core.config
 
         self.plotpsi = tk.StringVar()
@@ -123,14 +124,6 @@ class MainWindow(tk.Frame):
             anchor='e'
             ).grid(row=4, sticky=tk.E)
 
-        # widget bindings for user convenience
-        def focus_run_btn():
-            self.init_test()
-            self.runbtn.focus_set()
-
-        self.conc.bind("<Return>", lambda _: focus_run_btn())
-        self.comlbl.bind("<Button-1>", lambda _: self.find_coms())
-
         # grid entries into self.entfrm
         self.port1.grid(row=0, column=1, sticky=tk.E, padx=(0,3), pady=1)
         self.port2.grid(row=0, column=2, sticky=tk.W, padx=(3,0), pady=1)
@@ -170,9 +163,6 @@ class MainWindow(tk.Frame):
         self.runbtn.grid(row=1, column=1, padx=5, pady=2, sticky=tk.W)
         self.endbtn.grid(row=1, column=2, padx=5, pady=2, sticky=tk.E)
 
-        # let enter key start tests
-        self.runbtn.bind('<Return>', lambda _: self.test.run_test())
-        # NOTE: will this throw an exception if not hasattr ? ^
         # a pair of Radiobuttons to choose which column of data to plot
         tk.Label(
             master=self.cmdfrm,
@@ -206,7 +196,6 @@ class MainWindow(tk.Frame):
         # matplotlib objects
         self.fig, self.ax = plt.subplots(figsize=(7.5, 4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
-        # TODO: explicitly clarify some of these args
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()
@@ -220,6 +209,13 @@ class MainWindow(tk.Frame):
         self.outfrm.grid(row=1, column=0, sticky=tk.NSEW, pady=2)
         self.cmdfrm.grid(row=2, column=0, sticky=tk.NSEW, pady=2)
         self.tstfrm.grid(padx=3)
+
+        # widget bindings
+        self.chem.bind("<Return>", lambda _: self.conc.focus_set())
+        self.conc.bind("<Return>", lambda _: self.init_test())
+        self.comlbl.bind("<Button-1>", lambda _: self.find_coms())
+        self.runbtn.bind('<Return>', lambda _: self.test.run_test())
+        self.endbtn.bind('<Return>', lambda _: self.test.end_test())
 
     def find_coms(self) -> None:
         """Looks for COM ports and disables the controls if two aren't found"""
@@ -261,6 +257,7 @@ class MainWindow(tk.Frame):
             'conc': self.conc.get().strip().replace(' ', '_')
         }
         self.test = Experiment(self, **params)
+        self.runbtn.focus_set()
 
     def to_log(self, *msgs) -> None:
         """Logs a message to the Text widget in MainWindow's outfrm"""
@@ -305,3 +302,11 @@ class MainWindow(tk.Frame):
             self.ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
             self.ax.set_facecolor('w')
             self.ax.legend(loc=0)
+
+    def close_app(self):
+        if hasattr(self, 'test'):
+            if self.test.running:
+                print("Can't close the application while a test is running")
+        else:
+            print("Destroying root")
+            self.core.root.destroy()
