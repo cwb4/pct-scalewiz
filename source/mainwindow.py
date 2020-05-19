@@ -70,7 +70,7 @@ class MainWindow(tk.Frame):
         )
         # this spacing is to avoid using multiple labels
         self.outfrm = tk.LabelFrame(self.tstfrm,
-            text="Elapsed,            Pump1,             Pump2",
+            text="Elapsed,            Pump1,              Pump2",
             font=bold_font
         )
         self.cmdfrm = tk.LabelFrame(self.tstfrm,
