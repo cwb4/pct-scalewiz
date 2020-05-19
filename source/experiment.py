@@ -159,11 +159,14 @@ class Experiment():
                 print("Failed to send stop/close order to pump")
                 print(e)
 
-        max_measures = round(self.elapsed/self.interval)  # for this particular run
-        self.to_log(f"Took {self.readings}/{max_measures} expected readings in {self.elapsed/60:.2f} min")
-        completion_rate = round(self.readings/max_measures*100)
-        self.to_log(f"Dataset is {completion_rate}% complete")
-
+        try:
+            max_measures = round(self.elapsed/self.interval)  # for this particular run
+            completion_rate = round(self.readings/max_measures*100)
+            self.to_log(f"Took {self.readings}/{max_measures} expected readings in {self.elapsed/60:.2f} min")
+            self.to_log(f"Dataset is {completion_rate}% complete")
+        except ZeroDivisionError:
+            self.to_log("The test ended before any measurements were recorded")
+            
         self.running = False
         # re-enable the entries to let user start new test
         for child in self.mainwin.entfrm.winfo_children():
