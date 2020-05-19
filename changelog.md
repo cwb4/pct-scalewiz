@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.3] 2020-5-19
+### Added
+ - full support for Linux cross compatibility implemented
+ - additional error handling while test is running
+### Changed
+ - minor improvements to calculations log formatting
+
 ## [0.6.2] 2020-5-18
 ### Added
  - can no longer (accidentally) close the program while a test is running
