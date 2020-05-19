@@ -16,20 +16,20 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
     line = '\n' + '-'*75 + '\n'
     to_log(f"\nBeginning evaluation of {proj}" + line*2)
     start=time.time()
-    to_log(f"baseline: {round(baseline)} psi")
-    to_log(f"time limit: {round(xlim*60)} s")
-    to_log(f"failing pressure threshold: {round(ylim)} psi")
-    to_log(f"reading interval: {interval} s/reading ")
 
     max_measures = round(xlim*60/interval)
     total_area = round(ylim*max_measures)
     baseline_area = round(baseline*max_measures)
     avail_area = total_area - baseline_area
 
+    to_log(f"baseline: {round(baseline)} psi")
+    to_log(f"time limit: {round(xlim*60)} s")
+    to_log(f"failing pressure threshold: {round(ylim)} psi")
+    to_log(f"reading interval: {interval} s/reading")
+    to_log(f"max measures = {round(xlim*60)} / {interval}: {max_measures}")
     to_log(f"total area =  {ylim} * {max_measures}: {total_area} psi")
     to_log(f"baseline area = {baseline} * {max_measures}: {baseline_area} psi")
     to_log(f"avail area = total area - baseline area: {avail_area} psi")
-    to_log(f"max measures = {round(xlim*60)} / {interval}: {max_measures}")
     to_log(line)
 
     blank_scores = []
