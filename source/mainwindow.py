@@ -304,9 +304,10 @@ class MainWindow(tk.Frame):
             self.ax.legend(loc=0)
 
     def close_app(self):
+
         if hasattr(self, 'test'):
             if self.test.running:
                 print("Can't close the application while a test is running")
-        else:
-            print("Destroying root")
-            self.core.root.destroy()
+                return
+        print("Destroying root")
+        self.core.root.destroy()
