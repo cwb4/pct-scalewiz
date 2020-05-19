@@ -43,7 +43,7 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         to_log(f"blank duration: {round(measures*interval/60, 3)} min")
         to_log(f"number of measurements: {measures}")
         to_log(f"max psi: {int(round(blank.max()))}")
-        scale_area = blank.sum()
+        scale_area = round(blank.sum())
         to_log(f"scale area = sum of all pressure readings: {scale_area} psi")
         over_blank = ylim*len(blank) - scale_area
         to_log(f"area over blank = {ylim}*{measures} - scale area: {over_blank} psi")
@@ -63,8 +63,8 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         measures = len(trial)
         duration = round(measures*interval/60, 3)
         if duration > xlim:
-            to_log(f"Trial duration {duration} is longer than {xlim}")
-            to_log(f"Truncating duration to {xlim} (does not affect score)")
+            to_log(f"Trial duration {duration} min is longer than {xlim} min")
+            to_log(f"Truncating duration to {xlim} min (does not affect score)")
             duration = xlim
         durations.append(duration)
         to_log(f"trial duration: {duration} min")
