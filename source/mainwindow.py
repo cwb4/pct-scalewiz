@@ -222,16 +222,27 @@ class MainWindow(tk.Frame):
 
         print("Finding COM ports")
         list = serial.tools.list_ports.comports()
-        useports = [i.device for i in list]
-        if len(useports) < 2:
+        ports = [i.device for i in list]
+        if len(ports) < 2:
             self.to_log("Not enough COM ports found...",
                         "Click 'COM ports:' to try again.")
-            useports = ["??", "??"]
+            ports = ["??", "??"]
+
+        useports = []
+        for port in ports:
+            try:
+                this = serial.Serial(port)
+                this.close()
+                print(this.is_open)
+                useports.append(port)
+            except SerialException as e:
+                self.to_log(f"Could not connect to port {port}")
+                print(e)
 
         self.port1.delete(0, tk.END)
         self.port2.delete(0, tk.END)
-        self.port1.insert(0, useports[0])
-        self.port2.insert(0, useports[1])
+        self.port1.insert(0, ports[-1])
+        self.port2.insert(0, ports[-2])
 
         if "?" in self.port1.get()  or "?" in self.port2.get():
             print("Disabling start button")
