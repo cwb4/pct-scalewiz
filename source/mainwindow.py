@@ -233,7 +233,6 @@ class MainWindow(tk.Frame):
             try:
                 this = serial.Serial(port)
                 this.close()
-                print(this.is_open)
                 useports.append(port)
             except SerialException as e:
                 self.to_log(f"Could not connect to port {port}")
@@ -241,8 +240,8 @@ class MainWindow(tk.Frame):
 
         self.port1.delete(0, tk.END)
         self.port2.delete(0, tk.END)
-        self.port1.insert(0, ports[-1])
-        self.port2.insert(0, ports[-2])
+        self.port1.insert(0, useports[-1])
+        self.port2.insert(0, useports[-2])
 
         if "?" in self.port1.get()  or "?" in self.port2.get():
             print("Disabling start button")
@@ -253,7 +252,7 @@ class MainWindow(tk.Frame):
             self.dataout['state'] = 'disabled'
             print(f"Successfully connected to COM ports {useports}")
             print("Enabling start button")
-            self.strtbtn['state'] = ['enable']
+            self.strtbtn['state'] = 'enable'
 
     def init_test(self) -> None:
         """Scrape form for user input, then init an Experiment object"""
