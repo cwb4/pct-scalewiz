@@ -21,6 +21,7 @@ class Experiment():
         self.chem = chem
         self.conc = conc
         self.running = False
+        self.elapsed = 0
 
         print("Disabling MainWindow test parameter entries")
         for child in self.mainwin.entfrm.winfo_children():
@@ -92,7 +93,7 @@ class Experiment():
                     'PSI 1' : [1, 1, 1, 1, 1],
                     'PSI 2' : [1, 1, 1, 1, 1]
                     }
-        psi1, psi2, self.elapsed = 0, 0, 0
+        psi1, psi2, = 0, 0,
         self.interval = self.core.config.getint(
             'test settings', 'interval seconds'
         )
@@ -166,7 +167,7 @@ class Experiment():
             self.to_log(f"Dataset is {completion_rate}% complete")
         except ZeroDivisionError:
             self.to_log("The test ended before any measurements were recorded")
-            
+
         self.running = False
         # re-enable the entries to let user start new test
         for child in self.mainwin.entfrm.winfo_children():
