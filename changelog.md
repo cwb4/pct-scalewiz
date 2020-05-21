@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
- - support for having more than two pumps connected to the same device 
+ - support for having more than two pumps connected to the same device
+### Fixed
+ - bug causing script to crash if neither pump is connected to computer
 
 
 ## [0.6.3] 2020-5-19
