@@ -230,13 +230,15 @@ class MainWindow(tk.Frame):
 
         useports = []
         for port in ports:
-            try:
-                this = serial.Serial(port)
-                this.close()
-                useports.append(port)
-            except SerialException as e:
-                self.to_log(f"Could not connect to port {port}")
-                print(e)
+            if port != "??":
+                try:
+                    this = serial.Serial(port)
+                    this.close()
+                    useports.append(port)
+                except SerialException as e:
+                    self.to_log(f"Could not connect to port {port}")
+                    print(e)
+            else: useports.append("??")
 
         self.port1.delete(0, tk.END)
         self.port2.delete(0, tk.END)
