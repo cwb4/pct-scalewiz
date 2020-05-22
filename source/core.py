@@ -75,7 +75,6 @@ if __name__ == "__main__":
     root.resizable(0, 0)
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
     try:
-        # icon = os.path.normpath(r'C:\Users\P\Documents\GitHub\pct-scalewiz\images\chem.ico')
         root.iconbitmap('chem.ico')
     except:
         pass
