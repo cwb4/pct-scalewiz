@@ -9,6 +9,7 @@ __pycache__/
 # Personal use
 build.bat
 run.bat
+updatedrop.bat
 *.plt
 *.xlsx
 *.ini
