@@ -79,5 +79,6 @@ if __name__ == "__main__":
     root.title("Scale Block Wizard")
     root.resizable(0, 0)
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
-    root.iconbitmap('chem.ico')
+    if os.name == 'nt':
+        root.iconbitmap('chem.ico')
     root.mainloop()

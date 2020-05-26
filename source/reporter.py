@@ -3,11 +3,12 @@
 from datetime import date
 import os  # handling file paths
 import pickle  # storing plotter settings
+import tkinter as tk  # GUI
+from tkinter import ttk, filedialog, messagebox
 import PIL
 import shutil
 import time
-import tkinter as tk  # GUI
-from tkinter import ttk, filedialog, messagebox
+
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt  # plotting the data
@@ -38,7 +39,8 @@ class Reporter(tk.Toplevel):
     def __init__(self, parent, *args, **kwargs):
         """Init the reporter."""
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
-        self.iconbitmap('chem.ico')
+        if os.name == 'nt':
+            self.iconbitmap('chem.ico')
         self.core = parent
         self.mainwin = self.core.mainwin
         self.config = self.core.config

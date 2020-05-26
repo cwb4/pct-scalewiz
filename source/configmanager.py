@@ -73,7 +73,8 @@ class ConfigManager(tk.Toplevel):
 
         """
         tk.Toplevel.__init__(self, parent)
-        self.iconbitmap('chem.ico')
+        if os.name == 'nt':
+            self.iconbitmap('chem.ico')
         self.core = parent
         self.protocol("WM_DELETE_WINDOW", self.update_settings)
         self.minsize(400, 500)  # big enough to hold the DEFAULT_DICT

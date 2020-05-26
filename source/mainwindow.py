@@ -126,8 +126,8 @@ class MainWindow(tk.Frame):
             ).grid(row=4, sticky=tk.E)
 
         # grid entries into self.entfrm
-        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(0, 3), pady=1)
-        self.port2.grid(row=0, column=2, sticky=tk.W, padx=(3, 0), pady=1)
+        self.port1.grid(row=0, column=1, sticky=tk.E, padx=(0, 4), pady=1)
+        self.port2.grid(row=0, column=2, sticky=tk.W, padx=(4, 0), pady=1)
         self.chem.grid(row=3, column=1, columnspan=2, pady=1)
         self.conc.grid(row=4, column=1, columnspan=2, pady=1)
         self.strtbtn.grid(row=5, column=1, columnspan=2, pady=1)
