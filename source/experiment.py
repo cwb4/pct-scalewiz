@@ -96,12 +96,12 @@ class Experiment():
         while (
                 (psi1 < self.failpsi or psi2 < self.failpsi)
                 and (
-                    self.elapsed <= self.timelimit*60
-                    or self.readings <= self.timelimit*60/self.interval
+                    self.elapsed <= self.timelimit * 60
+                    or self.readings <= self.timelimit * 60 / self.interval
                 )
                 and self.running
         ):
-            reading_ratio = self.elapsed/self.readings
+            reading_ratio = self.elapsed / self.readings
             rate_is_good = reading_ratio - self.interval > 0.01
             if time.time() - reading_start >= self.interval:
                 if self.readings != 0 and rate_is_good:
@@ -152,12 +152,11 @@ class Experiment():
                 print(error)
 
         try:
-            max_measures = round(self.elapsed/self.interval)
-            completion_rate = round(self.readings/max_measures*100)
+            max_measures = round(self.elapsed / self.interval)
+            completion_rate = round(self.readings / max_measures * 100)
             this_duration = f"{self.elapsed/60:.2f} min"
             self.to_log(
-                f"Took {self.readings}/{max_measures} expected readings " +
-                f"in {this_duration}"
+                f"Took {self.readings}/{max_measures} expected readings in {this_duration}"
             )
             self.to_log(f"Dataset is {completion_rate}% complete")
         except ZeroDivisionError:

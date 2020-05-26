@@ -1,4 +1,4 @@
-"""The MenuBar for the MainWindow"""
+"""Menu bar for the MainWindow."""
 
 import tkinter as tk  # GUI
 from tkinter import filedialog
@@ -10,22 +10,20 @@ from concentrations import ConcCalc
 
 
 class MenuBar(tk.Frame):
-    """The menu bar for the main window"""
+    """Menu bar for the main window."""
 
     def __init__(self, parent, *args, **kwargs):
+        """Init the MenuBar."""
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.mainwin = parent
         self.core = parent.core
         self.config = self.mainwin.core.config
-        plotstyle_list = self.config.get(
-            'plot settings', 'plot styles'
-            ).split(',')
+        plotstyle_list = self.config.get('plot settings', 'plot styles').split(',')
         self.plotstyle_list = [i.strip() for i in plotstyle_list]
         self.build()
 
     def build(self):
-        """Makes the Tkinter widgets for the menu bar"""
-
+        """Make the Tkinter widgets for the menu bar."""
         self.menubar = tk.Menu(self)
         # self.filemenu = tk.Menu(self, tearoff=0)
         self.menubar.add_command(
@@ -47,7 +45,7 @@ class MenuBar(tk.Frame):
         for style in self.plotstyle_list:
             self.pltstylmenu.add_command(
                 label=style,
-                command=lambda s = style: self.set_plotstyle(s)
+                command=lambda s=style: self.set_plotstyle(s)
             )
         # check the config to see if we want to show this label to the user
         if self.config.getboolean('plot settings', 'show style options'):
@@ -78,7 +76,7 @@ class MenuBar(tk.Frame):
         out = filedialog.askdirectory(
             initialdir="C:\"",
             title="Select data output directory:"
-            )
+        )
 
         if out != "":
             self.mainwin.project = os.path.normpath(out)
@@ -100,7 +98,8 @@ class MenuBar(tk.Frame):
 
         print("Opening ConfigManager")
         self.config.read(self.config.path)
-        ConfigManager(self.core,
+        ConfigManager(
+            self.core,
             configpath=self.config.path,
             _title='Settings',
             defaultdict=self.config.DEFAULT_DICT
@@ -115,9 +114,9 @@ class MenuBar(tk.Frame):
 
     def show_help(self):
         tk.messagebox.showinfo(
-        parent=self,
-        title="Help: Using ScaleWiz",
-        message=f"""
+            parent=self,
+            title="Help: Using ScaleWiz",
+            message=f"""
 When you start the program, the pumps should connect automatically.
 Clicking the 'COM Ports' label will attempt to reconnect to the pumps.
 

@@ -118,12 +118,12 @@ class MainWindow(tk.Frame):
             master=self.entfrm,
             text="Chemical:",
             anchor='e'
-            ).grid(row=3, sticky=tk.E)
+        ).grid(row=3, sticky=tk.E)
         ttk.Label(
             master=self.entfrm,
             text="Concentration:",
             anchor='e'
-            ).grid(row=4, sticky=tk.E)
+        ).grid(row=4, sticky=tk.E)
 
         # grid entries into self.entfrm
         self.port1.grid(row=0, column=1, sticky=tk.E, padx=(0, 4), pady=1)
@@ -168,19 +168,19 @@ class MainWindow(tk.Frame):
         tk.Label(
             master=self.cmdfrm,
             text="Select data to plot:"
-            ).grid(row=0, column=0, padx=5)
+        ).grid(row=0, column=0, padx=5)
         tk.Radiobutton(
             master=self.cmdfrm,
             text="PSI 1",
             variable=self.plotpsi,
             value='PSI 1'
-            ).grid(row=0, column=1, padx=5)
+        ).grid(row=0, column=1, padx=5)
         tk.Radiobutton(
             master=self.cmdfrm,
             text="PSI 2",
             variable=self.plotpsi,
             value='PSI 2'
-            ).grid(row=0, column=2, padx=5)
+        ).grid(row=0, column=2, padx=5)
 
         # disable the controls to prevent starting test w/o parameters
         for child in self.cmdfrm.winfo_children():
@@ -201,7 +201,7 @@ class MainWindow(tk.Frame):
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()
         self.canvas.get_tk_widget().pack()
-        interval = self.config.getint('test settings', 'interval seconds')*1000
+        interval = self.config.getint('test settings', 'interval seconds') * 1000
         self.ani = FuncAnimation(self.fig, self.animate, interval=interval)
 
         # grid stuff into self.tstfrm

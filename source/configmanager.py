@@ -184,12 +184,12 @@ class ConfigManager(tk.Toplevel):
             btnfrm,
             text='Save',
             command=lambda: self.save_config()
-            ).grid(row=0, column=0, pady=5, padx=3, sticky='ne')
+        ).grid(row=0, column=0, pady=5, padx=3, sticky='ne')
         ttk.Button(
             btnfrm,
             text='Reset Defaults',
             command=lambda: self.reset_config()
-            ).grid(row=0, column=1, pady=5, padx=3, sticky='nw')
+        ).grid(row=0, column=1, pady=5, padx=3, sticky='nw')
         btnfrm.pack()  # put them at the bottom of the form
 
         # then pack everything else
@@ -215,7 +215,7 @@ class ConfigManager(tk.Toplevel):
         self.canvas.bind_all(
             '<MouseWheel>',
             lambda event: self.canvas.yview_scroll(
-                int(-1*(event.delta/120)), "units"
+                int(-1 * (event.delta / 120)), "units"
             )
         )
 
@@ -291,5 +291,5 @@ if __name__ == '__main__':
         root,
         text='Your stuff here',
         anchor='center'
-        ).grid(padx=100, pady=10)
+    ).grid(padx=100, pady=10)
     root.mainloop()

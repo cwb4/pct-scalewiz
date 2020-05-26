@@ -14,13 +14,13 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
             print(f"{msg}")
             log.append(f"{msg}")
 
-    line = '\n' + '-'*75 + '\n'
-    _log(f"\nBeginning evaluation of {proj}" + line*2)
+    line = '\n' + '-' * 75 + '\n'
+    _log(f"\nBeginning evaluation of {proj}" + line * 2)
     start = time.time()
 
-    max_measures = round(xlim*60/interval)
-    total_area = round(ylim*max_measures)
-    baseline_area = round(baseline*max_measures)
+    max_measures = round(xlim * 60 / interval)
+    total_area = round(ylim * max_measures)
+    baseline_area = round(baseline * max_measures)
     avail_area = total_area - baseline_area
 
     _log(f"baseline = {round(baseline)} psi")
@@ -40,7 +40,7 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
 
     for blank in blanks:
         blank = blank.dropna()
-        blank_times.append(round(len(blank)*interval, 2))
+        blank_times.append(round(len(blank) * interval, 2))
         _log(blank.name)
         measures = len(blank)
         _log(f"blank duration = {round(measures*interval/60, 3)} min")
@@ -48,7 +48,7 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         _log(f"max psi = {int(round(blank.max()))}")
         scale_area = round(blank.sum())
         _log(f"scale area = sum of all pressure readings: {scale_area} psi")
-        over_blank = ylim*measures - scale_area
+        over_blank = ylim * measures - scale_area
         _log("area over blank = fail psi * measures - scale area")
         _log(f"area over blank = {ylim} * {measures} - {scale_area}")
         _log(f"area over blank = {over_blank} psi")
@@ -68,7 +68,7 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         trial = trial.dropna()
         _log(trial.name)
         measures = len(trial)
-        duration = round(measures*interval/60, 3)
+        duration = round(measures * interval / 60, 3)
         if duration > xlim:
             _log(f"trial duration {duration} min is longer than {xlim} min")
             _log(f"truncating duration to {xlim} min (doesn't affect score)")
@@ -83,15 +83,13 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         # check if this was a passing run or not
         if measures < max_measures:
             _log(
-                f"trial length {measures} < {max_measures} expected " +
-                "for a passing run"
+                f"trial length {measures} < {max_measures} for a passing run"
             )
             # ylim per would-be measure
-            failure_region = round(ylim*(max_measures - measures))
+            failure_region = round(ylim * (max_measures - measures))
         else:
             _log(
-                f"trial length {measures} >= {max_measures} expected " +
-                "for a passing run"
+                f"trial length {measures} >= {max_measures} for a passing run"
             )
             failure_region = 0
 
@@ -102,9 +100,9 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         new_scale_text = f"{scale_area} + {failure_region} - {baseline_area}"
         _log("new scale area = " + new_scale_text)
         _log(f"new scale area = {scale_area} psi")
-        scale_ratio = float(scale_area/protectable)
+        scale_ratio = float(scale_area / protectable)
         _log(f"scale ratio = scale area / protectable area: {scale_ratio}")
-        score = (1 - scale_ratio)*100
+        score = (1 - scale_ratio) * 100
         if score > 100:
             _log("Negative scale ratio detected; reducing score to 100%")
             score = 100
@@ -134,6 +132,6 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         ylim,
         max_psis
     )
-    _log(line*2)
+    _log(line * 2)
     _log(f"Finished evaluation in {round(time.time() - start, 3)} s\n")
     return results_queue, log

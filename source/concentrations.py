@@ -31,12 +31,12 @@ class ConcCalc(tk.Toplevel):
             self,
             text="Treating conc. (ppm): ",
             anchor='w'
-            ).grid(row=0, column=0, padx=15, pady=3, sticky='w')
+        ).grid(row=0, column=0, padx=15, pady=3, sticky='w')
         tk.Label(
             self,
             text="Sample volume (mL): ",
             anchor='w'
-            ).grid(row=1, column=0, padx=15, pady=3, sticky='w')
+        ).grid(row=1, column=0, padx=15, pady=3, sticky='w')
 
         def_font = font.nametofont("TkDefaultFont")
         bold_font = font.Font(font=def_font)
@@ -46,7 +46,7 @@ class ConcCalc(tk.Toplevel):
             self,
             text="Treating volume: ",
             anchor='w'
-            ).grid(row=2, column=0, padx=15, pady=3, sticky='w')
+        ).grid(row=2, column=0, padx=15, pady=3, sticky='w')
         self.conc_ent = ttk.Entry(self, textvariable=self.conc)
         self.vol_ent = ttk.Entry(self, textvariable=self.vol)
         self.conc_ent.grid(row=0, column=1, padx=15, pady=3, sticky='w')

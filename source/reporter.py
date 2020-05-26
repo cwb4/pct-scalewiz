@@ -1,4 +1,4 @@
-"""Evaluates data and makes a plot"""
+"""Evaluates data and makes a plot."""
 
 from datetime import date
 import os  # handling file paths
@@ -78,10 +78,8 @@ class Reporter(tk.Toplevel):
             master=self,
             # NOTE: this is a dirty way of doing it... but it works
             text=(
-                "File path:                           " +
-                "Series title:                        " +
-                "           Pressure to evaluate:"
-                )
+                "File path:                           Series title:                                    Pressure to evaluate:"
+            )
         )
         defpsi = self.config.get('test settings', 'default pump')
         num_srs = self.config.getint('report settings', 'series per project')
@@ -102,13 +100,13 @@ class Reporter(tk.Toplevel):
             tk.Label(
                 master=self.setfrm,
                 text="Plot style:"
-                ).grid(row=0, column=0, sticky=tk.E, padx=5, pady=2)
+            ).grid(row=0, column=0, sticky=tk.E, padx=5, pady=2)
             self.stylemenu.grid(row=0, column=1, sticky='w', padx=(5, 10), pady=2)
 
         tk.Label(
             master=self.setfrm,
             text="Time limit (min):"
-            ).grid(row=0, column=2, sticky=tk.E, padx=5, pady=(10, 2))
+        ).grid(row=0, column=2, sticky=tk.E, padx=5, pady=(10, 2))
         self.xlim = ttk.Entry(self.setfrm, width=14)
         self.xlim.insert(
             0,
@@ -119,7 +117,7 @@ class Reporter(tk.Toplevel):
         tk.Label(
             master=self.setfrm,
             text="Legend location:"
-            ).grid(row=1, column=0, sticky=tk.E, padx=5, pady=2)
+        ).grid(row=1, column=0, sticky=tk.E, padx=5, pady=2)
         self.locsmenu = ttk.OptionMenu(
             self.setfrm,
             self.loc,
@@ -131,7 +129,7 @@ class Reporter(tk.Toplevel):
         tk.Label(
             master=self.setfrm,
             text="Max pressure (psi):"
-            ).grid(row=1, column=2, sticky=tk.E, padx=5, pady=2)
+        ).grid(row=1, column=2, sticky=tk.E, padx=5, pady=2)
         self.ylim = ttk.Entry(self.setfrm, width=14)
         self.ylim.insert(
             0,
@@ -142,7 +140,7 @@ class Reporter(tk.Toplevel):
         tk.Label(
             master=self.setfrm,
             text="Baseline pressure (psi):"
-            ).grid(row=2, column=2, sticky=tk.E, padx=5, pady=2)
+        ).grid(row=2, column=2, sticky=tk.E, padx=5, pady=2)
         self.baseline = ttk.Entry(self.setfrm, width=14)
         self.baseline.insert(
             0,
@@ -393,24 +391,24 @@ class Reporter(tk.Toplevel):
             master=result_window,
             text="Trial",
             anchor='w'
-            ).grid(row=0, column=0, sticky='w', padx=35, pady=3)
+        ).grid(row=0, column=0, sticky='w', padx=35, pady=3)
         tk.Label(
             master=result_window,
             text="% protection",
             anchor='w'
-            ).grid(row=0, column=1, sticky='w', padx=35, pady=3)
+        ).grid(row=0, column=1, sticky='w', padx=35, pady=3)
 
         for i, title in enumerate(self.results_queue[1]):
             entry = tk.Entry(result_window, bg=def_bg, width=len(title))
             entry.insert(0, title)
             entry.configure(state='readonly', relief='flat')
-            entry.grid(row=i+1, column=0, sticky='W', padx=35, pady=3)
+            entry.grid(row=i + 1, column=0, sticky='W', padx=35, pady=3)
 
         for i, value in enumerate(self.results_queue[2]):
             entry = tk.Entry(result_window, bg=def_bg, width=10)
             entry.insert(0, value)
             entry.configure(state='readonly', relief='flat')
-            entry.grid(row=i+1, column=1, sticky='W', padx=35, pady=3)
+            entry.grid(row=i + 1, column=1, sticky='W', padx=35, pady=3)
 
     def export_report(self):
         """Export the reporter's results_queue to an .xlsx file."""
@@ -424,9 +422,7 @@ class Reporter(tk.Toplevel):
             tk.messagebox.showerror(
                 parent=self,
                 message=(
-                    "No valid template file found." +
-                    "\nYou can set the template path in " +
-                    "Settings > Report Settings."
+                    "No valid template file found.\nYou can set the template path in Settings > Report Settings."
                 )
             )
             return
@@ -434,8 +430,7 @@ class Reporter(tk.Toplevel):
         if not hasattr(self, 'results_queue'):
             tk.messagebox.showinfo(
                 parent=self,
-                message="You must evaulate a set of data before" +
-                "exporting a report."
+                message="You must evaulate a set of data before exporting a report."
             )
             return
 
@@ -506,7 +501,7 @@ class Reporter(tk.Toplevel):
         chem_concs = [" ".join(title.split(' ')[-2:-1]) for title in result_titles]
 
         for (cell, blank_time) in zip(blank_time_cells, blank_times):
-            ws[cell] = float(round(blank_time/60, 2))
+            ws[cell] = float(round(blank_time / 60, 2))
         for (cell, name) in zip(chem_name_cells, chem_names):
             ws[cell] = f"{name}"
         for (cell, conc) in zip(chem_conc_cells, chem_concs):
@@ -517,7 +512,7 @@ class Reporter(tk.Toplevel):
             ws[cell] = int(psi)
         for (cell, score) in zip(protection_cells, result_values):
             score = score[:-1]
-            ws[cell] = float(score)/100  # cell format in template set to %
+            ws[cell] = float(score) / 100  # cell format in template set to %
 
         # note: may need to move contents up before deleting hide_rows
 
@@ -531,7 +526,7 @@ class Reporter(tk.Toplevel):
             else:
                 resize_rows.append(i)
 
-        row_width = 200/len(resize_rows)
+        row_width = 200 / len(resize_rows)
         if row_width >= 30:
             row_width = 30
         for row in resize_rows:
@@ -547,7 +542,7 @@ class Reporter(tk.Toplevel):
         tk.messagebox.showinfo(
             parent=self,
             message=f"Report exported to\n{report_path}"
-            )
+        )
 
     def show_help(self):
         """Shows a help dialog to the user"""
