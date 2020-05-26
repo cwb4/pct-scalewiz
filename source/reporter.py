@@ -5,10 +5,9 @@ import os  # handling file paths
 import pickle  # storing plotter settings
 import tkinter as tk  # GUI
 from tkinter import ttk, filedialog, messagebox
-import PIL
 import shutil
 import time
-
+import PIL
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt  # plotting the data
@@ -16,12 +15,13 @@ from matplotlib.ticker import MultipleLocator
 import openpyxl
 from pandas import Series, DataFrame, read_csv  # reading the data
 
-
 from seriesentry import SeriesEntry
 from evaluator import evaluate
 
 
 class Reporter(tk.Toplevel):
+    """Class for collecting data and exporting results from evaluator."""
+
     LocsLst = [  # list of legend locations - used in a widget
         "best",
         "upper right",
