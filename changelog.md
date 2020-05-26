@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
- - custom icon 
+ - custom icon (with appropriate license)
  - support for having more than two pumps connected to the same device
+### Changed
+ - code review / QA
 ### Fixed
- - bug causing script to crash if neither pump is connected to computer
+ - bug causing script to crash if neither pump is connected to computer when program starts
 
 
 ## [0.6.3] 2020-5-19
