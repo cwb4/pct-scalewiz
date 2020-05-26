@@ -1,17 +1,17 @@
-"""A class to handle the logic for running the test"""
+"""A class to handle the logic for running the test."""
 
 import csv  # logging the data
-from datetime import datetime  # logging the data
 import os  # handling file paths
+import time  # sleeping
 import serial
 from serial import SerialException
-import time  # sleeping
 
 
 class Experiment():
-    def __init__(self, parent, port1, port2, timelimit, failpsi, chem, conc):
-        """Collects all the user data from the MainWindow widgets"""
+    """A class to handle the logic for running the test."""
 
+    def __init__(self, parent, port1, port2, timelimit, failpsi, chem, conc):
+        """Collect all the user data from the MainWindow widgets."""
         self.mainwin = parent
         self.core = self.mainwin.core
         self.port1 = port1
@@ -22,6 +22,10 @@ class Experiment():
         self.conc = conc
         self.running = False
         self.elapsed = 0
+        self.readings = 0
+        self.interval = self.core.config.getint(
+            'test settings', 'interval seconds'
+        )
 
         print("Disabling MainWindow test parameter entries")
         for child in self.mainwin.entfrm.winfo_children():
@@ -49,8 +53,8 @@ class Experiment():
         print(f"Creating output file at \n{self.outpath}")
 
         header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
-        with open(self.outpath, "w") as f:
-            csv.writer(f, delimiter=',').writerow(header_row)
+        with open(self.outpath, "w") as file:
+            csv.writer(file, delimiter=',').writerow(header_row)
 
         # the timeout values are an alternative to using TextIOWrapper
         # the values chosen were suggested by the pump's documentation
@@ -68,51 +72,40 @@ class Experiment():
                 child.configure(state="normal")
 
     def to_log(self, *msgs) -> None:
-        """Passes str messages to the parent widget's to_log method"""
-
+        """Pass str messages to the parent widget's to_log method."""
         self.mainwin.to_log(*msgs)
 
     def run_test(self) -> None:
-        """Submits a test loop to the thread_pool_executor"""
-
+        """Submit a test loop to the thread_pool_executor."""
         if not self.running:
             self.to_log("Starting the test")
             self.core.thread_pool_executor.submit(self.take_reading)
             self.running = True
 
     def take_reading(self) -> None:
-        """Loop to be handled by the thread_pool_executor"""
-
+        """Loop to be handled by the thread_pool_executor."""
         for pump in (self.pump1, self.pump2):
             pump.write('ru'.encode())
         # let the pumps warm up before we start recording data
         time.sleep(3)
 
         # a dict to hold recent pressure readings
-        pressures = {
-                    'PSI 1' : [1, 1, 1, 1, 1],
-                    'PSI 2' : [1, 1, 1, 1, 1]
-                    }
-        psi1, psi2, = 0, 0,
-        self.interval = self.core.config.getint(
-            'test settings', 'interval seconds'
-        )
+        psi1, psi2 = 0, 0
         starttime = time.time()
-        self.readings = 0
         reading_start = time.time()
         while (
-         (psi1 < self.failpsi or psi2 < self.failpsi)
-        and (
-             self.elapsed <= self.timelimit*60
-             or self.readings <= self.timelimit*60/self.interval
-             )
-        and self.running
-         ):
-
+                (psi1 < self.failpsi or psi2 < self.failpsi)
+                and (
+                    self.elapsed <= self.timelimit*60
+                    or self.readings <= self.timelimit*60/self.interval
+                )
+                and self.running
+        ):
+            reading_ratio = self.elapsed/self.readings
+            rate_is_good = reading_ratio - self.interval > 0.01
             if time.time() - reading_start >= self.interval:
-                if self.readings != 0 and self.elapsed/self.readings - self.interval > 0.01:
-                    print(f"avg s/reading: {round(self.elapsed/self.readings, 4)}")
-
+                if self.readings != 0 and rate_is_good:
+                    print(f"avg s/reading: {round(reading_ratio, 4)}")
                 reading_start = time.time()
                 try:
                     for pump in (self.pump1, self.pump2):
@@ -120,18 +113,18 @@ class Experiment():
                     time.sleep(0.05)  # give a moment to respond
                     psi1 = int(self.pump1.readline().decode().split(',')[1])
                     psi2 = int(self.pump2.readline().decode().split(',')[1])
-                except SerialException as e:
-                    self.to_log(e)
+                except SerialException as error:
+                    self.to_log(error)
 
-                thisdata = [
-                            time.strftime("%I:%M:%S", time.localtime()),
-                            round(self.elapsed),  # as seconds
-                            f"{self.elapsed/60:.2f}",  # as minutes
-                            psi1,
-                            psi2
-                            ]
-                with open(self.outpath, "a", newline='') as f:
-                    csv.writer(f, delimiter=',').writerow(thisdata)
+                this_data = [
+                    time.strftime("%I:%M:%S", time.localtime()),
+                    round(self.elapsed),  # as seconds
+                    f"{self.elapsed/60:.2f}",  # as minutes
+                    psi1,
+                    psi2
+                ]
+                with open(self.outpath, "a", newline='') as file:
+                    csv.writer(file, delimiter=',').writerow(this_data)
                 this_reading = (
                     f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
                 )
@@ -142,28 +135,30 @@ class Experiment():
 
         print("Test complete")
         self.end_test()
-        for i in range(3):
+        for _ in range(3):
             print('\a')
             time.sleep(0.5)
 
     def end_test(self) -> None:
-        """Stops the pumps and closes their COM ports, then swaps the button
-        states for the entfrm and cmdfrm widgets"""
-
+        """Stop the pumps and close their COM ports then swap button states."""
         print("Ending the test")
         if self.running:
             try:
                 for pump in (self.pump1, self.pump2):
                     pump.write('st'.encode())
                     pump.close()
-            except SerialException as e:
+            except SerialException as error:
                 print("Failed to send stop/close order to pump")
-                print(e)
+                print(error)
 
         try:
-            max_measures = round(self.elapsed/self.interval)  # for this particular run
+            max_measures = round(self.elapsed/self.interval)
             completion_rate = round(self.readings/max_measures*100)
-            self.to_log(f"Took {self.readings}/{max_measures} expected readings in {self.elapsed/60:.2f} min")
+            this_duration = f"{self.elapsed/60:.2f} min"
+            self.to_log(
+                f"Took {self.readings}/{max_measures} expected readings " +
+                f"in {this_duration}"
+            )
             self.to_log(f"Dataset is {completion_rate}% complete")
         except ZeroDivisionError:
             self.to_log("The test ended before any measurements were recorded")

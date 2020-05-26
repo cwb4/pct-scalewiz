@@ -36,10 +36,13 @@ Gist: https://gist.github.com/teauxfu/bfe19a82381461771c87e2d1a4113355
 import configparser
 import os
 import tkinter as tk
-from tkinter import scrolledtext, ttk
+from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 
 
 class ConfigManager(tk.Toplevel):
+    """Toplevel for managing settings in an .ini file."""
+
     # used if one isn't passed to the instance
     DEFAULT_DICT = {
         'section1': {'key1': 'value1',
@@ -54,26 +57,30 @@ class ConfigManager(tk.Toplevel):
     }
 
     def __init__(
-        self, parent,
-        configpath=None, _title=' ', defaultdict=None
+            self,
+            parent,
+            configpath=None,
+            _title=' ',
+            defaultdict=None
     ):
-        """
-        Initializes a new ConfigManager.
-            * parent: should be a Tkinter object
-            * configpath =  an absolute path to the config file
-            * _title: optional, the Toplevel's title
-            * defaultdict: dict to use when resetting defaults
-             uses a demo dict for defaults if one isn't passed.
+        """Initialize a new ConfigManager.
+
+        * parent: should be a Tkinter object
+        * configpath =  an absolute path to the config file
+        * _title: optional, the Toplevel's title
+        * defaultdict: dict to use when resetting defaults
+         uses a demo dict for defaults if one isn't passed.
 
         """
         tk.Toplevel.__init__(self, parent)
+        self.iconbitmap('chem.ico')
         self.core = parent
         self.protocol("WM_DELETE_WINDOW", self.update_settings)
         self.minsize(400, 500)  # big enough to hold the DEFAULT_DICT
         self.configpath = configpath  # to config.ini
-        if not self.configpath is None:
+        if self.configpath is not None:
             self.configpath = os.path.normpath(configpath)
-        self.window_title  = _title  # title of the Toplevel
+        self.window_title = _title  # title of the Toplevel
         self.defaultdict = defaultdict
         if defaultdict is None:
             self.defaultdict = ConfigManager.DEFAULT_DICT
@@ -91,17 +98,16 @@ class ConfigManager(tk.Toplevel):
         parser = configparser.ConfigParser()
         try:
             parser.read(self.configpath)
-        except TypeError as e:
-            print(e)
+        except TypeError as error:
+            print(error)
             print("Using the defaultdict instead")
             parser.read_dict(self.defaultdict)
         finally:
-            parser_dict = self.as_dict(parser)
+            parser_dict = as_dict(parser)
             self.build(parser_dict)
 
     def build(self, parser_dict: dict) -> None:
-        """Dynamically populates GUI from the contents of parser_dict"""
-
+        """Dynamically populates GUI from the contents of parser_dict."""
         if hasattr(self, 'container'):
             self.container.destroy()
 
@@ -112,7 +118,7 @@ class ConfigManager(tk.Toplevel):
         for section in self._sections:
             self._section_keys.extend(self.parser_dict[section].keys())
 
-        #----------------------------- Cosmetics ---------------------------
+        # ---------------------------- Cosmetics ---------------------------
 
         self.winfo_toplevel().title(self.window_title)
         self.container = tk.Frame(self)
@@ -130,39 +136,41 @@ class ConfigManager(tk.Toplevel):
             frm.grid_columnconfigure(0, weight=1)
             frm.grid_columnconfigure(1, weight=1)
             # make a label and Entry/Text widget for each key in the section
-            for idx, section_key in enumerate(self.parser_dict[section].keys()):
+            for i, section_key in enumerate(self.parser_dict[section].keys()):
                 self._section_keys.append(section_key)
-                frm.grid_rowconfigure(idx, weight=1)
+                frm.grid_rowconfigure(i, weight=1)
 
-                tk.Label(frm,
+                tk.Label(
+                    frm,
                     text=section_key.title(),
                     anchor='ne',
                     width=self.label_width
-                ).grid(row=idx, column=0, padx=2, pady=2, sticky='e')
+                ).grid(row=i, column=0, padx=2, pady=2, sticky='e')
 
                 # the length of this particular value
                 val_len = len(f'{self.parser_dict[section][section_key]}')
                 # if the key has a long value put it in a scrolledtext
                 if val_len >= self.max_entry_length:
-                    ent = tk.scrolledtext.ScrolledText(frm,
+                    ent = ScrolledText(
+                        frm,
                         width=self.text_width,
                         height=self.text_height,
                         wrap='word'
                     )
-                    ent.grid(row=idx, column=1, padx=2, pady=2, sticky='e')
+                    ent.grid(row=i, column=1, padx=2, pady=2, sticky='e')
                     the_key = self.parser_dict[section][section_key]
                     if ',' in the_key:  # check to see if the string is a list
                         the_key = the_key.split(',')
-                        for word in (the_key):
+                        for word in the_key:
                             ent.insert('end', word.strip())
-                            if not word in the_key[-1]:
+                            if word not in the_key[-1]:
                                 ent.insert('end', ',\n')
                     else:  # it isn't clearly a list, so just stick it in there
                         ent.insert(1.0, the_key.strip())
                 # use an entry widget if the key's value is short enough
                 else:
-                    ent =  ttk.Entry(frm, width=self.entry_width)
-                    ent.grid(row=idx, column=1, padx=2, pady=2, sticky='e')
+                    ent = ttk.Entry(frm, width=self.entry_width)
+                    ent.grid(row=i, column=1, padx=2, pady=2, sticky='e')
                     ent.insert(0, self.parser_dict[section][section_key])
                 # after deciding which to make, add to a list for convenience
                 self._fields.append(ent)
@@ -171,26 +179,30 @@ class ConfigManager(tk.Toplevel):
 
         # make buttons to save the form or reset to defaults
         btnfrm = tk.Frame(self.scrollable_frame)
-        ttk.Button(btnfrm,
+        ttk.Button(
+            btnfrm,
             text='Save',
             command=lambda: self.save_config()
             ).grid(row=0, column=0, pady=5, padx=3, sticky='ne')
-        ttk.Button(btnfrm,
+        ttk.Button(
+            btnfrm,
             text='Reset Defaults',
             command=lambda: self.reset_config()
             ).grid(row=0, column=1, pady=5, padx=3, sticky='nw')
         btnfrm.pack()  # put them at the bottom of the form
 
         # then pack everything else
-        self.canvas.create_window((0, 0),
-            window=self.scrollable_frame, anchor="nw"
+        self.canvas.create_window(
+            (0, 0),
+            window=self.scrollable_frame,
+            anchor="nw"
         )
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
         self.container.pack(fill="both", expand=True)
 
-        # ------------------------------End Cosmetics--------------------------
+        # ------------------------------End Cosmetics-----------------------
 
         # set bindings to enable scrolling
         self.scrollable_frame.bind(
@@ -208,36 +220,33 @@ class ConfigManager(tk.Toplevel):
 
     def reset_config(self):
         """Rebuilds the ConfigManager from the defaultdict."""
-
         print('Rebuilding form from defaultdict')
         self.build(self.defaultdict)
 
     def save_config(self):
-        """Saves the contents of the form to configpath if one was passed."""
-
-        # collect all the inputs
+        """Save the contents of the form to configpath if one was passed."""
         all_inputs = []
         for child in self._fields:  # filter getting by widget class
             if isinstance(child, ttk.Entry):
                 all_inputs.append(child.get())
-            if isinstance(child, tk.scrolledtext.ScrolledText):
+            if isinstance(child, ScrolledText):
                 text = child.get(1.0, 'end')
                 all_inputs.append(text)
 
         new_parser_dict = {}
         for section in self._sections:
             new_parser_dict[section] = {}
-            for section_key, input in zip(self._section_keys, all_inputs):
+            for section_key, entry in zip(self._section_keys, all_inputs):
                 if section_key in self.parser_dict[section]:
                     # configparser uses ordereddicts by default
                     # this should maintain their order
-                    new_parser_dict[section][section_key] = input
+                    new_parser_dict[section][section_key] = entry
 
         parser = configparser.ConfigParser()
         parser.read_dict(new_parser_dict)
 
         if self.configpath is None:
-            print(f'Not saving to file because configpath is {self.configpath}')
+            print(f'Not saving to file, configpath is {self.configpath}')
         else:
             with open(self.configpath, 'w') as configfile:
                 parser.write(configfile)
@@ -245,26 +254,27 @@ class ConfigManager(tk.Toplevel):
         # reset the form to reflect the changes
         self.build(new_parser_dict)
 
-    def as_dict(self, config) -> dict:
-        """
-        Converts a ConfigParser object into a dictionary.
-
-        The resulting dictionary has sections as keys which point to a dict of the
-        sections options as key : value pairs.
-
-        https://stackoverflow.com/a/23944270
-
-        """
-        the_dict = {}
-        for section in config.sections():
-            the_dict[section] = {}
-            for key, val in config.items(section):
-                the_dict[section][key] = val
-        return the_dict
-
     def update_settings(self):
+        """Read from the configpath."""
         self.core.config.read(self.configpath)
         self.destroy()
+
+
+def as_dict(config) -> dict:
+    """Convert a ConfigParser object into a dictionary.
+
+    The resulting dictionary has sections as keys which point to a dict of
+    the sections options as key : value pairs.
+
+    https://stackoverflow.com/a/23944270
+
+    """
+    the_dict = {}
+    for section in config.sections():
+        the_dict[section] = {}
+        for key, val in config.items(section):
+            the_dict[section][key] = val
+    return the_dict
 
 
 if __name__ == '__main__':
@@ -276,7 +286,9 @@ if __name__ == '__main__':
     )
     root.winfo_toplevel().config(menu=root.menubar)
     root.winfo_toplevel().title('ConfigManager Demo')
-    tk.Label(root,
-        text='Your stuff here', anchor='center'
+    tk.Label(
+        root,
+        text='Your stuff here',
+        anchor='center'
         ).grid(padx=100, pady=10)
     root.mainloop()

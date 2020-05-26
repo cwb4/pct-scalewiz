@@ -1,29 +1,31 @@
 """This is the entry point for the program.
-  - imports then creates an instance of MainWindow
-  - has a thread_pool_executor attribute for a blocking loop made in MainWindow
+
+- imports then creates an instance of MainWindow
+- has a thread_pool_executor attribute for a blocking loop made in MainWindow
 """
 
 import configparser
 import os
-from concurrent.futures import ThreadPoolExecutor  # handling the test loop
-import serial  # talking to the pumps
-import sys  # to sys.exit() on window close
+from concurrent.futures import ThreadPoolExecutor  # handling the test
 import tkinter as tk  # GUI
 
 from mainwindow import MainWindow
 
 
 class ScaleWiz(tk.Frame):
-    """This class """
+    """Core class for the application."""
 
-    VERSION = '[0.6.1]'
+    VERSION = '[0.6.3]'
 
     DEFAULT_DICT = {
         'plot settings': {
             'default style': 'bmh',
             'show style options': 'True',
-            'plot styles': """bmh, fivethirtyeight, seaborn, seaborn-colorblind, seaborn-dark-palette, seaborn-muted, seaborn-notebook, seaborn-paper, seaborn-pastel, tableau-colorblind10""",
-        'color cycle':"""orange, blue, red, mediumseagreen, darkgoldenrod, indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
+            'plot styles': """bmh, fivethirtyeight, seaborn, seaborn-colorblind,
+                seaborn-dark-palette, seaborn-muted, seaborn-notebook,
+                seaborn-paper, seaborn-pastel, tableau-colorblind10""",
+            'color cycle': """orange, blue, red, mediumseagreen, darkgoldenrod,
+            indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
         },
         'report settings': {
             'template path': '',
@@ -31,15 +33,16 @@ class ScaleWiz(tk.Frame):
         },
         'test settings': {
             'fail psi': '1500',
-            'default baseline' : 75,
+            'default baseline': 75,
             'time limit minutes': '90',
-            'interval seconds' : '3',
+            'interval seconds': '3',
             'default pump': 'PSI 2',
             'project folder': '',
         }
     }
 
     def __init__(self, parent, *args, **kwargs):
+        """Instantiate the core."""
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.root = parent
         self.config = configparser.ConfigParser()
@@ -51,8 +54,11 @@ class ScaleWiz(tk.Frame):
             self.config.path = os.path.abspath('scalewiz.ini')
 
         self.config.read('scalewiz.ini')
-        default_sections = [i for i in ScaleWiz.DEFAULT_DICT.keys()]
-        if not self.config.sections() == default_sections:
+        # default_sections = [i for i in ScaleWiz.DEFAULT_DICT]
+        default_sections = []
+        for key in ScaleWiz.DEFAULT_DICT:
+            default_sections.append(key)
+        if self.config.sections() != default_sections:
             print("The found config didn't have the right sections")
             self.make_config()
 
@@ -60,8 +66,7 @@ class ScaleWiz(tk.Frame):
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
 
     def make_config(self):
-        """Creates a default scalewiz.ini in the current working directory"""
-
+        """Create a default scalewiz.ini in the current working directory."""
         print("Making new scalewiz.ini file in \n" + f"{os.getcwd()}")
         self.config.read_dict(ScaleWiz.DEFAULT_DICT)
         with open('scalewiz.ini', 'w') as configfile:
@@ -74,8 +79,5 @@ if __name__ == "__main__":
     root.title("Scale Block Wizard")
     root.resizable(0, 0)
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
-    try:
-        root.iconbitmap('chem.ico')
-    except:
-        pass
+    root.iconbitmap('chem.ico')
     root.mainloop()

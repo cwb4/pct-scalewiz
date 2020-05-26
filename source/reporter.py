@@ -1,18 +1,20 @@
 """Evaluates data and makes a plot"""
 
 from datetime import date
-import matplotlib as mpl
-import matplotlib.pyplot as plt  # plotting the data
-from matplotlib.ticker import MultipleLocator
 import os  # handling file paths
-import openpyxl
-from pandas import Series, DataFrame, read_csv # reading the data
 import pickle  # storing plotter settings
 import PIL
 import shutil
 import time
 import tkinter as tk  # GUI
 from tkinter import ttk, filedialog, messagebox
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt  # plotting the data
+from matplotlib.ticker import MultipleLocator
+import openpyxl
+from pandas import Series, DataFrame, read_csv  # reading the data
+
 
 from seriesentry import SeriesEntry
 from evaluator import evaluate
@@ -34,7 +36,9 @@ class Reporter(tk.Toplevel):
     ]
 
     def __init__(self, parent, *args, **kwargs):
+        """Init the reporter."""
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
+        self.iconbitmap('chem.ico')
         self.core = parent
         self.mainwin = self.core.mainwin
         self.config = self.core.config
@@ -43,9 +47,8 @@ class Reporter(tk.Toplevel):
         self.resizable(0, 0)
         self.build()
 
-    def build(self)  -> None:
-        """Makes the widgets"""
-
+    def build(self) -> None:
+        """Make the widgets."""
         self.winfo_toplevel().title("Report Generator")
 
         self.pltbar = tk.Menu(self)
@@ -79,7 +82,8 @@ class Reporter(tk.Toplevel):
                 )
         )
         defpsi = self.config.get('test settings', 'default pump')
-        for _ in range(self.config.getint('report settings', 'series per project')):
+        num_srs = self.config.getint('report settings', 'series per project')
+        for _ in range(num_srs):
             SeriesEntry(self.entfrm, defpsi).grid(padx=2)
         self.entfrm.grid(row=0, padx=2)
 
@@ -102,9 +106,12 @@ class Reporter(tk.Toplevel):
         tk.Label(
             master=self.setfrm,
             text="Time limit (min):"
-            ).grid(row=0, column=2, sticky=tk.E, padx=5, pady=(10,2))
+            ).grid(row=0, column=2, sticky=tk.E, padx=5, pady=(10, 2))
         self.xlim = ttk.Entry(self.setfrm, width=14)
-        self.xlim.insert(0, self.config.get('test settings', 'time limit minutes'))
+        self.xlim.insert(
+            0,
+            self.config.get('test settings', 'time limit minutes')
+        )
         self.xlim.grid(row=0, column=3, sticky='w', padx=5, pady=(2))
 
         tk.Label(
@@ -124,7 +131,8 @@ class Reporter(tk.Toplevel):
             text="Max pressure (psi):"
             ).grid(row=1, column=2, sticky=tk.E, padx=5, pady=2)
         self.ylim = ttk.Entry(self.setfrm, width=14)
-        self.ylim.insert(0,
+        self.ylim.insert(
+            0,
             self.config.get('test settings', 'fail psi')
         )
         self.ylim.grid(row=1, column=3, sticky=tk.W, padx=5, pady=2)
@@ -134,7 +142,8 @@ class Reporter(tk.Toplevel):
             text="Baseline pressure (psi):"
             ).grid(row=2, column=2, sticky=tk.E, padx=5, pady=2)
         self.baseline = ttk.Entry(self.setfrm, width=14)
-        self.baseline.insert(0,
+        self.baseline.insert(
+            0,
             self.config.get('test settings', 'default baseline')
         )
         self.baseline.grid(row=2, column=3, sticky=tk.W, padx=5, pady=2)
@@ -150,33 +159,33 @@ class Reporter(tk.Toplevel):
         self.setfrm.grid(row=1, pady=2)
 
     def prep_plot(self) -> dict:
-        """Returns a dict of tuples
-            paths - str paths of original datafiles
-            titles - str tuple of original series titles
-            plotpumps - str tuple which pump's pressure to evaluate
-            plot_params - a tuple of (str, int, int, (floats,))
-                        last arg optional
-        """
+        """Return a dict of tuples.
 
+        paths - str paths of original datafiles
+        titles - str tuple of original series titles
+        plotpumps - str tuple which pump's pressure to evaluate
+        plot_params - a tuple of (str, int, int, (floats,))
+                    last arg optional
+        """
         print("Preparing plot from Reporter fields")
         paths = tuple(
             [
-            child.path.get()
-            for child in self.entfrm.winfo_children()
+                child.path.get()
+                for child in self.entfrm.winfo_children()
             ]
         )
 
         titles = tuple(
             [
-            child.title.get()
-            for child in self.entfrm.winfo_children()
+                child.title.get()
+                for child in self.entfrm.winfo_children()
             ]
         )
 
         plotpumps = tuple(
             [
-            child.plotpump.get()
-            for child in self.entfrm.winfo_children()
+                child.plotpump.get()
+                for child in self.entfrm.winfo_children()
             ]
         )
 
@@ -199,16 +208,15 @@ class Reporter(tk.Toplevel):
         plot_params = (self.plotterstyle.get(), xlim, ylim, baseline)
 
         _plt = {
-                'paths' : paths,
-                'titles' : titles,
-                'plotpumps' : plotpumps,
-                'plot_params' : plot_params
-                }
+            'paths': paths,
+            'titles': titles,
+            'plotpumps': plotpumps,
+            'plot_params': plot_params
+        }
         return _plt
 
     def make_plot(self, paths, titles, plotpumps, plot_params) -> None:
-        """Makes a new plot from some tuples"""
-
+        """Make a new plot from some tuples."""
         print("Spawning a new plot \n")
         start = time.time()
         # reset the stylesheet
@@ -229,7 +237,7 @@ class Reporter(tk.Toplevel):
         with plt.style.context(style):
             colors = self.config.get('plot settings', 'color cycle').split(',')
             colors = [i.strip() for i in colors]
-            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color = colors)
+            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
             self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             self.ax.set_xlabel("Time (min)")
             self.ax.set_xlim(left=0, right=xlim)
@@ -249,18 +257,29 @@ class Reporter(tk.Toplevel):
                 if os.path.isfile(path):
                     df = DataFrame(read_csv(path))
                 else:
-                    df = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
+                    df = DataFrame(
+                        data={
+                            'Minutes': [0],
+                            'PSI 1': [0],
+                            'PSI 2': [0]
+                        }
+                    )
                 # if the trial is a blank run change the line style
-                if title == "": pass
+                if title == "":
+                    pass
                 elif "blank" in str(title).lower():
-                    self.ax.plot(df['Minutes'], df[plotpump],
+                    self.ax.plot(
+                        df['Minutes'],
+                        df[plotpump],
                         label=title,
                         linestyle=('-.')
                     )
                     blanks.append(Series(df[plotpump], name=title))
 
                 else:  # plot using default line style
-                    self.ax.plot(df['Minutes'], df[plotpump],
+                    self.ax.plot(
+                        df['Minutes'],
+                        df[plotpump],
                         label=title
                     )
                     trials.append(Series(df[plotpump], name=title))
@@ -272,19 +291,21 @@ class Reporter(tk.Toplevel):
             # some tests to validate user input
             if len(blanks) == 0 and len(trials) == 0:
                 tk.messagebox.showwarning(
-                parent=self,
-                title="No data selected",
-                message="Click a 'File path:' entry to select a data file")
+                    parent=self,
+                    title="No data selected",
+                    message="Click a 'File path:' entry to select a data file"
+                )
             elif len(blanks) == 0:
                 tk.messagebox.showwarning(
-                parent=self,
-                title="No series designated as blank",
-                message="At least one series title must contain 'blank'")
+                    parent=self,
+                    title="No series designated as blank",
+                    message="At least one series title must contain 'blank'"
+                )
             elif len(trials) == 0:
                 tk.messagebox.showwarning(
-                parent=self,
-                title="No trial data selected",
-                message="At least one trial not titled 'blank' must be selected")
+                    parent=self,
+                    title="No trial data selected",
+                    message="Must select least one trial not titled 'blank'")
             else:
                 self.get_results(blanks, trials, baseline, xlim, ylim)
                 self.fig.show()
@@ -295,18 +316,17 @@ class Reporter(tk.Toplevel):
                 image_path = os.path.join(self.mainwin.project, image)
                 self.fig.savefig(image_path)
                 print(f"Saved plot image to\n{image_path}")
-                print(f"Finished plotting in {round(time.time() - start, 2)} s")
+                print(f"Finished plotting in {round(time.time()-start, 2)} s")
 
     def pickle_plot(self) -> None:
-        """Pickles a list to a file in the project directory"""
-
+        """Pickle a list to a file in the project directory."""
         project = self.mainwin.project.split('\\')
         short_proj = project[-1]
         _pickle = f"{short_proj}.pct"
         _path = os.path.join(self.mainwin.project, _pickle)
-        with open(_path, 'wb') as p:
+        with open(_path, 'wb') as file:
             print(f"Pickling project to\n{_path}")
-            pickle.dump(self.prep_plot(), file=p)
+            pickle.dump(self.prep_plot(), file=file)
         tk.messagebox.showinfo(
             parent=self,
             title="Saved successfully",
@@ -314,9 +334,7 @@ class Reporter(tk.Toplevel):
         )
 
     def unpickle_plot(self) -> None:
-        """Unpickles/unpacks a list of string 3-tuples and puts those values
-        into SeriesEntry widgets"""
-
+        """Unpickle a list of string 3-tuples into SeriesEntry widgets."""
         fil = filedialog.askopenfilename(
             initialdir="C:\"",
             title="Select data to plot:",
@@ -326,9 +344,8 @@ class Reporter(tk.Toplevel):
         # this puts data paths into their original entries
         if fil != '':
             print(f"Unpickling project file\n{fil}")
-            with open(fil, 'rb') as p:
-                _plt = pickle.load(p)
-
+            with open(fil, 'rb') as file:
+                _plt = pickle.load(file)
             into_widgets = zip(
                 _plt['paths'],
                 _plt['titles'],
@@ -352,19 +369,18 @@ class Reporter(tk.Toplevel):
         self.lift()
 
     def get_results(self, blanks, trials, baseline, xlim, ylim):
-        """Evaluates the data"""
-
+        """Evaluate the data."""
         print("Getting results from evaluator")
         interval = self.config.getint('test settings', 'interval seconds')
         proj = self.mainwin.title
-        (self.results_queue, self.log) = evaluate(
+        self.results_queue, self.log = evaluate(
             proj, blanks, trials, baseline, xlim, ylim, interval
         )
 
         stamp = round(time.time())
         log_file = os.path.join(self.mainwin.project, f"calc_log_{stamp}.txt")
-        with open(log_file, 'w') as f:
-            f.write('\n'.join(self.log))
+        with open(log_file, 'w') as file:
+            file.write('\n'.join(self.log))
         print(f"Wrote calculations log to \n{log_file}\n")
 
         result_window = tk.Toplevel(self)
@@ -383,42 +399,41 @@ class Reporter(tk.Toplevel):
             ).grid(row=0, column=1, sticky='w', padx=35, pady=3)
 
         for i, title in enumerate(self.results_queue[1]):
-            e = tk.Entry(result_window, bg=def_bg, width=len(title))
-            e.insert(0, title)
-            e.configure(state='readonly', relief='flat')
-            e.grid(row=i+1, column=0, sticky='W', padx=35, pady=3)
+            entry = tk.Entry(result_window, bg=def_bg, width=len(title))
+            entry.insert(0, title)
+            entry.configure(state='readonly', relief='flat')
+            entry.grid(row=i+1, column=0, sticky='W', padx=35, pady=3)
 
         for i, value in enumerate(self.results_queue[2]):
-            e = tk.Entry(result_window, bg=def_bg, width=10)
-            e.insert(0, value)
-            e.configure(state='readonly', relief='flat')
-            e.grid(row=i+1, column=1, sticky='W', padx=35, pady=3)
+            entry = tk.Entry(result_window, bg=def_bg, width=10)
+            entry.insert(0, value)
+            entry.configure(state='readonly', relief='flat')
+            entry.grid(row=i+1, column=1, sticky='W', padx=35, pady=3)
 
     def export_report(self):
-        """Exports the reporter's results_queue to an .xlsx file designated
-        as the template in the config file
-
-        """
-
+        """Export the reporter's results_queue to an .xlsx file."""
         print("Preparing export")
         start = time.time()
 
-        template_path = os.path.normpath(
-            self.config.get('report settings', 'template path')
-        )
+        template_path = self.config.get('report settings', 'template path')
+        template_path = os.path.normpath(template_path)
+
         if not os.path.isfile(template_path):
             tk.messagebox.showerror(
                 parent=self,
-                message=('No valid template file found.' +
-                '\nYou can set the template path in Settings > Report Settings.'
+                message=(
+                    "No valid template file found." +
+                    "\nYou can set the template path in " +
+                    "Settings > Report Settings."
                 )
             )
             return
 
         if not hasattr(self, 'results_queue'):
             tk.messagebox.showinfo(
-            parent=self,
-            message="You must evaulate a set of data before exporting a report."
+                parent=self,
+                message="You must evaulate a set of data before" +
+                "exporting a report."
             )
             return
 
@@ -454,8 +469,8 @@ class Reporter(tk.Toplevel):
         shutil.copyfile(template_path, report_path)
 
         print(f"Populating file\n{report_path}")
-        wb = openpyxl.load_workbook(report_path)
-        ws = wb.active
+        workbook = openpyxl.load_workbook(report_path)
+        ws = workbook.active
         ws._images[1] = img
 
         blank_times = self.results_queue[0]
@@ -466,7 +481,7 @@ class Reporter(tk.Toplevel):
         ylim = self.results_queue[5]
         max_psis = self.results_queue[6]
 
-        # # TODO:  move this mapping into the config somehow
+        # TODO:  move this mapping into the config somehow
         ws['C4'] = customer
         ws['C6'] = company
         ws['C7'] = sample_point
@@ -482,7 +497,7 @@ class Reporter(tk.Toplevel):
         chem_name_cells = [f"A{i}" for i in range(19, 27)]
         chem_conc_cells = [f"D{i}" for i in range(19, 27)]
         duration_cells = [f"E{i}" for i in range(19, 27)]
-        max_psi_cells = [f"G{i}" for i in range (19, 27)]
+        max_psi_cells = [f"G{i}" for i in range(19, 27)]
         protection_cells = [f"H{i}" for i in range(19, 27)]
 
         chem_names = [" ".join(title.split(' ')[:-2]) for title in result_titles]
@@ -509,20 +524,21 @@ class Reporter(tk.Toplevel):
         resize_rows = []
 
         for i in rows_with_data:
-            if ws[f'A{i}'].value == None:
+            if ws[f'A{i}'].value is None:
                 hide_rows.append(i)
             else:
                 resize_rows.append(i)
 
         row_width = 200/len(resize_rows)
-        if row_width >= 30: row_width = 30
+        if row_width >= 30:
+            row_width = 30
         for row in resize_rows:
             ws.row_dimensions[row].height = row_width
         for row in hide_rows:
             ws.row_dimensions[row].hidden = True
 
         print(f"Saving report to\n{report_path}")
-        wb.save(filename=report_path)
+        workbook.save(filename=report_path)
         print("Removing temp files")
         os.remove(img_path)
         print(f"Finished export in {round(time.time() - start, 2)} s")
@@ -535,9 +551,9 @@ class Reporter(tk.Toplevel):
         """Shows a help dialog to the user"""
 
         tk.messagebox.showinfo(
-        parent=self,
-        title="Help: Using the Report Generator",
-        message="""
+            parent=self,
+            title="Help: Using the Report Generator",
+            message="""
 Clicking on a 'File path' field will prompt you to select the .csv file of the data you want to plot. You may change the default 'Series title' to appear on the plot.
 
 Including the word 'blank' in a series title will designate it as such for the purposes of calculations, and will set the data to plot as a dashed line. You must select at least one blank and one non-blank set of data to evaluate results.
