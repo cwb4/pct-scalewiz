@@ -4,7 +4,8 @@ from datetime import date
 import os  # handling file paths
 import pickle  # storing plotter settings
 import tkinter as tk  # GUI
-from tkinter import ttk, filedialog, messagebox
+from tkinter import ttk, filedialog
+from tkinter.messagebox import showinfo, showwarning, showerror
 import shutil
 import time
 import PIL
@@ -290,19 +291,19 @@ class Reporter(tk.Toplevel):
 
             # some tests to validate user input
             if len(blanks) == 0 and len(trials) == 0:
-                tk.messagebox.showwarning(
+                showwarning(
                     parent=self,
                     title="No data selected",
                     message="Click a 'File path:' entry to select a data file"
                 )
             elif len(blanks) == 0:
-                tk.messagebox.showwarning(
+                showwarning(
                     parent=self,
                     title="No series designated as blank",
                     message="At least one series title must contain 'blank'"
                 )
             elif len(trials) == 0:
-                tk.messagebox.showwarning(
+                showwarning(
                     parent=self,
                     title="No trial data selected",
                     message="Must select least one trial not titled 'blank'")
@@ -327,7 +328,7 @@ class Reporter(tk.Toplevel):
         with open(_path, 'wb') as file:
             print(f"Pickling project to\n{_path}")
             pickle.dump(self.prep_plot(), file=file)
-        tk.messagebox.showinfo(
+        showinfo(
             parent=self,
             title="Saved successfully",
             message=f"Project data saved to\n{_path}"
@@ -412,33 +413,42 @@ class Reporter(tk.Toplevel):
 
     def export_report(self):
         """Export the reporter's results_queue to an .xlsx file."""
-        print("Preparing export")
-        start = time.time()
-
-        template_path = self.config.get('report settings', 'template path')
-        template_path = os.path.normpath(template_path)
-
-        if not os.path.isfile(template_path):
-            tk.messagebox.showerror(
-                parent=self,
-                message=(
-                    "No valid template file found.\nYou can set the template path in Settings > Report Settings."
-                )
-            )
-            return
-
         if not hasattr(self, 'results_queue'):
-            tk.messagebox.showinfo(
+            showinfo(
                 parent=self,
                 message="You must evaulate a set of data before exporting a report."
             )
             return
+        template_path = self.config.get('report settings', 'template path')
+        template_path = os.path.normpath(template_path)
+        if not os.path.isfile(template_path):
+            showerror(
+                parent=self,
+                message="No valid template file found.\nYou can set the template path in Settings > Report Settings."
+            )
+            return
+
+        print("Preparing export")
+        start = time.time()
 
         project = self.mainwin.project.split('\\')
         company = project[-1].split('-')[0].strip()
         sample_point = project[-1].split('-')[1].strip()
         customer = project[-2].strip()
         short_proj = project[-1].strip()
+
+        file = f"#-# {short_proj} Calcium Carbonate Scale Block Analysis.xlsx"
+        report_path = os.path.join(self.mainwin.project, file)
+        while os.path.isfile(report_path):
+            report_path = report_path[:-5]
+            report_path += ' - copy.xlsx'
+
+        print(f"Copying report template to\n{report_path}")
+        shutil.copyfile(template_path, report_path)
+
+        print(f"Populating file\n{report_path}")
+        workbook = openpyxl.load_workbook(report_path)
+        ws = workbook.active
 
         img_filename = f"{short_proj}.png"
         img_path = os.path.join(self.mainwin.project, img_filename)
@@ -455,19 +465,6 @@ class Reporter(tk.Toplevel):
         img.save(img_path)
         img = openpyxl.drawing.image.Image(img_path)
         img.anchor = 'A28'
-
-        file = f"#-# {short_proj} Calcium Carbonate Scale Block Analysis.xlsx"
-        report_path = os.path.join(self.mainwin.project, file)
-        while os.path.isfile(report_path):
-            report_path = report_path[:-5]
-            report_path += ' - copy.xlsx'
-
-        print(f"Copying report template to\n{report_path}")
-        shutil.copyfile(template_path, report_path)
-
-        print(f"Populating file\n{report_path}")
-        workbook = openpyxl.load_workbook(report_path)
-        ws = workbook.active
         ws._images[1] = img
 
         blank_times = self.results_queue[0]
@@ -539,15 +536,14 @@ class Reporter(tk.Toplevel):
         print("Removing temp files")
         os.remove(img_path)
         print(f"Finished export in {round(time.time() - start, 2)} s")
-        tk.messagebox.showinfo(
+        showinfo(
             parent=self,
             message=f"Report exported to\n{report_path}"
         )
 
     def show_help(self):
-        """Shows a help dialog to the user"""
-
-        tk.messagebox.showinfo(
+        """Show a help dialog to the user."""
+        showinfo(
             parent=self,
             title="Help: Using the Report Generator",
             message="""
