@@ -120,7 +120,6 @@ class ConfigManager(tk.Toplevel):
             self._section_keys.extend(self.parser_dict[section].keys())
 
         # ---------------------------- Cosmetics ---------------------------
-
         self.winfo_toplevel().title(self.window_title)
         self.container = tk.Frame(self)
         self.canvas = tk.Canvas(self.container)
@@ -202,7 +201,6 @@ class ConfigManager(tk.Toplevel):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
         self.container.pack(fill="both", expand=True)
-
         # ------------------------------End Cosmetics-----------------------
 
         # set bindings to enable scrolling
@@ -280,8 +278,8 @@ def as_dict(config) -> dict:
 
 if __name__ == '__main__':
     root = tk.Tk()
-    root.menubar = tk.Menu(root)
-    root.menubar.add_command(
+    menubar = tk.Menu(root)
+    menubar.add_command(
         label='Settings',
         command=lambda: ConfigManager(root)
     )
