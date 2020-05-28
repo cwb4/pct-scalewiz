@@ -4,7 +4,7 @@ from datetime import date
 import os  # handling file paths
 import pickle  # storing plotter settings
 import tkinter as tk  # GUI
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, font  # type: ignore
 from tkinter.messagebox import showinfo, showwarning, showerror
 import shutil
 import time
@@ -37,6 +37,7 @@ class Reporter(tk.Toplevel):
         "center"
     ]
 
+
     def __init__(self, parent, *args, **kwargs):
         """Init the reporter."""
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
@@ -51,6 +52,9 @@ class Reporter(tk.Toplevel):
 
     def build(self) -> None:
         """Make the widgets."""
+        def_font = font.nametofont("TkDefaultFont")
+        bold_font = font.Font(font=def_font)
+        bold_font.config(weight='bold')
         self.winfo_toplevel().title("Report Generator")
 
         self.pltbar = tk.Menu(self)
@@ -78,17 +82,17 @@ class Reporter(tk.Toplevel):
             master=self,
             # NOTE: this is a dirty way of doing it... but it works
             text=(
-                "File path:                           Series title:                                    Pressure to evaluate:"
-            )
+                "File path:                           Series title:                                   Data to evaluate:"
+            ),
+            font=bold_font
         )
         defpsi = self.config.get('test settings', 'default pump')
-        num_srs = self.config.getint('report settings', 'series per project')
-        for _ in range(num_srs):
+        for _ in range(10):
             SeriesEntry(self.entfrm, defpsi).grid(padx=2)
-        self.entfrm.grid(row=0, padx=2)
+        self.entfrm.grid(row=0, padx=3, pady=2)
 
         # to hold the settings entries
-        self.setfrm = tk.LabelFrame(master=self, text="Plot parameters")
+        self.setfrm = tk.LabelFrame(master=self, text="Plot parameters", font=bold_font)
 
         tk.Label(
             master=self.setfrm,
