@@ -1,5 +1,5 @@
 <p  align='center'>
-<img src="https://github.com/teauxfu/pct-scalewiz/blob/master/demo/sample_data/sample_logo.PNG" width='200' height='100'>
+<img src="https://github.com/teauxfu/pct-scalewiz/blob/master/images/pct_logo.PNG" width='200' height='100'>
 </p>
 
 # Premier Chemical Technologies, LLC  - Scale Block Wizard
