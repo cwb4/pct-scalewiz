@@ -138,6 +138,7 @@ class MainWindow(tk.Frame):
             width=45,
             height=12,
             state='disabled'
+            wrap='word'
         )
 
         self.dataout.pack(fill=tk.BOTH)
