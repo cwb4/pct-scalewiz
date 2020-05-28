@@ -37,7 +37,6 @@ class Reporter(tk.Toplevel):
         "center"
     ]
 
-
     def __init__(self, parent, *args, **kwargs):
         """Init the reporter."""
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
@@ -210,8 +209,6 @@ class Reporter(tk.Toplevel):
         """Make a new plot from some tuples."""
         print("Spawning a new plot \n")
         start = time.time()
-        # reset the stylesheet
-        plt.rcParams.update(plt.rcParamsDefault)
 
         # give names to plot parameters
         style = plot_params[0]
@@ -229,15 +226,15 @@ class Reporter(tk.Toplevel):
             colors = self.config.get('plot settings', 'color cycle').split(',')
             colors = [i.strip() for i in colors]
             mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
-            self.fig, self.ax = plt.subplots(figsize=(12.5, 5), dpi=100)
-            self.ax.set_xlabel("Time (min)")
-            self.ax.set_xlim(left=0, right=xlim)
-            self.ax.set_ylabel("Pressure (psi)")
-            self.ax.set_ylim(top=ylim)
-            self.ax.yaxis.set_major_locator(MultipleLocator(100))
-            self.ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
-            self.ax.set_facecolor('w')
-            self.fig.canvas.set_window_title(self.mainwin.title)
+            fig, ax = plt.subplots(figsize=(12.5, 5), dpi=100)
+            ax.set_xlabel("Time (min)")
+            ax.set_xlim(left=0, right=xlim)
+            ax.set_ylabel("Pressure (psi)")
+            ax.set_ylim(top=ylim)
+            ax.yaxis.set_major_locator(MultipleLocator(100))
+            ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
+            ax.set_facecolor('w')
+            fig.canvas.set_window_title(self.mainwin.title)
             plt.tight_layout()
 
             blanks = []
@@ -259,7 +256,7 @@ class Reporter(tk.Toplevel):
                 if title == "":
                     pass
                 elif "blank" in str(title).lower():
-                    self.ax.plot(
+                    ax.plot(
                         df['Minutes'],
                         df[plotpump],
                         label=title,
@@ -268,14 +265,14 @@ class Reporter(tk.Toplevel):
                     blanks.append(Series(df[plotpump], name=title))
 
                 else:  # plot using default line style
-                    self.ax.plot(
+                    ax.plot(
                         df['Minutes'],
                         df[plotpump],
                         label=title
                     )
                     trials.append(Series(df[plotpump], name=title))
 
-            self.ax.legend(loc=self.loc.get())
+            ax.legend(loc=self.loc.get())
 
             baseline = plot_params[3]
 
@@ -299,13 +296,13 @@ class Reporter(tk.Toplevel):
                     message="Must select least one trial not titled 'blank'")
             else:
                 self.get_results(blanks, trials, baseline, xlim, ylim)
-                self.fig.show()
+                fig.show()
 
                 project = self.mainwin.project.split('\\')
                 short_proj = project[-1]
                 image = f"{short_proj}.png"
                 image_path = os.path.join(self.mainwin.project, image)
-                self.fig.savefig(image_path)
+                fig.savefig(image_path)
                 print(f"Saved plot image to\n{image_path}")
                 print(f"Finished plotting in {round(time.time()-start, 2)} s")
 
