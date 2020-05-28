@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### To-do
+ - validate user input in reporter
 ### Added
  - purchased custom icon (with appropriate license)
  - support for having more than two pumps connected to the same device
@@ -22,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - full support for Linux cross compatibility implemented
  - additional error handling while test is running
 ### Changed
- - minor improvements to calculations log 
+ - minor improvements to calculations log
 ### Removed
  - support for plot style options (can only change series colors)
  -   
