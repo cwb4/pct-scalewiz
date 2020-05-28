@@ -16,31 +16,8 @@ from mainwindow import MainWindow
 class ScaleWiz(tk.Frame):
     """Core class for the application."""
 
-    VERSION = '[0.6.3]'
+    VERSION = '[0.6.3x]'
 
-    DEFAULT_DICT = {
-        'plot settings': {
-            'default style': 'bmh',
-            'show style options': 'True',
-            'plot styles': """bmh, fivethirtyeight, seaborn, seaborn-colorblind,
-                seaborn-dark-palette, seaborn-muted, seaborn-notebook,
-                seaborn-paper, seaborn-pastel, tableau-colorblind10""",
-            'color cycle': """orange, blue, red, mediumseagreen, darkgoldenrod,
-            indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
-        },
-        'report settings': {
-            'template path': '',
-            'series per project': '10'
-        },
-        'test settings': {
-            'fail psi': '1500',
-            'default baseline': 75,
-            'time limit minutes': '90',
-            'interval seconds': '3',
-            'default pump': 'PSI 2',
-            'project folder': '',
-        }
-    }
 
     def __init__(self, parent):
         """Instantiate the core."""
@@ -56,8 +33,8 @@ class ScaleWiz(tk.Frame):
             print("Found scalewiz.ini")
             self.config.path = os.path.abspath('scalewiz.ini')
 
-        self.config.read('scalewiz.ini')
-        default_sections = [i for i in ScaleWiz.DEFAULT_DICT]
+        self.config.read(self.config.path)
+        default_sections = [i for i in self.config.DEFAULT_DICT]
         if self.config.sections() != default_sections:
             print("The found config didn't have the right sections")
             self.make_config()
