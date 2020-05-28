@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### To-do
  - validate user input in reporter
  - remove legend location option from reporter
+ - refactor results_queue from being a persistent state to an object
 ### Added
  - purchased custom icon (with appropriate license)
  - support for having more than two pumps connected to the same device
