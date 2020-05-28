@@ -1,5 +1,6 @@
 """A Toplevel to manage settings from a ConfigParser object."""
 
+import os
 from configparser import ConfigParser
 import tkinter as tk
 from tkinter import ttk
@@ -36,6 +37,8 @@ class ConfigManager(tk.Toplevel):
         tk.Toplevel.__init__(self, parent)
         self.parser = parser
         self.title('Settings')
+        if os.name == 'nt':
+            self.iconbitmap('chem.ico')
         self.build()
         self.fill_form()
 
