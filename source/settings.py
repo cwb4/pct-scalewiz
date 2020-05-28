@@ -140,8 +140,10 @@ class ConfigManager(tk.Toplevel):
         reset_btn = ttk.Button(btn_frm, text="Restore Defaults", command=lambda: self.restore_defaults())
 
         # grid the buttons
-        reset_btn.grid(row=0, column=0, padx=5)
-        save_btn.grid(row=0, column=1, padx=5)
+        reset_btn.grid(row=0, column=0, padx=5, sticky='ew')
+        save_btn.grid(row=0, column=1, padx=5, sticky='ew')
+        for col in (0, 1):
+            btn_frm.grid_columnconfigure(col, weight=1)
 
         # grid the container frames
         test_frm.grid(row=0, column=0, sticky='nsew', pady=2, padx=2)

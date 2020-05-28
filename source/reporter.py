@@ -100,27 +100,30 @@ class Reporter(tk.Toplevel):
         base_lbl = tk.Label(master=self.set_frm, text="Baseline pressure (psi):")
 
         # grid the labels
-        time_lbl.grid(row=0, column=0, sticky=tk.E, padx=5)
-        fail_lbl.grid(row=0, column=1, sticky=tk.E, padx=5)
-        base_lbl.grid(row=0, column=2, sticky=tk.E, padx=5)
+        time_lbl.grid(row=0, column=0, sticky='w', padx=5)
+        fail_lbl.grid(row=0, column=1, sticky='w', padx=5)
+        base_lbl.grid(row=0, column=2, sticky='w', padx=5)
 
         # settings entries
         self.time_limit = ttk.Spinbox(
             self.set_frm,
             width=14,
             from_=0, to=1440,
+            justify='center',
             validate='all', validatecommand=(vcmd, '%P')
         )
         self.fail_psi = ttk.Spinbox(
             self.set_frm,
             width=14,
             from_=0, to=5000,
+            justify='center',
             validate='all', validatecommand=(vcmd, '%P')
         )
         self.baseline = ttk.Spinbox(
             self.set_frm,
             width=14,
             from_=0, to=5000,
+            justify='center',
             validate='all', validatecommand=(vcmd, '%P')
         )
 
