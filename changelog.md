@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### To-do
  - validate user input in reporter
+ - remove legend location option from reporter
 ### Added
  - purchased custom icon (with appropriate license)
  - support for having more than two pumps connected to the same device
