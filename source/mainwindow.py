@@ -33,8 +33,8 @@ class MainWindow(tk.Frame):
         self.core.root.protocol("WM_DELETE_WINDOW", self.close_app)
         self.parser = self.core.parser
 
-        self.plotpsi = tk.StringVar()
-        self.plotpsi.set(self.parser.get('test settings', 'default pump'))
+        self.default_pump = tk.StringVar()
+        self.default_pump.set(self.parser.get('test settings', 'default pump'))
         self.project = os.path.normpath(
             self.parser.get(
                 'test settings',
@@ -43,13 +43,7 @@ class MainWindow(tk.Frame):
             )
         )
 
-        try:
-            project = self.project.split('\\')
-            self.title = project[-2] + " - " + project[-1]
-        except IndexError:
-            self.title = os.getcwd()
-        self.winfo_toplevel().title(self.title)
-
+        self.update_title()
         self.build_window()
         self.find_coms()
 
@@ -171,13 +165,13 @@ class MainWindow(tk.Frame):
         tk.Radiobutton(
             master=self.cmdfrm,
             text="PSI 1",
-            variable=self.plotpsi,
+            variable=self.default_pump,
             value='PSI 1'
         ).grid(row=0, column=1, padx=5)
         tk.Radiobutton(
             master=self.cmdfrm,
             text="PSI 2",
-            variable=self.plotpsi,
+            variable=self.default_pump,
             value='PSI 2'
         ).grid(row=0, column=2, padx=5)
 
@@ -300,7 +294,7 @@ class MainWindow(tk.Frame):
             self.axis.set_xlim((0, None), auto=True)
             self.axis.margins(0)
 
-            y_data = data[self.plotpsi.get()]
+            y_data = data[self.default_pump.get()]
             x_data = data['Minutes']
             if self.chem.get() == "" and self.conc.get() == "":
                 label = " "
@@ -311,6 +305,19 @@ class MainWindow(tk.Frame):
             self.axis.grid(color='darkgrey', alpha=0.65, linestyle='-')
             self.axis.set_facecolor('w')
             self.axis.legend(loc=0)
+
+    def update_title(self):
+        """Determine OS path format, then title the main window accordingly."""
+        try:
+            if os.name == 'nt':
+                project = self.project.split('\\')
+            elif os.name == 'posix':
+                project = self.project.split('/')
+            title = project[-2] + " - " + project[-1]
+        except IndexError:
+            title = os.getcwd()
+        self.winfo_toplevel().title(title)
+        print(f"Set main window title to {title}")
 
     def close_app(self):
         """Check if a test is running, then close the application."""

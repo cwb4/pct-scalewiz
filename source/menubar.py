@@ -70,13 +70,7 @@ class MenuBar(tk.Frame):
                 self.parser.write(configfile)
             print("Updated 'project folder' in config file")
             print(f"Set project directory to\n{self.mainwin.project}")
-            # make it the MainWindow title in a pretty way
-            try:
-                p = self.mainwin.project.split('\\')
-                self.mainwin.title = p[-2] + " - " + p[-1]
-                self.mainwin.winfo_toplevel().title(self.mainwin.title)
-            except IndexError:
-                self.mainwin.winfo_toplevel().title(self.mainwin.project)
+            self.mainwin.update_title()
 
     def manage_config(self):
         """Re-reads the config, then opens a ConfigManager Toplevel"""
