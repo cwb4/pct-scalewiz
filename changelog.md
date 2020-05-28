@@ -5,16 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-### To-do
- - validate user input in reporter
- - remove legend location option from reporter
- - refactor results_queue from being a persistent state to an object
+## [0.7.0] 2020-5-28
 ### Added
- - purchased custom icon (with appropriate license)
+ - purchased custom application icon (with appropriate license)
  - support for having more than two pumps connected to the same device
 ### Changed
  - refactored the settings menu to a simpler user interface with input validation
+ - removed unused settings from the report generator
 ### Fixed
  - bug causing script to crash if neither pump is connected to computer when program starts
 ### Removed
