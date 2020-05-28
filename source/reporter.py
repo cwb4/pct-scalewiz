@@ -44,7 +44,7 @@ class Reporter(tk.Toplevel):
             self.iconbitmap('chem.ico')
         self.core = parent
         self.mainwin = self.core.mainwin
-        self.config = self.core.config
+        self.parser = self.core.parser
         self.loc = tk.StringVar()
         self.resizable(0, 0)
         self.build()
@@ -85,7 +85,7 @@ class Reporter(tk.Toplevel):
             ),
             font=bold_font
         )
-        defpsi = self.config.get('test settings', 'default pump')
+        defpsi = self.parser.get('test settings', 'default pump')
         for _ in range(10):
             SeriesEntry(self.entfrm, defpsi).grid(padx=2)
         self.entfrm.grid(row=0, padx=3, pady=2)
@@ -100,7 +100,7 @@ class Reporter(tk.Toplevel):
         self.xlim = ttk.Entry(self.setfrm, width=14)
         self.xlim.insert(
             0,
-            self.config.get('test settings', 'time limit minutes')
+            self.parser.get('test settings', 'time limit minutes')
         )
         self.xlim.grid(row=0, column=3, sticky='w', padx=5, pady=(2))
 
@@ -123,7 +123,7 @@ class Reporter(tk.Toplevel):
         self.ylim = ttk.Entry(self.setfrm, width=14)
         self.ylim.insert(
             0,
-            self.config.get('test settings', 'fail psi')
+            self.parser.get('test settings', 'fail psi')
         )
         self.ylim.grid(row=1, column=3, sticky=tk.W, padx=5, pady=2)
 
@@ -134,7 +134,7 @@ class Reporter(tk.Toplevel):
         self.baseline = ttk.Entry(self.setfrm, width=14)
         self.baseline.insert(
             0,
-            self.config.get('test settings', 'default baseline')
+            self.parser.get('test settings', 'default baseline')
         )
         self.baseline.grid(row=2, column=3, sticky=tk.W, padx=5, pady=2)
 
@@ -183,17 +183,17 @@ class Reporter(tk.Toplevel):
         if self.xlim.get() != '':
             xlim = int(self.xlim.get())
         else:
-            xlim = self.config.getint('test settings', 'time limit minutes')
+            xlim = self.parser.getint('test settings', 'time limit minutes')
 
         if self.ylim.get() != '':
             ylim = int(self.ylim.get())
         else:
-            ylim = self.config.getint('test settings', 'fail psi')
+            ylim = self.parser.getint('test settings', 'fail psi')
 
         if self.baseline.get() != '':
             baseline = int(self.baseline.get())
         else:
-            baseline = self.config.getint('test settings', 'default baseline')
+            baseline = self.parser.getint('test settings', 'default baseline')
 
         plot_params = ('bmh', xlim, ylim, baseline)
 
@@ -223,7 +223,7 @@ class Reporter(tk.Toplevel):
             ylim = int(self.mainwin.failpsi.get())
 
         with plt.style.context(style):
-            colors = self.config.get('plot settings', 'color cycle').split(',')
+            colors = self.parser.get('plot settings', 'color cycle').split(',')
             colors = [i.strip() for i in colors]
             mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
             fig, ax = plt.subplots(figsize=(12.5, 5), dpi=100)
@@ -359,7 +359,7 @@ class Reporter(tk.Toplevel):
     def get_results(self, blanks, trials, baseline, xlim, ylim):
         """Evaluate the data."""
         print("Getting results from evaluator")
-        interval = self.config.getint('test settings', 'interval seconds')
+        interval = self.parser.getint('test settings', 'interval seconds')
         proj = self.mainwin.title
         self.results_queue, self.log = evaluate(
             proj, blanks, trials, baseline, xlim, ylim, interval
@@ -406,7 +406,7 @@ class Reporter(tk.Toplevel):
                 message="You must evaulate a set of data before exporting a report."
             )
             return
-        template_path = self.config.get('report settings', 'template path')
+        template_path = self.parser.get('report settings', 'template path')
         template_path = os.path.normpath(template_path)
         if not os.path.isfile(template_path):
             showerror(
