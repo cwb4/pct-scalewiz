@@ -22,7 +22,6 @@ class Experiment():
         self.conc = conc
         self.running = False
         self.elapsed = 0
-        self.readings = 0
         self.interval = self.core.config.getint(
             'test settings', 'interval seconds'
         )
@@ -91,6 +90,7 @@ class Experiment():
 
         # a dict to hold recent pressure readings
         psi1, psi2 = 0, 0
+        self.readings = 0
         starttime = time.time()
         reading_start = time.time()
         while (
@@ -101,10 +101,11 @@ class Experiment():
                 )
                 and self.running
         ):
-            reading_ratio = self.elapsed / self.readings
-            rate_is_good = reading_ratio - self.interval > 0.01
             if time.time() - reading_start >= self.interval:
-                if self.readings != 0 and rate_is_good:
+                self.readings += 1
+                reading_ratio = self.elapsed / self.readings
+                rate_is_bad = reading_ratio - self.interval > 0.01
+                if self.readings != 0 and rate_is_bad:
                     print(f"avg s/reading: {round(reading_ratio, 4)}")
                 reading_start = time.time()
                 try:
@@ -129,7 +130,6 @@ class Experiment():
                     f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
                 )
                 self.to_log(this_reading)
-                self.readings += 1
                 self.elapsed = time.time() - starttime
                 # end of while loop
 
