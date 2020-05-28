@@ -152,7 +152,7 @@ class Experiment():
                 print(error)
 
         try:
-            max_measures = round(self.elapsed / self.interval)
+            max_measures = round(self.elapsed / self.interval) - 1
             completion_rate = round(self.readings / max_measures * 100, 1)
             this_duration = f"{self.elapsed/60:.2f} min"
             self.to_log(
