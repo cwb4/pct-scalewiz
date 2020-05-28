@@ -374,6 +374,8 @@ class Reporter(tk.Toplevel):
         result_window = tk.Toplevel(self)
         result_window.attributes('-topmost', 'true')
         result_window.title("Results")
+        if os.name == 'nt':
+            result_window.iconbitmap('chem.ico')
         def_bg = result_window.cget('bg')
         tk.Label(
             master=result_window,
