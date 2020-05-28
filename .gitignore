@@ -11,7 +11,7 @@ build.bat
 run.bat
 updatedrop.bat
 *.plt
-*.xlsx
+
 *.ini
 *.csv
 calc_log_*.txt
