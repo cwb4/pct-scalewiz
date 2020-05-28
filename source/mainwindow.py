@@ -103,7 +103,7 @@ class MainWindow(tk.Frame):
         # grid entry labels into self.entfrm
         self.comlbl = ttk.Label(
             self.entfrm,
-            text="COM ports:",
+            text="Device ports:",
         )
         self.comlbl.grid(row=0, sticky=tk.E)
         ttk.Label(
@@ -209,12 +209,12 @@ class MainWindow(tk.Frame):
         self.endbtn.bind('<Return>', lambda _: self.test.end_test())
 
     def find_coms(self) -> None:
-        """Look for COM ports and disables the controls if two aren't found."""
-        print("Finding COM ports")
+        """Look for devices and disable the controls if two aren't found."""
+        print("Finding connected devices")
         ports = [i.device for i in serial.tools.list_ports.comports()]
         if len(ports) < 2:
-            self.to_log("Not enough COM ports found...",
-                        "Click 'COM ports:' to try again.")
+            self.to_log("Not enough devices found...",
+                        "Click 'Device ports:' to try again.")
             ports = ["??", "??"]
 
         useports = []
@@ -243,7 +243,7 @@ class MainWindow(tk.Frame):
             self.dataout['state'] = 'normal'
             self.dataout.delete(1.0, 'end')
             self.dataout['state'] = 'disabled'
-            print(f"Successfully connected to COM ports {useports}")
+            print(f"Successfully connected to devices {useports}")
             print("Enabling start button")
             self.strtbtn['state'] = 'enable'
 
