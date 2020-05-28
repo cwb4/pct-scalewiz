@@ -16,7 +16,7 @@ class Experiment():
         self.core = self.mainwin.core
         self.port1 = port1
         self.port2 = port2
-        self.timelimit = timelimit
+        self.time_limit = timelimit
         self.failpsi = failpsi
         self.chem = chem
         self.conc = conc
@@ -96,8 +96,8 @@ class Experiment():
         while (
                 (psi1 < self.failpsi or psi2 < self.failpsi)
                 and (
-                    self.elapsed <= self.timelimit * 60
-                    or self.readings <= self.timelimit * 60 / self.interval
+                    self.elapsed <= self.time_limit * 60
+                    or self.readings <= self.time_limit * 60 / self.interval
                 )
                 and self.running
         ):
