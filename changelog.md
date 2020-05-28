@@ -7,12 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
- - custom icon (with appropriate license)
+ - purchased custom icon (with appropriate license)
  - support for having more than two pumps connected to the same device
 ### Changed
- - code review / QA
+ - refactored the settings menu to a simpler user interface with input validation
 ### Fixed
  - bug causing script to crash if neither pump is connected to computer when program starts
+### Removed
+ - support for plot styles other than the default (color sequence may still be changed)
 
 
 ## [0.6.3] 2020-5-19
