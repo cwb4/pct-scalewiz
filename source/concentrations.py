@@ -66,7 +66,7 @@ class ConcCalc(tk.Toplevel):
             conc = int(self.conc_ent.get())
             vol = int(self.vol_ent.get())
             self.mL.set(f"{conc*vol/1000/1000:.4f} mL, or")
-            self.uL.set(f"{conc*vol/1000:.2f} μL")
+            self.uL.set(f"{conc*vol/1000:.1f} μL")
         except ValueError:
             pass
 
