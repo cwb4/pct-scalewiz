@@ -8,6 +8,7 @@ import configparser
 import os
 from concurrent.futures import ThreadPoolExecutor  # handling the test
 import tkinter as tk  # GUI
+import settings
 
 from mainwindow import MainWindow
 
@@ -41,12 +42,14 @@ class ScaleWiz(tk.Frame):
         }
     }
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent):
         """Instantiate the core."""
-        tk.Frame.__init__(self, parent, *args, **kwargs)
+        tk.Frame.__init__(self, parent)
         self.root = parent
         self.config = configparser.ConfigParser()
-        self.config.DEFAULT_DICT = ScaleWiz.DEFAULT_DICT
+        # self.config.DEFAULT_DICT = ScaleWiz.DEFAULT_DICT
+        self.config.DEFAULT_DICT = settings.DEFAULT_DICT
+
         if not os.path.isfile('scalewiz.ini'):
             self.make_config()
         else:
@@ -54,10 +57,7 @@ class ScaleWiz(tk.Frame):
             self.config.path = os.path.abspath('scalewiz.ini')
 
         self.config.read('scalewiz.ini')
-        # default_sections = [i for i in ScaleWiz.DEFAULT_DICT]
-        default_sections = []
-        for key in ScaleWiz.DEFAULT_DICT:
-            default_sections.append(key)
+        default_sections = [i for i in ScaleWiz.DEFAULT_DICT]
         if self.config.sections() != default_sections:
             print("The found config didn't have the right sections")
             self.make_config()
@@ -68,7 +68,7 @@ class ScaleWiz(tk.Frame):
     def make_config(self):
         """Create a default scalewiz.ini in the current working directory."""
         print("Making new scalewiz.ini file in \n" + f"{os.getcwd()}")
-        self.config.read_dict(ScaleWiz.DEFAULT_DICT)
+        self.config.read_dict(self.config.DEFAULT_DICT)
         with open('scalewiz.ini', 'w') as configfile:
             self.config.write(configfile)
             self.config.path = os.path.abspath('scalewiz.ini')
