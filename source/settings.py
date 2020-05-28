@@ -3,7 +3,7 @@
 import os
 from configparser import ConfigParser
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 from tkinter import font  # type: ignore
 
 DEFAULT_DICT = {
@@ -151,6 +151,11 @@ class ConfigManager(tk.Toplevel):
         rep_frm.grid(row=1, column=0, sticky='nsew', pady=2, padx=2)
         btn_frm.grid(row=2, column=0, sticky='nsew', pady=2, padx=2)
 
+        # widget bindings
+        self.proj_dir.bind('<Button-1>', self.ask_dir)
+        self.temp_path.bind('<Button-1>', self.ask_fil)
+
+
     def fill_form(self):
         """Fill the form with values from the ConfigParser."""
         fail_psi = self.parser.getint('test settings', 'fail psi')
@@ -196,6 +201,40 @@ class ConfigManager(tk.Toplevel):
         """Fill the form with the DEFAULT_DICT."""
         self.parser.read_dict(DEFAULT_DICT)  # type: ignore
         self.fill_form()
+
+    def ask_dir(self, event):
+        """Create a prompt asking the user for a directory.
+
+        If the path isn't
+        blank, put it in the clicked widget.
+
+        """
+        dir = filedialog.askdirectory(
+            initialdir="C:\"",
+            title="Select project folder:",
+        )
+        if dir != "":
+            event.widget.delete(0,'end')
+            event.widget.insert(0, dir)
+            event.widget.after(75, event.widget.xview_moveto, 1)
+
+    def ask_fil(self, event):
+        """Create a prompt asking the user for an .xlsx file.
+
+        If the path isn't
+        blank, put it in the clicked widget.
+
+        """
+        fil = filedialog.askopenfilename(
+            initialdir="C:\"",
+            title="Select report template:",
+            filetypes=[("Excel files", "*.xlsx")]
+        )
+
+        if not fil == "":
+            event.widget.delete(0, 'end')
+            event.widget.insert(0, fil)
+            event.widget.after(75, event.widget.xview_moveto, 1)
 
     def is_numeric(self, P):
         """Validate that user input is numeric."""
