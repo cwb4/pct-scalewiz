@@ -286,8 +286,6 @@ class MainWindow(tk.Frame):
         except (FileNotFoundError, AttributeError):
             data = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
 
-        # NOTE: can remove this line ?
-        plt.rcParams.update(plt.rcParamsDefault)  # refresh the style
         with plt.style.context('bmh'):
             self.axis.clear()
             self.axis.set_xlabel("Time (min)")

@@ -210,8 +210,6 @@ class Reporter(tk.Toplevel):
         """Make a new plot from some tuples."""
         print("Spawning a new plot \n")
         start = time.time()
-        # reset the stylesheet
-        plt.rcParams.update(plt.rcParamsDefault)
 
         # give names to plot parameters
         style = plot_params[0]
