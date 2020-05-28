@@ -55,6 +55,7 @@ class Reporter(tk.Toplevel):
         bold_font = font.Font(font=def_font)
         bold_font.config(weight='bold')
         self.winfo_toplevel().title("Report Generator")
+        vcmd = (self.register(self.is_numeric))
 
         self.pltbar = tk.Menu(self)
         self.pltbar.add_command(
@@ -79,7 +80,7 @@ class Reporter(tk.Toplevel):
         # a LabelFrame to hold the SeriesEntry widgets
         self.entfrm = tk.LabelFrame(
             master=self,
-            # NOTE: this is a dirty way of doing it... but it works
+            # NOTE: this is a dirty way of avoiding using many labels
             text=(
                 "File path:                           Series title:                                   Data to evaluate:"
             ),
@@ -91,62 +92,68 @@ class Reporter(tk.Toplevel):
         self.entfrm.grid(row=0, padx=3, pady=2)
 
         # to hold the settings entries
-        self.setfrm = tk.LabelFrame(master=self, text="Plot parameters", font=bold_font)
+        self.set_frm = tk.LabelFrame(master=self, text="Plot parameters", font=bold_font)
 
-        tk.Label(
-            master=self.setfrm,
-            text="Time limit (min):"
-        ).grid(row=0, column=2, sticky=tk.E, padx=5, pady=(10, 2))
-        self.xlim = ttk.Entry(self.setfrm, width=14)
-        self.xlim.insert(
+        # settings labels
+        time_lbl = tk.Label(master=self.set_frm, text="Time limit (min):")
+        fail_lbl = tk.Label(master=self.set_frm, text="Max pressure (psi):")
+        base_lbl = tk.Label(master=self.set_frm, text="Baseline pressure (psi):")
+
+        # grid the labels
+        time_lbl.grid(row=0, column=0, sticky=tk.E, padx=5)
+        fail_lbl.grid(row=0, column=1, sticky=tk.E, padx=5)
+        base_lbl.grid(row=0, column=2, sticky=tk.E, padx=5)
+
+        # settings entries
+        self.time_limit = ttk.Spinbox(
+            self.set_frm,
+            width=14,
+            from_=0, to=1440,
+            validate='all', validatecommand=(vcmd, '%P')
+        )
+        self.fail_psi = ttk.Spinbox(
+            self.set_frm,
+            width=14,
+            from_=0, to=5000,
+            validate='all', validatecommand=(vcmd, '%P')
+        )
+        self.baseline = ttk.Spinbox(
+            self.set_frm,
+            width=14,
+            from_=0, to=5000,
+            validate='all', validatecommand=(vcmd, '%P')
+        )
+
+        # grid settings entries
+        self.time_limit.grid(row=1, column=0, sticky='w', padx=5, pady=2)
+        self.fail_psi.grid(row=1, column=1, sticky='w', padx=5, pady=2)
+        self.baseline.grid(row=1, column=2, sticky='w', padx=5, pady=2)
+
+        # insert default plot parameters
+        self.time_limit.insert(
             0,
-            self.parser.get('test settings', 'time limit minutes')
+            self.parser.getint('test settings', 'time limit minutes')
         )
-        self.xlim.grid(row=0, column=3, sticky='w', padx=5, pady=(2))
-
-        tk.Label(
-            master=self.setfrm,
-            text="Legend location:"
-        ).grid(row=1, column=0, sticky=tk.E, padx=5, pady=2)
-        self.locsmenu = ttk.OptionMenu(
-            self.setfrm,
-            self.loc,
-            Reporter.LocsLst[1],
-            *Reporter.LocsLst
-        )
-        self.locsmenu.grid(row=1, column=1, sticky=tk.W, padx=(5, 10), pady=2)
-
-        tk.Label(
-            master=self.setfrm,
-            text="Max pressure (psi):"
-        ).grid(row=1, column=2, sticky=tk.E, padx=5, pady=2)
-        self.ylim = ttk.Entry(self.setfrm, width=14)
-        self.ylim.insert(
+        self.fail_psi.insert(
             0,
-            self.parser.get('test settings', 'fail psi')
+            self.parser.getint('test settings', 'fail psi')
         )
-        self.ylim.grid(row=1, column=3, sticky=tk.W, padx=5, pady=2)
-
-        tk.Label(
-            master=self.setfrm,
-            text="Baseline pressure (psi):"
-        ).grid(row=2, column=2, sticky=tk.E, padx=5, pady=2)
-        self.baseline = ttk.Entry(self.setfrm, width=14)
         self.baseline.insert(
             0,
-            self.parser.get('test settings', 'default baseline')
+            self.parser.getint('test settings', 'default baseline')
         )
-        self.baseline.grid(row=2, column=3, sticky=tk.W, padx=5, pady=2)
 
+        # make a button to plot, then grid it
         self.pltbtn = ttk.Button(
-            master=self.setfrm,
+            master=self.set_frm,
             text="Evaluate",
             width=30,
             command=lambda: self.make_plot(**self.prep_plot())
         )
-        self.pltbtn.grid(row=3, columnspan=4, pady=2)
+        self.pltbtn.grid(row=2, columnspan=4, pady=2)
 
-        self.setfrm.grid(row=1, pady=2)
+        # grid the settings frame
+        self.set_frm.grid(row=1, pady=2)
 
     def prep_plot(self) -> dict:
         """Return a dict of tuples.
@@ -180,13 +187,13 @@ class Reporter(tk.Toplevel):
         )
 
         # look for empty entries in the form
-        if self.xlim.get() != '':
-            xlim = int(self.xlim.get())
+        if self.time_limit.get() != '':
+            xlim = int(self.time_limit.get())
         else:
             xlim = self.parser.getint('test settings', 'time limit minutes')
 
-        if self.ylim.get() != '':
-            ylim = int(self.ylim.get())
+        if self.fail_psi.get() != '':
+            ylim = int(self.fail_psi.get())
         else:
             ylim = self.parser.getint('test settings', 'fail psi')
 
@@ -234,7 +241,7 @@ class Reporter(tk.Toplevel):
             ax.yaxis.set_major_locator(MultipleLocator(100))
             ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
             ax.set_facecolor('w')
-            fig.canvas.set_window_title(self.mainwin.title)
+            fig.canvas.set_window_title(self.mainwin.title())
             plt.tight_layout()
 
             blanks = []
@@ -272,7 +279,7 @@ class Reporter(tk.Toplevel):
                     )
                     trials.append(Series(df[plotpump], name=title))
 
-            ax.legend(loc=self.loc.get())
+            ax.legend(loc='best')
 
             baseline = plot_params[3]
 
@@ -529,6 +536,13 @@ class Reporter(tk.Toplevel):
             parent=self,
             message=f"Report exported to\n{report_path}"
         )
+
+    def is_numeric(self, P):
+        """Validate that user input is numeric."""
+        if str.isdigit(P) or P == "":
+            return True
+        else:
+            return False
 
     def show_help(self):
         """Show a help dialog to the user."""
