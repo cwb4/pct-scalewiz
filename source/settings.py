@@ -1,6 +1,5 @@
 """A Toplevel to manage settings from a ConfigParser object."""
 
-import os
 from configparser import ConfigParser
 import tkinter as tk
 from tkinter import ttk
@@ -17,10 +16,16 @@ DEFAULT_DICT = {
     },
     'report settings': {
         'template path': '',
-        'color cycle': """orange, blue, red, mediumseagreen, darkgoldenrod,
-        indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
+        'color cycle': """orange, blue, red, mediumseagreen, darkgoldenrod, indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
     }
 }
+
+
+def make_config(parser: ConfigParser):
+    """Create a default scalewiz.ini in the current working directory."""
+    parser.read_dict(DEFAULT_DICT)  # type: ignore
+    with open('scalewiz.ini', 'w') as configfile:
+        parser.write(configfile)
 
 
 class ConfigManager(tk.Toplevel):
@@ -124,9 +129,21 @@ class ConfigManager(tk.Toplevel):
         color_lbl.grid(row=1, column=0, sticky='ne')
         self.color_cycle.grid(row=1, column=1, pady=2, padx=2, sticky='w')
 
+        # frame for buttons
+        btn_frm = tk.Frame(self)
+
+        # buttons
+        save_btn = ttk.Button(btn_frm, text="Save", command=lambda: self.save_settings())
+        reset_btn = ttk.Button(btn_frm, text="Restore Defaults", command=lambda: self.restore_defaults())
+
+        # grid the buttons
+        reset_btn.grid(row=0, column=0, padx=5)
+        save_btn.grid(row=0, column=1, padx=5)
+
         # grid the container frames
         test_frm.grid(row=0, column=0, sticky='nsew', pady=2, padx=2)
         rep_frm.grid(row=1, column=0, sticky='nsew', pady=2, padx=2)
+        btn_frm.grid(row=2, column=0, sticky='nsew', pady=2, padx=2)
 
     def fill_form(self):
         """Fill the form with values from the ConfigParser."""
@@ -156,15 +173,23 @@ class ConfigManager(tk.Toplevel):
         self.temp_path.insert(0, temp_path)
         self.color_cycle.insert(1.0, color_cycle)
 
-    def close_settings(self):
-        """Close the window."""
-        pass
-
-    def make_config(self, parser: ConfigParser):
-        """Create a default scalewiz.ini in the current working directory."""
-        parser.read_dict(DEFAULT_DICT)
+    def save_settings(self):
+        """Save the form contents to file."""
+        self.parser['test settings']['fail psi'] = self.fail_psi.get()
+        self.parser['test settings']['time limit minutes'] = self.time_limit.get()
+        self.parser['test settings']['interval seconds'] = self.interval.get()
+        self.parser['test settings']['default baseline'] = self.base_psi.get()
+        self.parser['test settings']['default pump'] = self.def_pump.get()
+        self.parser['test settings']['project folder'] = self.proj_dir.get()
+        self.parser['report settings']['template path'] = self.temp_path.get()
+        self.parser['report settings']['color cycle'] = self.color_cycle.get(1.0, 'end')
         with open('scalewiz.ini', 'w') as configfile:
-            parser.write(configfile)
+            self.parser.write(configfile)
+
+    def restore_defaults(self):
+        """Fill the form with the DEFAULT_DICT."""
+        self.parser.read_dict(DEFAULT_DICT)  # type: ignore
+        self.fill_form()
 
     def is_numeric(self, P):
         """Validate that user input is numeric."""
