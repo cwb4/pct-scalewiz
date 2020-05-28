@@ -131,8 +131,10 @@ class Experiment():
                 )
                 self.to_log(this_reading)
                 self.elapsed = time.time() - starttime
-                # end of while loop
 
+            else:
+                time.sleep(self.interval / 10)
+        # end of while loop
         print("Test complete")
         self.end_test()
         for _ in range(3):
