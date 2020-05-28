@@ -17,7 +17,6 @@ class ScaleWiz(tk.Frame):
 
     VERSION = '[0.6.3x]'
 
-
     def __init__(self, parent):
         """Instantiate the core."""
         tk.Frame.__init__(self, parent)
