@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - support for having more than two pumps connected to the same device
 ### Changed
  - refactored the settings menu to a simpler user interface with input validation
- - removed unused settings from the report generator
+ - refactored the report generator to a simpler user interface with input validation
+ - calculations log is more explicit and states formula used for each calculation step
 ### Fixed
  - bug causing script to crash if neither pump is connected to computer when program starts
 ### Removed
