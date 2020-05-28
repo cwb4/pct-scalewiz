@@ -85,8 +85,8 @@ class MenuBar(tk.Frame):
         ConfigManager(self.core, self.parser)
         self.parser.read(self.parser.path)
 
-
     def show_help(self):
+        """Show a help dialog."""
         tk.messagebox.showinfo(
             parent=self,
             title="Help: Using ScaleWiz",
