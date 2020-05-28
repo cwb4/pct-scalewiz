@@ -5,7 +5,6 @@ from tkinter import filedialog
 import os  # handling file paths
 
 from reporter import Reporter
-# from configmanager import ConfigManager
 from concentrations import ConcCalc
 from settings import ConfigManager
 
@@ -18,7 +17,7 @@ class MenuBar(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.mainwin = parent
         self.core = parent.core
-        self.config = self.mainwin.core.config
+        self.parser = self.mainwin.core.parser
         self.build()
 
     def build(self):
@@ -42,7 +41,7 @@ class MenuBar(tk.Frame):
 
         self.menubar.add_command(
             label='Settings',
-            command=lambda: self.manageconfig()
+            command=lambda: self.manage_config()
         )
 
         self.menubar.add_command(
@@ -66,11 +65,11 @@ class MenuBar(tk.Frame):
 
         if out != "":
             self.mainwin.project = os.path.normpath(out)
-            self.config['test settings']['project folder'] = self.mainwin.project
+            self.parser['test settings']['project folder'] = self.mainwin.project
             with open('scalewiz.ini', 'w') as configfile:
-                self.config.write(configfile)
-                print("Updated 'project folder' in config file")
-                print(f"Set project directory to\n{self.mainwin.project}")
+                self.parser.write(configfile)
+            print("Updated 'project folder' in config file")
+            print(f"Set project directory to\n{self.mainwin.project}")
             # make it the MainWindow title in a pretty way
             try:
                 p = self.mainwin.project.split('\\')
@@ -79,17 +78,13 @@ class MenuBar(tk.Frame):
             except IndexError:
                 self.mainwin.winfo_toplevel().title(self.mainwin.project)
 
-    def manageconfig(self):
+    def manage_config(self):
         """Re-reads the config, then opens a ConfigManager Toplevel"""
         print("Opening ConfigManager")
-        self.config.read(self.config.path)
-        # ConfigManager(
-        #     self.core,
-        #     configpath=self.config.path,
-        #     _title='Settings',
-        #     defaultdict=self.config.DEFAULT_DICT
-        # )
-        ConfigManager(self.core, self.config)
+        self.parser.read(self.parser.path)
+        ConfigManager(self.core, self.parser)
+        self.parser.read(self.parser.path)
+
 
     def show_help(self):
         tk.messagebox.showinfo(

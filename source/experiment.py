@@ -22,7 +22,7 @@ class Experiment():
         self.conc = conc
         self.running = False
         self.elapsed = 0
-        self.interval = self.core.config.getint(
+        self.interval = self.core.parser.getint(
             'test settings', 'interval seconds'
         )
 
@@ -153,7 +153,7 @@ class Experiment():
 
         try:
             max_measures = round(self.elapsed / self.interval)
-            completion_rate = round(self.readings / max_measures * 100)
+            completion_rate = round(self.readings / max_measures * 100, 1)
             this_duration = f"{self.elapsed/60:.2f} min"
             self.to_log(
                 f"Took {self.readings}/{max_measures} expected readings in {this_duration}"

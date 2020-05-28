@@ -17,7 +17,7 @@ DEFAULT_DICT = {
     },
     'report settings': {
         'template path': '',
-        'color cyle': """orange, blue, red, mediumseagreen, darkgoldenrod,
+        'color cycle': """orange, blue, red, mediumseagreen, darkgoldenrod,
         indigo, mediumvioletred, darkcyan, maroon, darkslategrey"""
     }
 }
@@ -159,6 +159,12 @@ class ConfigManager(tk.Toplevel):
     def close_settings(self):
         """Close the window."""
         pass
+
+    def make_config(self, parser: ConfigParser):
+        """Create a default scalewiz.ini in the current working directory."""
+        parser.read_dict(DEFAULT_DICT)
+        with open('scalewiz.ini', 'w') as configfile:
+            parser.write(configfile)
 
     def is_numeric(self, P):
         """Validate that user input is numeric."""

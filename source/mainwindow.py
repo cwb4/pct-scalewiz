@@ -31,12 +31,12 @@ class MainWindow(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.core = parent
         self.core.root.protocol("WM_DELETE_WINDOW", self.close_app)
-        self.config = self.core.config
+        self.parser = self.core.parser
 
         self.plotpsi = tk.StringVar()
-        self.plotpsi.set(self.config.get('test settings', 'default pump'))
+        self.plotpsi.set(self.parser.get('test settings', 'default pump'))
         self.project = os.path.normpath(
-            self.config.get(
+            self.parser.get(
                 'test settings',
                 'project folder',
                 fallback=os.getcwd()
@@ -137,7 +137,7 @@ class MainWindow(tk.Frame):
             master=self.outfrm,
             width=45,
             height=12,
-            state='disabled'
+            state='disabled',
             wrap='word'
         )
 
@@ -197,7 +197,7 @@ class MainWindow(tk.Frame):
         toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
         toolbar.update()
         self.canvas.get_tk_widget().pack()
-        interval = self.config.getint('test settings', 'interval seconds') * 1000
+        interval = self.parser.getint('test settings', 'interval seconds') * 1000
         self.ani = FuncAnimation(self.fig, self.animate, interval=interval)
 
         # grid stuff into self.tstfrm
@@ -259,11 +259,11 @@ class MainWindow(tk.Frame):
         params = {
             'port1': self.port1.get().strip(),
             'port2': self.port2.get().strip(),
-            'timelimit': self.config.getint(
+            'timelimit': self.parser.getint(
                 'test settings',
                 'time limit minutes'
             ),
-            'failpsi': self.config.getint('test settings', 'fail psi'),
+            'failpsi': self.parser.getint('test settings', 'fail psi'),
             'chem': self.chem.get().strip().replace(' ', '_'),
             'conc': self.conc.get().strip().replace(' ', '_')
         }
@@ -293,7 +293,7 @@ class MainWindow(tk.Frame):
             self.axis.set_xlabel("Time (min)")
             self.axis.set_ylabel("Pressure (psi)")
             self.axis.set_ylim(
-                top=self.config.getint(
+                top=self.parser.getint(
                     'test settings',
                     'fail psi'
                 )
