@@ -45,7 +45,6 @@ class Reporter(tk.Toplevel):
         self.core = parent
         self.mainwin = self.core.mainwin
         self.config = self.core.config
-        self.plotterstyle = tk.StringVar()
         self.loc = tk.StringVar()
         self.resizable(0, 0)
         self.build()
@@ -90,19 +89,6 @@ class Reporter(tk.Toplevel):
 
         # to hold the settings entries
         self.setfrm = tk.LabelFrame(master=self, text="Plot parameters")
-
-        self.stylemenu = ttk.OptionMenu(
-            self.setfrm,
-            self.plotterstyle,
-            self.config.get('plot settings', 'default style'),
-            *self.config.get('plot settings', 'plot styles').split(',')
-        )
-        if self.config.getboolean('plot settings', 'show style options'):
-            tk.Label(
-                master=self.setfrm,
-                text="Plot style:"
-            ).grid(row=0, column=0, sticky=tk.E, padx=5, pady=2)
-            self.stylemenu.grid(row=0, column=1, sticky='w', padx=(5, 10), pady=2)
 
         tk.Label(
             master=self.setfrm,
@@ -206,7 +192,7 @@ class Reporter(tk.Toplevel):
         else:
             baseline = self.config.getint('test settings', 'default baseline')
 
-        plot_params = (self.plotterstyle.get(), xlim, ylim, baseline)
+        plot_params = ('bmh', xlim, ylim, baseline)
 
         _plt = {
             'paths': paths,

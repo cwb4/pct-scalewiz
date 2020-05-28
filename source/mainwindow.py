@@ -50,8 +50,6 @@ class MainWindow(tk.Frame):
             self.title = os.getcwd()
         self.winfo_toplevel().title(self.title)
 
-        self.plotstyle = self.config.get('plot settings', 'default style')
-
         self.build_window()
         self.find_coms()
 
@@ -187,12 +185,9 @@ class MainWindow(tk.Frame):
             child.configure(state="disabled")
 
         # set up the plot area
-        self.pltfrm = tk.LabelFrame(
+        self.pltfrm = tk.Frame(
             master=self.tstfrm,
-            text=" "
         )
-        if self.config.getboolean('plot settings', 'show style options'):
-            self.pltfrm.configure(text=(f"Plot style: {self.plotstyle}"))
 
         # matplotlib objects
         self.fig, self.axis = plt.subplots(figsize=(7.5, 4), dpi=100)
@@ -237,6 +232,7 @@ class MainWindow(tk.Frame):
                 except SerialException as error:
                     self.to_log(f"Could not connect to port {port}")
                     print(error)
+                    useports.append("??")
             else:
                 useports.append("??")
 
@@ -289,8 +285,9 @@ class MainWindow(tk.Frame):
         except (FileNotFoundError, AttributeError):
             data = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
 
+        # NOTE: can remove this line ?
         plt.rcParams.update(plt.rcParamsDefault)  # refresh the style
-        with plt.style.context(self.plotstyle):
+        with plt.style.context('bmh'):
             self.axis.clear()
             self.axis.set_xlabel("Time (min)")
             self.axis.set_ylabel("Pressure (psi)")

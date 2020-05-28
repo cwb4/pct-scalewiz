@@ -5,8 +5,9 @@ from tkinter import filedialog
 import os  # handling file paths
 
 from reporter import Reporter
-from configmanager import ConfigManager
+# from configmanager import ConfigManager
 from concentrations import ConcCalc
+from settings import ConfigManager
 
 
 class MenuBar(tk.Frame):
@@ -18,8 +19,6 @@ class MenuBar(tk.Frame):
         self.mainwin = parent
         self.core = parent.core
         self.config = self.mainwin.core.config
-        plotstyle_list = self.config.get('plot settings', 'plot styles').split(',')
-        self.plotstyle_list = [i.strip() for i in plotstyle_list]
         self.build()
 
     def build(self):
@@ -40,19 +39,6 @@ class MenuBar(tk.Frame):
             label="Make new report",
             command=lambda: Reporter(self.core)
         )
-
-        self.pltstylmenu = tk.Menu(master=self, tearoff=1)
-        for style in self.plotstyle_list:
-            self.pltstylmenu.add_command(
-                label=style,
-                command=lambda s=style: self.set_plotstyle(s)
-            )
-        # check the config to see if we want to show this label to the user
-        if self.config.getboolean('plot settings', 'show style options'):
-            self.menubar.add_cascade(
-                label="Set plot style",
-                menu=self.pltstylmenu
-            )
 
         self.menubar.add_command(
             label='Settings',
@@ -95,22 +81,15 @@ class MenuBar(tk.Frame):
 
     def manageconfig(self):
         """Re-reads the config, then opens a ConfigManager Toplevel"""
-
         print("Opening ConfigManager")
         self.config.read(self.config.path)
-        ConfigManager(
-            self.core,
-            configpath=self.config.path,
-            _title='Settings',
-            defaultdict=self.config.DEFAULT_DICT
-        )
-
-    def set_plotstyle(self, style: str) -> None:
-        """Sets the plot style for MainWindow"""
-
-        print(f"Changing MainWindow plot style to {style}")
-        self.mainwin.plotstyle = style
-        self.mainwin.pltfrm.configure(text=(f"Style: {self.mainwin.plotstyle}"))
+        # ConfigManager(
+        #     self.core,
+        #     configpath=self.config.path,
+        #     _title='Settings',
+        #     defaultdict=self.config.DEFAULT_DICT
+        # )
+        ConfigManager(self.core, self.config)
 
     def show_help(self):
         tk.messagebox.showinfo(
@@ -123,8 +102,6 @@ Clicking the 'COM Ports' label will attempt to reconnect to the pumps.
 Set project folder: Sets the folder to put data files in.
 
 Make new report: Opens a new Report Generator window.
-
-Set plot style: Changes the plot style for the plot in the main window (only visible if 'Show Style Options' in settings is set to True)
 
 Settings: Opens a menu to modify the current settings file ('scalewiz.ini') in the directory the program runs out of
 
