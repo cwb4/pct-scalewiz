@@ -1,6 +1,8 @@
-<p  align='center'>
+<!-- <p  align='center'>
 <img src="https://github.com/teauxfu/pct-scalewiz/blob/master/images/pct_logo.PNG" width='200' height='100'>
-</p>
+</p> -->
+
+![](images/pct_logo.PNG)
 
 # Premier Chemical Technologies, LLC  - Scale Block Wizard
 A graphical user interface designed to work with Teledyne SSI MX-class pumps.
