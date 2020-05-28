@@ -233,7 +233,7 @@ class Reporter(tk.Toplevel):
             ylim = int(self.mainwin.failpsi.get())
 
         with plt.style.context(style):
-            colors = self.parser.get('plot settings', 'color cycle').split(',')
+            colors = self.parser.get('report settings', 'color cycle').split(',')
             colors = [i.strip() for i in colors]
             mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
             fig, ax = plt.subplots(figsize=(12.5, 5), dpi=100)
@@ -244,7 +244,7 @@ class Reporter(tk.Toplevel):
             ax.yaxis.set_major_locator(MultipleLocator(100))
             ax.grid(color='darkgrey', alpha=0.65, linestyle='-')
             ax.set_facecolor('w')
-            fig.canvas.set_window_title(self.mainwin.title())
+            fig.canvas.set_window_title(self.mainwin.winfo_toplevel().title())
             plt.tight_layout()
 
             blanks = []
@@ -370,7 +370,7 @@ class Reporter(tk.Toplevel):
         """Evaluate the data."""
         print("Getting results from evaluator")
         interval = self.parser.getint('test settings', 'interval seconds')
-        proj = self.mainwin.title
+        proj = self.mainwin.project
         self.results_queue, self.log = evaluate(
             proj, blanks, trials, baseline, xlim, ylim, interval
         )
