@@ -20,8 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - full support for Linux cross compatibility implemented
  - additional error handling while test is running
 ### Changed
- - minor improvements to calculations log formatting
-
+ - minor improvements to calculations log 
+### Removed
+ - support for plot style options (can only change series colors)
+ -   
 ## [0.6.2] 2020-5-18
 ### Added
  - can no longer (accidentally) close the program while a test is running
