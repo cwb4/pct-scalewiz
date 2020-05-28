@@ -7,29 +7,26 @@ A graphical user interface designed to work with Teledyne SSI MX-class pumps.
 The intended usage is for running dynamic tube-blocking tests for calcium
 carbonate scale inhibitor chemical performance testing.
 Features include:
-  * simple, reliable workflow for setting up experiments and
-   handling data output to .csv files
-  * no hardware hassle - COM ports are automatically detected and managed
-  * straightforward pump controls
-  * real-time pressure data visualization with multiple style options
-  * easy to use plotting utility for producing publication-quality images
+* real-time data visualization
+* simple, reliable workflow for setting up projects and handling data output to .csv files
+* no hardware hassle - COM ports are automatically detected and managed
+* straightforward test controls and experiment parameter settings
+* plotting utility for producing publication-quality images, with support for exporting test results to a .xlsx file
+* a simple calculator for determining chemical injection volume
 
 ## Installation
 Dependencies may be installed using the requirements.txt file included.
 ```bash
-python -m pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 Then download the source code and run core.py
 ```bash
-python core.py
+python3 core.py
 ```
-<!-- Alternatively, Windows x64 systems may just download and run
-the latest [executable](https://github.com/teauxfu/pct-scalewiz/releases). -->
 
-### Requirements
-The appropriate hardware drivers may be downloaded from the
- [manufacturer website](https://ssihplc.com/manuals/#driver-downloads).
+### Alternatives
+Hardware drivers and a limited pump interface may be downloaded from the [manufacturer website](https://ssihplc.com/manuals/#driver-downloads).
 
 ## Screenshots
 ### Main window
@@ -38,16 +35,11 @@ The appropriate hardware drivers may be downloaded from the
 ![](images/plotting_utility.PNG)
 ### Sample plot
 ![](images/demo_plot.PNG)
+### Settings menu
+![](images/settings_menu.PNG)
+### Concentration calculator
+![](images/conc_calc.PNG)
 
-## Roadmap
-Expanded functionality for the plotting utility is the most recently added feature.
-The user may select from a small range of Matplotlib styles and formatting options such as legend location.
-Additionally, the user inputs in the plotter window can be saved to or loaded from a ".plt" file.
-This allows for easy modification of previously created plots.  
-Planned features include
-  * simple utility to read/write generic messages to/from the pumps,
-    such as commands to change the pumps' flow rates
-  * menu command to allow users to choose custom plot colors
 
 
 ## License
