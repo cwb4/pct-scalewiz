@@ -22,6 +22,7 @@ class Experiment():
         self.conc = conc
         self.running = False
         self.elapsed = 0
+        self.readings = 0
         self.interval = self.core.parser.getint(
             'test settings', 'interval seconds'
         )
@@ -31,8 +32,9 @@ class Experiment():
             child.configure(state="disabled")
 
         print("Enabling MainWindow test controls")
-        for child in self.mainwin.cmdfrm.winfo_children():
-            child.configure(state="normal")
+        self.mainwin.def_pump.configure(state='readonly')
+        self.mainwin.runbtn.configure(state='normal')
+        self.mainwin.endbtn.configure(state='normal')
 
         # clear the text widget
         self.mainwin.dataout['state'] = 'normal'

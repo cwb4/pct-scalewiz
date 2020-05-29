@@ -32,8 +32,6 @@ class MainWindow(tk.Frame):
         self.core.root.protocol("WM_DELETE_WINDOW", self.close_app)
         self.parser = self.core.parser
 
-        self.default_pump = tk.StringVar()
-        self.default_pump.set(self.parser.get('test settings', 'default pump'))
         self.project = os.path.normpath(
             self.parser.get(
                 'test settings',
@@ -153,35 +151,35 @@ class MainWindow(tk.Frame):
             command=lambda: self.test.end_test(),
             width=15
         )
-        self.runbtn.grid(row=1, column=1, padx=5, pady=2, sticky=tk.W)
-        self.endbtn.grid(row=1, column=2, padx=5, pady=2, sticky=tk.E)
+        self.runbtn.grid(row=1, column=0, padx=5, pady=2, sticky='e')
+        self.endbtn.grid(row=1, column=1, padx=5, pady=2, sticky='w')
+        cols = self.cmdfrm.grid_size()[0]
+        for col in range(cols):
+            self.cmdfrm.grid_columnconfigure(col, weight=1)
 
         # a pair of Radiobuttons to choose which column of data to plot
         tk.Label(
             master=self.cmdfrm,
             text="Select data to plot:"
-        ).grid(row=0, column=0, padx=5)
-        tk.Radiobutton(
-            master=self.cmdfrm,
-            text="PSI 1",
-            variable=self.default_pump,
-            value='PSI 1'
-        ).grid(row=0, column=1, padx=5)
-        tk.Radiobutton(
-            master=self.cmdfrm,
-            text="PSI 2",
-            variable=self.default_pump,
-            value='PSI 2'
-        ).grid(row=0, column=2, padx=5)
+        ).grid(row=0, column=0, padx=5, sticky='e')
 
+        self.def_pump = ttk.Combobox(
+            master=self.cmdfrm,
+            values=["PSI 1", "PSI 2"],
+            state='readonly',
+            justify='center',
+            background='white',
+            width=13,
+        )
+        self.def_pump.set(self.parser.get('test settings', 'default pump'))
+
+        self.def_pump.grid(row=0, column=1, padx=5, sticky='w')
         # disable the controls to prevent starting test w/o parameters
         for child in self.cmdfrm.winfo_children():
             child.configure(state="disabled")
 
         # set up the plot area
-        self.pltfrm = tk.Frame(
-            master=self.tstfrm,
-        )
+        self.pltfrm = tk.Frame(master=self.tstfrm)
 
         # matplotlib objects
         self.fig, self.axis = plt.subplots(figsize=(7.5, 4), dpi=100)
@@ -291,7 +289,7 @@ class MainWindow(tk.Frame):
             self.axis.set_xlim((0, None), auto=True)
             self.axis.margins(0)
 
-            y_data = data[self.default_pump.get()]
+            y_data = data[self.def_pump.get()]
             x_data = data['Minutes']
             if self.chem.get() == "" and self.conc.get() == "":
                 label = " "
