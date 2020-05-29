@@ -5,6 +5,7 @@ from configparser import ConfigParser
 import tkinter as tk
 from tkinter import ttk, filedialog
 from tkinter import font  # type: ignore
+import webbrowser
 
 DEFAULT_DICT = {
     'test settings': {
@@ -49,7 +50,8 @@ class ConfigManager(tk.Toplevel):
         def_font = font.nametofont("TkDefaultFont")
         bold_font = font.Font(font=def_font)
         bold_font.config(weight='bold')
-
+        underline_font = font.Font(font=def_font)
+        underline_font.config(underline=1)
         # frame for test settings
         test_frm = tk.LabelFrame(self, text="Test Settings", font=bold_font)
 
@@ -121,7 +123,7 @@ class ConfigManager(tk.Toplevel):
 
         # the labels
         temp_lbl = ttk.Label(rep_frm, text="Report template:", anchor='w')
-        color_lbl = ttk.Label(rep_frm, text="Color cycle:", anchor='w')
+        color_lbl = tk.Label(rep_frm, text="Color cycle:", anchor='w', font=underline_font, fg='#0000EE')
 
         # the entries
         self.temp_path = ttk.Entry(rep_frm, width=32)
@@ -154,6 +156,7 @@ class ConfigManager(tk.Toplevel):
         # widget bindings
         self.proj_dir.bind('<Button-1>', self.ask_dir)
         self.temp_path.bind('<Button-1>', self.ask_fil)
+        color_lbl.bind('<Button-1>', lambda e: webbrowser.open_new(r'https://htmlcolorcodes.com/color-names/'))
 
 
     def fill_form(self):
