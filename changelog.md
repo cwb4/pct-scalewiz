@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
  - 'Color cycle' label in settings menu is now a link to a list of valid color names
+ - user input validation for concentration calculator; only accepts numeric input
 ### Changed
  - added file dialog prompt to settings fields for file/folder paths so the user doesn't have to type them in manually
 
