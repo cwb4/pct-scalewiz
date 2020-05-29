@@ -11,6 +11,7 @@ build.bat
 run.bat
 updatedrop.bat
 *.plt
+"Scale Test Data"/
 
 *.ini
 *.csv
