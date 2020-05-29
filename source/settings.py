@@ -158,7 +158,6 @@ class ConfigManager(tk.Toplevel):
         self.temp_path.bind('<Button-1>', self.ask_fil)
         color_lbl.bind('<Button-1>', lambda e: webbrowser.open_new(r'https://htmlcolorcodes.com/color-names/'))
 
-
     def fill_form(self):
         """Fill the form with values from the ConfigParser."""
         fail_psi = self.parser.getint('test settings', 'fail psi')
@@ -212,13 +211,13 @@ class ConfigManager(tk.Toplevel):
         blank, put it in the clicked widget.
 
         """
-        dir = filedialog.askdirectory(
+        folder = filedialog.askdirectory(
             initialdir="C:\"",
             title="Select project folder:",
         )
-        if dir != "":
-            event.widget.delete(0,'end')
-            event.widget.insert(0, dir)
+        if folder != "":
+            event.widget.delete(0, 'end')
+            event.widget.insert(0, folder)
             event.widget.after(75, event.widget.xview_moveto, 1)
 
     def ask_fil(self, event):
