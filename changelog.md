@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - user input validation for concentration calculator; only accepts numeric input
 ### Changed
  - added file dialog prompt to settings fields for file/folder paths so the user doesn't have to type them in manually
+### Removed
+ - removed the unused toolbar from the main window's plot
 
 ## [0.7.0] 2020-5-28
 ### Added
