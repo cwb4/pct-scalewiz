@@ -27,6 +27,7 @@ class ConcCalc(tk.Toplevel):
 
     def build(self):
         """Make the widgets."""
+        vcmd = (self.register(self.is_numeric))
         tk.Label(
             self,
             text="Treating conc. (ppm): ",
@@ -47,8 +48,18 @@ class ConcCalc(tk.Toplevel):
             text="Treating volume: ",
             anchor='w'
         ).grid(row=2, column=0, padx=15, pady=3, sticky='w')
-        self.conc_ent = ttk.Entry(self, textvariable=self.conc)
-        self.vol_ent = ttk.Entry(self, textvariable=self.vol)
+        self.conc_ent = ttk.Spinbox(
+            self,
+            from_=0, to=999999,
+            textvariable=self.conc,
+            validate='all', validatecommand=(vcmd, '%P')
+        )
+        self.vol_ent = ttk.Spinbox(
+            self,
+            from_=0, to=999999,
+            textvariable=self.vol, validate='all',
+            validatecommand=(vcmd, '%P')
+        )
         self.conc_ent.grid(row=0, column=1, padx=15, pady=3, sticky='w')
         self.vol_ent.grid(row=1, column=1, padx=15, pady=3, sticky='w')
 
@@ -69,6 +80,13 @@ class ConcCalc(tk.Toplevel):
             self.uL.set(f"{conc*vol/1000:.1f} μL")
         except ValueError:
             pass
+
+    def is_numeric(self, P):
+        """Validate that user input is numeric."""
+        if str.isdigit(P) or P == "":
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':
