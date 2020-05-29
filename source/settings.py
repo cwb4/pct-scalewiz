@@ -50,13 +50,8 @@ class ConfigManager(tk.Toplevel):
         def_font = font.nametofont("TkDefaultFont")
         bold_font = font.Font(font=def_font)
         bold_font.config(weight='bold')
-<<<<<<< HEAD
         underline_font = font.Font(font=def_font)
         underline_font.config(underline=1)
-=======
-        hyperlink_font = font.Font(font=def_font)
-        hyperlink_font.config(underline=1)
->>>>>>> a4f36b5469ae68fc80d16d2ca9e7dd53dc6aada9
         # frame for test settings
         test_frm = tk.LabelFrame(self, text="Test Settings", font=bold_font)
 
@@ -128,11 +123,7 @@ class ConfigManager(tk.Toplevel):
 
         # the labels
         temp_lbl = ttk.Label(rep_frm, text="Report template:", anchor='w')
-<<<<<<< HEAD
         color_lbl = tk.Label(rep_frm, text="Color cycle:", anchor='w', font=underline_font, fg='#0000EE')
-=======
-        color_lbl = tk.Label(rep_frm, text="Color cycle:", anchor='w', font=hyperlink_font, fg='#0000EE')
->>>>>>> a4f36b5469ae68fc80d16d2ca9e7dd53dc6aada9
 
         # the entries
         self.temp_path = ttk.Entry(rep_frm, width=32)
