@@ -5,12 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.7.1] 2020-5-29
 ### Added
- - 'Color cycle' label in settings menu is now a link to a list of valid color names
  - user input validation for concentration calculator; only accepts numeric input
 ### Changed
- - added file dialog prompt to settings fields for file/folder paths so the user doesn't have to type them in manually
+ - 'Color cycle' label in settings menu is now a hyperlink to a list of valid color names
+ - added file dialog prompt to settings fields for file/folder paths so the user doesn't have to type file paths in manually
 ### Removed
  - removed the unused toolbar from the main window's plot
 
