@@ -133,7 +133,7 @@ class Experiment():
                 self.elapsed = time.time() - starttime
 
             else:
-                time.sleep(self.interval / 10)
+                time.sleep(self.interval / 5)
         # end of while loop
         print("Test complete")
         self.end_test()
