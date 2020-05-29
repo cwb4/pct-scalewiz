@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - 'Color cycle' label in settings menu is now a hyperlink to a list of valid color names
  - added file dialog prompt to settings fields for file/folder paths so the user doesn't have to type file paths in manually
+ - selecting pump to plot from MainWindow uses a combobox instead of radiobuttons
 ### Removed
  - removed the unused toolbar from the main window's plot
 
