@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+ - 'Color cycle' label in settings menu is now a link to a list of valid color names
 ### Changed
- - added file dialog prompt to settings fields for file/folder paths so the user doesn't have to type them in manually 
+ - added file dialog prompt to settings fields for file/folder paths so the user doesn't have to type them in manually
 
 ## [0.7.0] 2020-5-28
 ### Added
