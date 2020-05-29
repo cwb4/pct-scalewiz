@@ -12,7 +12,6 @@ from tkinter import font  # type: ignore
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.ticker import MultipleLocator
 from pandas import DataFrame, read_csv  # reading data from csv
 import serial  # talking to the pumps
@@ -188,9 +187,7 @@ class MainWindow(tk.Frame):
         self.fig, self.axis = plt.subplots(figsize=(7.5, 4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
-        toolbar = NavigationToolbar2Tk(self.canvas, self.pltfrm)
-        toolbar.update()
-        self.canvas.get_tk_widget().pack()
+        self.canvas.get_tk_widget().pack(pady=10)
         interval = self.parser.getint('test settings', 'interval seconds') * 1000
         self.ani = FuncAnimation(self.fig, self.animate, interval=interval)
 
