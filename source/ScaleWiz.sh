@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
-cd "~/pi/pct-scalewiz/source/"
+cd "pct-scalewiz/source/"
 python3 core.py
