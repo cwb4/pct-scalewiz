@@ -127,12 +127,12 @@ class MainWindow(tk.Frame):
         self.dataout = ScrolledText(
             master=self.outfrm,
             width=45,
-            height=12,
+            height=9,
             state='disabled',
             wrap='word'
         )
 
-        self.dataout.pack(fill=tk.BOTH)
+        self.dataout.pack()
         if self.project is os.getcwd():
             self.to_log(
                 "Click 'Set project folder' to choose the output directory"
@@ -185,15 +185,15 @@ class MainWindow(tk.Frame):
         self.fig, self.axis = plt.subplots(figsize=(7.5, 4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
-        self.canvas.get_tk_widget().pack(pady=10)
+        self.canvas.get_tk_widget().pack(pady=(7, 0))
         interval = self.parser.getint('test settings', 'interval seconds') * 1000
         self.ani = FuncAnimation(self.fig, self.animate, interval=interval)
 
         # grid stuff into self.tstfrm
-        self.entfrm.grid(row=0, column=0, sticky=tk.NSEW, pady=2)
-        self.pltfrm.grid(row=0, column=1, rowspan=3, sticky=tk.NSEW, padx=2)
-        self.outfrm.grid(row=1, column=0, sticky=tk.NSEW, pady=2)
-        self.cmdfrm.grid(row=2, column=0, sticky=tk.NSEW, pady=2)
+        self.entfrm.grid(row=0, column=0, sticky='new')
+        self.pltfrm.grid(row=0, column=1, rowspan=3, sticky='nsew')
+        self.outfrm.grid(row=1, column=0, sticky='nsew')
+        self.cmdfrm.grid(row=2, column=0, sticky='sew')
         self.tstfrm.grid(padx=3)
 
         # widget bindings
