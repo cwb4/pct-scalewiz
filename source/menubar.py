@@ -85,14 +85,11 @@ class MenuBar(tk.Frame):
             parent=self,
             title="Help: Using ScaleWiz",
             message=f"""
-When you start the program, the pumps should connect automatically.
-Clicking the 'COM Ports' label will attempt to reconnect to the pumps.
-
 Set project folder: Sets the folder to put data files in.
 
 Make new report: Opens a new Report Generator window.
 
-Settings: Opens a menu to modify the current settings file ('scalewiz.ini') in the directory the program runs out of
+Settings: Opens a menu to modify the current settings file ('scalewiz.ini') in the directory the program runs out of.
 
 Version: {self.core.VERSION}
 Website: https://github.com/teauxfu/pct-scalewiz
