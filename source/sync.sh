@@ -9,4 +9,4 @@ echo -n "Downloading files"
 rclone -v sync remote:"#Scale Test Data" "pct-scalewiz/Scale Test Data"
 
 echo -n "Done syncing"
-read -n 1 -s
+read -s foo
