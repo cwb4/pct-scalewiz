@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
  - Application font is now Arial across operating systems (visually consistent UI)
+ - optimized the experiment loop timer to be more reliable and drastically reduced CPU consumption
 
 ## [0.7.1] 2020-5-29
 ### Added
