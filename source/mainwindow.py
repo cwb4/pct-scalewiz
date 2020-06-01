@@ -47,84 +47,88 @@ class MainWindow(tk.Frame):
     def build_window(self) -> None:
         """Make all the tkinter widgets."""
         MenuBar(self)
-        def_font = font.nametofont("TkDefaultFont")
-        bold_font = font.Font(font=def_font)
+        bold_font = font.Font(font=font.nametofont("TkDefaultFont"))
         bold_font.config(weight='bold')
 
         # build the main frame
-        self.tstfrm = tk.Frame(self.core)
-        self.entfrm = tk.LabelFrame(
-            self.tstfrm,
+        self.tst_frm = tk.Frame(self.core)  # top level container
+        # frame for parameter entries
+        self.ent_frm = tk.LabelFrame(
+            self.tst_frm,
             text="Test parameters",
             font=bold_font
         )
-        # this spacing is to avoid using multiple labels
-        self.outfrm = tk.LabelFrame(
-            self.tstfrm,
-            text="Elapsed,            Pump1,             Pump2",
-            font=bold_font
-        )
-        self.cmdfrm = tk.LabelFrame(
-            self.tstfrm,
+        # a frame for test controls
+        self.cmd_frm = tk.LabelFrame(
+            self.tst_frm,
             text="Test controls",
             font=bold_font
         )
-        # define the self.entfrm entries
+        # define the self.ent_frm entries
         self.port1 = ttk.Entry(
-            master=self.entfrm,
+            self.ent_frm,
             width=14,
             justify='center'
         )
         self.port2 = ttk.Entry(
-            master=self.entfrm,
+            self.ent_frm,
             width=14,
             justify='center'
         )
         self.chem = ttk.Entry(
-            master=self.entfrm,
+            self.ent_frm,
             width=30,
             justify='center'
         )
-        self.chem.focus_set()  # move the cursor here for convenience
         self.conc = ttk.Entry(
-            master=self.entfrm,
+            self.ent_frm,
             width=30,
             justify='center'
         )
-        self.strtbtn = ttk.Button(
-            master=self.entfrm,
+        self.strt_btn = ttk.Button(
+            self.ent_frm,
             text="Start",
             command=lambda: self.init_test()
         )
-
-        # grid entry labels into self.entfrm
-        self.comlbl = ttk.Label(
-            self.entfrm,
+        # make entry labels for self.ent_frm
+        com_lbl = ttk.Label(
+            self.ent_frm,
             text="Device ports:",
         )
-        self.comlbl.grid(row=0, sticky=tk.E)
-        ttk.Label(
-            master=self.entfrm,
+        chem_lbl = ttk.Label(
+            self.ent_frm,
             text="Chemical:",
             anchor='e'
-        ).grid(row=3, sticky=tk.E)
-        ttk.Label(
-            master=self.entfrm,
+        )
+        conc_lbl = ttk.Label(
+            self.ent_frm,
             text="Concentration:",
             anchor='e'
-        ).grid(row=4, sticky=tk.E)
+        )
 
-        # grid entries into self.entfrm
+        # grid the labels
+        com_lbl.grid(row=0, sticky=tk.E)
+        chem_lbl.grid(row=3, sticky=tk.E)
+        conc_lbl.grid(row=4, sticky=tk.E)
+
+        # grid entries into self.ent_frm
         self.port1.grid(row=0, column=1, sticky=tk.E, padx=(0, 4), pady=1)
         self.port2.grid(row=0, column=2, sticky=tk.W, padx=(4, 0), pady=1)
         self.chem.grid(row=3, column=1, columnspan=2, pady=1)
         self.conc.grid(row=4, column=1, columnspan=2, pady=1)
-        self.strtbtn.grid(row=5, column=1, columnspan=2, pady=1)
-        cols = self.entfrm.grid_size()[0]
+        self.strt_btn.grid(row=5, column=1, columnspan=2, pady=1)
+        cols = self.ent_frm.grid_size()[0]
         for col in range(cols):
-            self.entfrm.grid_columnconfigure(col, weight=1)
+            self.ent_frm.grid_columnconfigure(col, weight=1)
 
-        self.dataout = ScrolledText(
+        # a frame for the output panel
+        self.outfrm = tk.LabelFrame(
+            self.tst_frm,
+            # this spacing is to avoid using multiple labels
+            text="Elapsed,            Pump1,             Pump2",
+            font=bold_font
+        )
+        self.data_out = ScrolledText(
             master=self.outfrm,
             width=45,
             height=9,
@@ -132,39 +136,38 @@ class MainWindow(tk.Frame):
             wrap='word'
         )
 
-        self.dataout.pack()
+        self.data_out.pack()
         if self.project is os.getcwd():
             self.to_log(
                 "Click 'Set project folder' to choose the output directory"
             )
 
-        # build self.cmdfrm 4x3 grid
-        self.runbtn = ttk.Button(
-            master=self.cmdfrm,
+        # build self.cmd_frm 4x3 grid
+        self.run_btn = ttk.Button(
+            master=self.cmd_frm,
             text="Run",
             command=lambda: self.test.run_test(),
             width=15
         )
-        self.endbtn = ttk.Button(
-            master=self.cmdfrm,
+        self.end_btn = ttk.Button(
+            master=self.cmd_frm,
             text="End",
-            command=lambda: self.test.end_test(),
+            command=lambda: self.end_test(),
             width=15
         )
-        self.runbtn.grid(row=1, column=0, padx=5, pady=2, sticky='e')
-        self.endbtn.grid(row=1, column=1, padx=5, pady=2, sticky='w')
-        cols = self.cmdfrm.grid_size()[0]
+        self.run_btn.grid(row=1, column=0, padx=5, pady=2, sticky='e')
+        self.end_btn.grid(row=1, column=1, padx=5, pady=2, sticky='w')
+        cols = self.cmd_frm.grid_size()[0]
         for col in range(cols):
-            self.cmdfrm.grid_columnconfigure(col, weight=1)
+            self.cmd_frm.grid_columnconfigure(col, weight=1)
 
-        # a pair of Radiobuttons to choose which column of data to plot
         tk.Label(
-            master=self.cmdfrm,
+            master=self.cmd_frm,
             text="Select data to plot:"
         ).grid(row=0, column=0, padx=5, sticky='e')
-
+        # combobox to choose which set of data to plot
         self.def_pump = ttk.Combobox(
-            master=self.cmdfrm,
+            master=self.cmd_frm,
             values=["PSI 1", "PSI 2"],
             state='readonly',
             justify='center',
@@ -174,34 +177,36 @@ class MainWindow(tk.Frame):
         self.def_pump.set(self.parser.get('test settings', 'default pump'))
 
         self.def_pump.grid(row=0, column=1, padx=5, sticky='w')
-        # disable the controls to prevent starting test w/o parameters
-        for child in self.cmdfrm.winfo_children():
-            child.configure(state="disabled")
 
         # set up the plot area
-        self.pltfrm = tk.Frame(master=self.tstfrm)
+        self.plt_frm = tk.Frame(master=self.tst_frm)
 
         # matplotlib objects
         self.fig, self.axis = plt.subplots(figsize=(7.5, 4), dpi=100)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self.pltfrm)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.plt_frm)
         self.canvas.get_tk_widget().pack(pady=(7, 0))
         interval = self.parser.getint('test settings', 'interval seconds') * 1000
         self.ani = FuncAnimation(self.fig, self.animate, interval=interval)
 
-        # grid stuff into self.tstfrm
-        self.entfrm.grid(row=0, column=0, sticky='new')
-        self.pltfrm.grid(row=0, column=1, rowspan=3, sticky='nsew')
+        # grid stuff into self.tst_frm
+        self.ent_frm.grid(row=0, column=0, sticky='new')
+        self.plt_frm.grid(row=0, column=1, rowspan=3, sticky='nsew')
         self.outfrm.grid(row=1, column=0, sticky='nsew')
-        self.cmdfrm.grid(row=2, column=0, sticky='sew')
-        self.tstfrm.grid(padx=3)
+        self.cmd_frm.grid(row=2, column=0, sticky='sew')
+        self.tst_frm.grid(padx=3)
 
         # widget bindings
         self.chem.bind("<Return>", lambda _: self.conc.focus_set())
         self.conc.bind("<Return>", lambda _: self.init_test())
-        self.comlbl.bind("<Button-1>", lambda _: self.find_coms())
-        self.runbtn.bind('<Return>', lambda _: self.test.run_test())
-        self.endbtn.bind('<Return>', lambda _: self.test.end_test())
+        com_lbl.bind("<Button-1>", lambda _: self.find_coms())
+        self.run_btn.bind('<Return>', lambda _: self.test.run_test())
+        self.end_btn.bind('<Return>', lambda _: self.test.end_test())
+        # move the cursor here for convenience
+        self.chem.focus_set()
+        # disable the controls to prevent starting test w/o parameters
+        for child in self.cmd_frm.winfo_children():
+            child.configure(state="disabled")
 
     def find_coms(self) -> None:
         """Look for devices and disable the controls if two aren't found."""
@@ -233,14 +238,14 @@ class MainWindow(tk.Frame):
 
         if "?" in self.port1.get() or "?" in self.port2.get():
             print("Disabling start button")
-            self.strtbtn['state'] = ['disable']
+            self.strt_btn['state'] = ['disable']
         else:
-            self.dataout['state'] = 'normal'
-            self.dataout.delete(1.0, 'end')
-            self.dataout['state'] = 'disabled'
+            self.data_out['state'] = 'normal'
+            self.data_out.delete(1.0, 'end')
+            self.data_out['state'] = 'disabled'
             print(f"Successfully connected to devices {useports}")
             print("Enabling start button")
-            self.strtbtn['state'] = 'enable'
+            self.strt_btn['state'] = 'enable'
 
     def init_test(self) -> None:
         """Scrape form for user input, then init an Experiment object."""
@@ -257,17 +262,22 @@ class MainWindow(tk.Frame):
             'conc': self.conc.get().strip().replace(' ', '_')
         }
         self.test = Experiment(self, **params)
-        self.runbtn.focus_set()
+        self.run_btn.focus_set()
+
+    def end_test(self):
+        """Sets the test.running variable to False."""
+        if hasattr(self, 'test'):
+            self.test.running = False
 
     def to_log(self, *msgs) -> None:
         """Log a message to the Text widget in MainWindow's outfrm."""
         for msg in msgs:
-            self.dataout['state'] = 'normal'
-            self.dataout.insert('end', f"{msg}" + "\n")
-            self.dataout['state'] = 'disabled'
-            self.dataout.see('end')
+            self.data_out['state'] = 'normal'
+            self.data_out.insert('end', f"{msg}" + "\n")
+            self.data_out['state'] = 'disabled'
+            self.data_out.see('end')
 
-    def animate(self, interval):
+    def animate(self, interval) -> None:
         """Call animation function for the current test's data."""
         try:
             data = read_csv(self.test.outpath)
@@ -301,7 +311,7 @@ class MainWindow(tk.Frame):
             self.axis.set_facecolor('w')
             self.axis.legend(loc=0)
 
-    def update_title(self):
+    def update_title(self) -> None:
         """Determine OS path format, then title the main window accordingly."""
         try:
             if os.name == 'nt':
@@ -314,7 +324,7 @@ class MainWindow(tk.Frame):
         self.winfo_toplevel().title(title)
         print(f"Set main window title to {title}")
 
-    def close_app(self):
+    def close_app(self) -> None:
         """Check if a test is running, then close the application."""
         if hasattr(self, 'test'):
             if self.test.running:
