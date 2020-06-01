@@ -8,6 +8,7 @@ from configparser import ConfigParser
 import os
 from concurrent.futures import ThreadPoolExecutor  # handling the test
 import tkinter as tk  # GUI
+from tkinter import font  # type: ignore
 import settings
 from mainwindow import MainWindow
 
@@ -33,6 +34,9 @@ class ScaleWiz(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
+    default_font = font.nametofont("TkDefaultFont")
+    default_font.configure(family="Arial")
+    root.option_add("*Font", "TkDefaultFont")
     root.title("Scale Block Wizard")
     root.resizable(0, 0)
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
