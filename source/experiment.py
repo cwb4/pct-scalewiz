@@ -28,18 +28,18 @@ class Experiment():
         )
 
         print("Disabling MainWindow test parameter entries")
-        for child in self.mainwin.entfrm.winfo_children():
+        for child in self.mainwin.ent_frm.winfo_children():
             child.configure(state="disabled")
 
         print("Enabling MainWindow test controls")
         self.mainwin.def_pump.configure(state='readonly')
-        self.mainwin.runbtn.configure(state='normal')
-        self.mainwin.endbtn.configure(state='normal')
+        self.mainwin.run_btn.configure(state='normal')
+        self.mainwin.end_btn.configure(state='normal')
 
         # clear the text widget
-        self.mainwin.dataout['state'] = 'normal'
-        self.mainwin.dataout.delete(1.0, 'end')
-        self.mainwin.dataout['state'] = 'disabled'
+        self.mainwin.data_out['state'] = 'normal'
+        self.mainwin.data_out.delete(1.0, 'end')
+        self.mainwin.data_out['state'] = 'disabled'
 
         # set up an output file
         file_name = f"{self.chem}_{self.conc}.csv"
@@ -66,10 +66,10 @@ class Experiment():
             self.to_log("Could not establish a connection to the pumps",
                         "Try resetting the port connections")
             print("Disabling MainWindow test controls")
-            for child in self.mainwin.cmdfrm.winfo_children():
+            for child in self.mainwin.cmd_frm.winfo_children():
                 child.configure(state="disabled")
             print("Enabling MainWindow parameter entries")
-            for child in self.mainwin.entfrm.winfo_children():
+            for child in self.mainwin.ent_frm.winfo_children():
                 child.configure(state="normal")
 
     def to_log(self, *msgs) -> None:
@@ -166,8 +166,8 @@ class Experiment():
 
         self.running = False
         # re-enable the entries to let user start new test
-        for child in self.mainwin.entfrm.winfo_children():
+        for child in self.mainwin.ent_frm.winfo_children():
             child.configure(state="normal")
         # disable the run/end buttons until a new test is started
-        for child in self.mainwin.cmdfrm.winfo_children():
+        for child in self.mainwin.cmd_frm.winfo_children():
             child.configure(state="disabled")
