@@ -94,14 +94,14 @@ class Experiment():
         psi1, psi2 = 0, 0
         self.readings = 0
         starttime = time.time()
-        reading_start = time.time()
+        reading_start = -1 * self.interval  # so that the first if doesnt fail
+        snooze = self.interval * 0.9
         while (
                 (psi1 < self.failpsi or psi2 < self.failpsi)
                 and (
                     self.elapsed <= self.time_limit * 60
                     or self.readings <= self.time_limit * 60 / self.interval
                 )
-                and self.running
         ):
             if time.time() - reading_start >= self.interval:
                 self.readings += 1
@@ -113,28 +113,31 @@ class Experiment():
                 try:
                     for pump in (self.pump1, self.pump2):
                         pump.write('cc'.encode())  # get current conditions
-                    time.sleep(0.05)  # give a moment to respond
                     psi1 = int(self.pump1.readline().decode().split(',')[1])
                     psi2 = int(self.pump2.readline().decode().split(',')[1])
                 except SerialException as error:
                     self.to_log(error)
-
                 this_data = [
                     time.strftime("%I:%M:%S", time.localtime()),
-                    round(self.elapsed),  # as seconds
+                    round(self.elapsed, 1),  # as seconds
                     f"{self.elapsed/60:.2f}",  # as minutes
                     psi1,
                     psi2
                 ]
-                with open(self.outpath, "a", newline='') as file:
-                    csv.writer(file, delimiter=',').writerow(this_data)
+                try:
+                    with open(self.outpath, "a", newline='') as file:
+                        csv.writer(file, delimiter=',').writerow(this_data)
+                except Exception as error:
+                    self.to_log(error)
                 this_reading = (
                     f"{self.elapsed/60:.2f} min, {psi1} psi, {psi2} psi"
                 )
                 self.to_log(this_reading)
+                time.sleep(snooze)
                 self.elapsed = time.time() - starttime
-
-        # end of while loop
+                if not self.running:
+                    break
+                # end of while loop
         print("Test complete")
         self.end_test()
         for _ in range(3):
@@ -144,17 +147,16 @@ class Experiment():
     def end_test(self) -> None:
         """Stop the pumps and close their COM ports then swap button states."""
         print("Ending the test")
-        if self.running:
-            try:
-                for pump in (self.pump1, self.pump2):
-                    pump.write('st'.encode())
-                    pump.close()
-            except SerialException as error:
-                print("Failed to send stop/close order to pump")
-                print(error)
+        try:
+            for pump in (self.pump1, self.pump2):
+                pump.write('st'.encode())
+                pump.close()
+        except SerialException as error:
+            print("Failed to send stop/close order to pump")
+            print(error)
 
         try:
-            max_measures = round(self.elapsed / self.interval) - 1
+            max_measures = round(self.elapsed / self.interval)
             completion_rate = round(self.readings / max_measures * 100, 1)
             this_duration = f"{self.elapsed/60:.2f} min"
             self.to_log(
