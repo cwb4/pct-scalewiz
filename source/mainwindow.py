@@ -205,8 +205,8 @@ class MainWindow(tk.Frame):
         # move the cursor here for convenience
         self.chem.focus_set()
         # disable the controls to prevent starting test w/o parameters
-        for child in self.cmd_frm.winfo_children():
-            child.configure(state="disabled")
+        for widget in (self.run_btn, self.end_btn, self.def_pump):
+            widget.configure(state="disabled")
 
     def find_coms(self) -> None:
         """Look for devices and disable the controls if two aren't found."""
