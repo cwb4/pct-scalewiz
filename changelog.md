@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+ - small module for sending commands to the pumps individually (start, stop, change flowrate, etc)
 ### Changed
  - Application font is now Arial across operating systems (visually consistent UI)
- - optimized the experiment loop timer to be more reliable and drastically reduced CPU consumption
+ - optimized the experiment loop timer to be more reliable and reduced CPU consumption by ~80% (!!!)
 
 ## [0.7.1] 2020-5-29
 ### Added
