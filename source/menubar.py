@@ -7,6 +7,7 @@ import os  # handling file paths
 from reporter import Reporter
 from concentrations import ConcCalc
 from settings import ConfigManager
+from pumpops import PumpManager
 
 
 class MenuBar(tk.Frame):
@@ -43,7 +44,11 @@ class MenuBar(tk.Frame):
             label='Settings',
             command=lambda: self.manage_config()
         )
-
+        self.menubar.add_command(
+            label='Control pumps',
+            command=lambda: PumpManager(self.core)
+        )
+        
         self.menubar.add_command(
             label='Help',
             command=lambda: self.show_help()
