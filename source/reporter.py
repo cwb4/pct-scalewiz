@@ -82,7 +82,7 @@ class Reporter(tk.Toplevel):
             master=self,
             # NOTE: this is a dirty way of avoiding using many labels
             text=(
-                "File path:                           Series title:                                   Data to evaluate:"
+                "File path:                                 Series title:                                          Data to evaluate:"
             ),
             font=bold_font
         )
