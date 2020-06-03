@@ -21,7 +21,7 @@ class PumpManager(tk.Toplevel):
     def __init__(self, parent):
         """Init with another Tk as parent."""
         tk.Toplevel.__init__(self, parent)
-        self.title("Pump Contoller")
+        self.title("Pump Controller")
         if os.name == 'nt':
             self.iconbitmap('chem.ico')
         self.build()
