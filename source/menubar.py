@@ -49,7 +49,6 @@ class MenuBar(tk.Frame):
             command=lambda: self.manage_config()
         )
 
-
         self.menubar.add_command(
             label='Help',
             command=lambda: self.show_help()
