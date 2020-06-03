@@ -12,7 +12,7 @@ from serial import SerialException
 import webbrowser
 
 
-COMMANDS = ['ru', 'st', 'cc', 'pr', ' ']
+COMMANDS = ['run', 'stop', 'info', 'pressure', ' ']
 
 
 class PumpManager(tk.Toplevel):
@@ -77,13 +77,23 @@ class PumpManager(tk.Toplevel):
         snd_btn.grid(row=2, column=0, columnspan=2)
         self.out_txt.pack()
         out_frm.grid(row=3, column=0, columnspan=2, sticky='ew', padx=2, pady=2)
-        container.pack(padx=2, pady=2)
+        self.container.pack(padx=2, pady=2)
 
         cmd_lbl.bind('<Button-1>', lambda e: webbrowser.open_new(r'https://ssihplc.com/manuals/#next-generation-operators-manuals'))
+        self.device_box.bind('<FocusIn>', lambda _: self.container.focus_set())
         self.device_box.bind('<Button-1>', lambda _: self.update_device_box())
 
     def send_cmd(self, device: str, cmd: str):
         """Try to open a serial port at device, then send an encoded message."""
+        if cmd == "run":
+            cmd = 'ru'
+        if cmd == "stop":
+            cmd = 'st'
+        if cmd == "info":
+            cmd = 'cc'
+        if cmd == "pressure":
+            cmd = 'pr'
+
         try:
             cmd = cmd.strip()
             pump = serial.Serial(device, timeout=0.05)
@@ -92,8 +102,10 @@ class PumpManager(tk.Toplevel):
             self.to_log(pump.readline().decode())
             pump.close()
         except SerialException as error:
-            self.to_log(error)
-        except Exception as error:
+            self.to_log("Cannot stop the pump while a test is running.")
+            print(error)
+        except FileNotFoundError as error:
+            print(error)
             self.to_log(error)
 
     def to_log(self, *msgs) -> None:
