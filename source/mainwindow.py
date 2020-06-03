@@ -131,7 +131,7 @@ class MainWindow(tk.Frame):
         self.data_out = ScrolledText(
             master=self.outfrm,
             width=45,
-            height=9,
+            height=13,
             state='disabled',
             wrap='word'
         )
