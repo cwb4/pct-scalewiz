@@ -41,7 +41,7 @@ Hardware drivers and a limited pump interface may be downloaded from the [manufa
 ![](images/settings_menu.PNG)
 ### Concentration calculator
 ![](images/conc_calc.PNG)
-### Stand alone pump interface
+### Stand-alone pump interface
 ![](images/pump_controller.PNG)
 
 
