@@ -41,14 +41,15 @@ class MenuBar(tk.Frame):
         )
 
         self.menubar.add_command(
+            label='Pump controller',
+            command=lambda: PumpManager(self.core)
+        )
+        self.menubar.add_command(
             label='Settings',
             command=lambda: self.manage_config()
         )
-        self.menubar.add_command(
-            label='Control pumps',
-            command=lambda: PumpManager(self.core)
-        )
-        
+
+
         self.menubar.add_command(
             label='Help',
             command=lambda: self.show_help()
