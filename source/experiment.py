@@ -26,6 +26,9 @@ class Experiment():
         self.interval = self.core.parser.getint(
             'test settings', 'interval seconds'
         )
+        if self.interval <= 1:
+            print("Reading interval cannot be less than 1, increasing the interval to 1")
+            self.interval = 1
 
         print("Disabling MainWindow test parameter entries")
         for child in self.mainwin.ent_frm.winfo_children():
