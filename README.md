@@ -4,7 +4,7 @@
 
 ![](images/pct_logo.PNG)
 
-# Premier Chemical Technologies, LLC  - Scale Block Wizard
+# ScaleWiz
 A graphical user interface designed to work with Teledyne SSI MX-class pumps.
 The intended usage is for running dynamic tube-blocking tests for calcium
 carbonate scale inhibitor chemical performance testing.
