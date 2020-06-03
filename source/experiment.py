@@ -104,6 +104,7 @@ class Experiment():
                 )
         ):
             if time.time() - reading_start >= self.interval:
+                self.elapsed = time.time() - starttime
                 self.readings += 1
                 reading_ratio = self.elapsed / self.readings
                 rate_is_bad = reading_ratio - self.interval > 0.01
@@ -134,7 +135,7 @@ class Experiment():
                 )
                 self.to_log(this_reading)
                 time.sleep(snooze)
-                self.elapsed = time.time() - starttime
+
                 if not self.running:
                     break
                 # end of while loop
