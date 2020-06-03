@@ -30,6 +30,7 @@ class PumpManager(tk.Toplevel):
         """Build all the Tkinter widgets."""
         underline_font = font.Font(font=font.nametofont("TkDefaultFont"))
         underline_font.config(underline=1)
+
         container = tk.Frame(self)
         device_lbl = tk.Label(container, text="Device:", anchor='w')
         devices = [i.device for i in serial.tools.list_ports.comports()]
@@ -38,7 +39,7 @@ class PumpManager(tk.Toplevel):
             values=devices,
             state='readonly',
             width=10,
-            justify='center'
+            justify='center',
         )
         cmd_lbl = tk.Label(
             container,
@@ -77,10 +78,10 @@ class PumpManager(tk.Toplevel):
         snd_btn.grid(row=2, column=0, columnspan=2)
         self.out_txt.pack()
         out_frm.grid(row=3, column=0, columnspan=2, sticky='ew', padx=2, pady=2)
-        self.container.pack(padx=2, pady=2)
+        container.pack(padx=2, pady=2)
 
         cmd_lbl.bind('<Button-1>', lambda e: webbrowser.open_new(r'https://ssihplc.com/manuals/#next-generation-operators-manuals'))
-        self.device_box.bind('<FocusIn>', lambda _: self.container.focus_set())
+        self.device_box.bind('<FocusIn>', lambda _: container.focus_set())
         self.device_box.bind('<Button-1>', lambda _: self.update_device_box())
 
     def send_cmd(self, device: str, cmd: str):
