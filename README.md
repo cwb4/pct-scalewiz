@@ -11,10 +11,13 @@ carbonate scale inhibitor chemical performance testing.
 Features include:
 * real-time data visualization
 * simple, reliable workflow for setting up projects and handling data output to .csv files
-* no hardware hassle - COM ports are automatically detected and managed
+* no hardware hassle - pump devices are automatically detected and managed
 * straightforward test controls and experiment parameter settings
+* explicit, verbose logging of data analysis steps
 * plotting utility for producing publication-quality images, with support for exporting test results to a .xlsx file
 * a simple calculator for determining chemical injection volume
+* a small stand-alone interface for sending commands to the pumps individually
+
 
 ## Installation
 Dependencies may be installed using the requirements.txt file included.
