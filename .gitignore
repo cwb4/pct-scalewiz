@@ -7,8 +7,7 @@ __pycache__/
 *.so
 
 # Personal use
-build.bat
-run.bat
+*.bat
 updatedrop.bat
 *.plt
 "Scale Test Data"/
