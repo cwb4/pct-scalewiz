@@ -77,7 +77,7 @@ class PumpManager(tk.Toplevel):
         self.cmd_box.grid(row=1, column=1, sticky='w', pady=2, padx=2)
         snd_btn.grid(row=2, column=0, columnspan=2)
         self.out_txt.pack()
-        out_frm.grid(row=3, column=0, columnspan=2, sticky='ew', padx=2, pady=2)
+        out_frm.grid(row=3, column=0, columnspan=2, sticky='ew', padx=10, pady=2)
         container.pack(padx=2, pady=2)
 
         cmd_lbl.bind('<Button-1>', lambda e: webbrowser.open_new(r'https://ssihplc.com/manuals/#next-generation-operators-manuals'))
