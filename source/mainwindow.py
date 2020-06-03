@@ -231,8 +231,8 @@ class MainWindow(tk.Frame):
             else:
                 useports.append("??")
 
-        self.port1.delete(0, tk.END)
-        self.port2.delete(0, tk.END)
+        self.port1.delete(0, 'end')
+        self.port2.delete(0, 'end')
         self.port1.insert(0, useports[-1])
         self.port2.insert(0, useports[-2])
 
