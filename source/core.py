@@ -16,7 +16,7 @@ from mainwindow import MainWindow
 class ScaleWiz(tk.Frame):
     """Core class for the application."""
 
-    VERSION = '[0.7.1u]'
+    VERSION = '[0.7.2]'
 
     def __init__(self, parent):
         """Instantiate the core."""
