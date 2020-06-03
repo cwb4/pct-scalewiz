@@ -103,7 +103,7 @@ class PumpManager(tk.Toplevel):
             self.to_log(pump.readline().decode())
             pump.close()
         except SerialException as error:
-            self.to_log("Cannot stop the pump while a test is running.")
+            self.to_log("Cannot access this pump while a test is running.")
             print(error)
         except FileNotFoundError as error:
             print(error)
