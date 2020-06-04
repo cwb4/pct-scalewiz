@@ -23,20 +23,6 @@ from evaluator import evaluate
 class Reporter(tk.Toplevel):
     """Class for collecting data and exporting results from evaluator."""
 
-    LocsLst = [  # list of legend locations - used in a widget
-        "best",
-        "upper right",
-        "upper left",
-        "lower left",
-        "lower right",
-        "right",
-        "center left",
-        "center right",
-        "lower center",
-        "upper center",
-        "center"
-    ]
-
     def __init__(self, parent, *args, **kwargs):
         """Init the reporter."""
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
