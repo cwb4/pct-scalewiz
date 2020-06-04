@@ -41,8 +41,16 @@ class MainWindow(tk.Frame):
         )
 
         self.update_title()
+        self.ports = []
+        self.port1_val = tk.StringVar()
+        self.port2_val = tk.StringVar()
+        self.port1_val.trace('w', self.check_unique_port1)
+        self.port2_val.trace('w', self.check_unique_port2)
+
         self.build_window()
-        self.find_coms()
+        self.update_port_boxes()
+        self.port1.set(self.ports[0])
+        self.port2.set(self.ports[1])
 
     def build_window(self) -> None:
         """Make all the tkinter widgets."""
@@ -65,24 +73,30 @@ class MainWindow(tk.Frame):
             font=bold_font
         )
         # define the self.ent_frm entries
-        self.port1 = ttk.Entry(
+        self.port1 = ttk.Combobox(
             self.ent_frm,
-            width=14,
-            justify='center'
+            values=self.ports,
+            textvariable=self.port1_val,
+            width=9,
+            justify='center',
+            state='readonly'
         )
-        self.port2 = ttk.Entry(
+        self.port2 = ttk.Combobox(
             self.ent_frm,
-            width=14,
-            justify='center'
+            values=self.ports,
+            textvariable=self.port2_val,
+            width=9,
+            justify='center',
+            state='readonly'
         )
         self.chem = ttk.Entry(
             self.ent_frm,
-            width=30,
+            width=25,
             justify='center'
         )
         self.conc = ttk.Entry(
             self.ent_frm,
-            width=30,
+            width=25,
             justify='center'
         )
         self.strt_btn = ttk.Button(
@@ -122,14 +136,14 @@ class MainWindow(tk.Frame):
             self.ent_frm.grid_columnconfigure(col, weight=1)
 
         # a frame for the output panel
-        self.outfrm = tk.LabelFrame(
+        self.out_frm = tk.LabelFrame(
             self.tst_frm,
             # this spacing is to avoid using multiple labels
             text="Elapsed,            Pump1,             Pump2",
             font=bold_font
         )
         self.data_out = ScrolledText(
-            master=self.outfrm,
+            master=self.out_frm,
             width=45,
             height=13,
             state='disabled',
@@ -192,14 +206,18 @@ class MainWindow(tk.Frame):
         # grid stuff into self.tst_frm
         self.ent_frm.grid(row=0, column=0, sticky='new')
         self.plt_frm.grid(row=0, column=1, rowspan=3, sticky='nsew')
-        self.outfrm.grid(row=1, column=0, sticky='nsew')
+        self.out_frm.grid(row=1, column=0, sticky='nsew')
         self.cmd_frm.grid(row=2, column=0, sticky='sew')
         self.tst_frm.grid(padx=3)
 
         # widget bindings
         self.chem.bind("<Return>", lambda _: self.conc.focus_set())
         self.conc.bind("<Return>", lambda _: self.init_test())
-        com_lbl.bind("<Button-1>", lambda _: self.find_coms())
+        com_lbl.bind("<Button-1>", lambda _: self.update_port_boxes())
+        self.port1.bind("<Button-1>", lambda _: self.update_port_boxes())
+        self.port2.bind("<Button-1>", lambda _: self.update_port_boxes())
+        self.port1.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
+        self.port2.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
         self.run_btn.bind('<Return>', lambda _: self.test.run_test())
         self.end_btn.bind('<Return>', lambda _: self.test.end_test())
         # move the cursor here for convenience
@@ -208,44 +226,58 @@ class MainWindow(tk.Frame):
         for widget in (self.run_btn, self.end_btn, self.def_pump):
             widget.configure(state="disabled")
 
-    def find_coms(self) -> None:
-        """Look for devices and disable the controls if two aren't found."""
+    def find_coms(self) -> list:
+        """Look for devices and returns a list of open ports."""
         print("Finding connected devices")
         ports = [i.device for i in serial.tools.list_ports.comports()]
+        print(f"Found these devices: {ports}")
         if len(ports) < 2:
             self.to_log("Not enough devices found...",
                         "Click 'Device ports:' to try again.")
             ports = ["??", "??"]
 
-        useports = []
+        open_ports = []
         for port in ports:
             if port != "??":
                 try:
-                    this = serial.Serial(port)
-                    this.close()
-                    useports.append(port)
+                    device = serial.Serial(port)
+                    device.close()
+                    open_ports.append(port)
                 except SerialException as error:
                     self.to_log(f"Could not connect to port {port}")
                     print(error)
-                    useports.append("??")
+                    open_ports.append("??")
             else:
-                useports.append("??")
+                open_ports.append("??")
+        print(f"Successfully connected to devices {open_ports}")
+        return open_ports
 
-        self.port1.delete(0, 'end')
-        self.port2.delete(0, 'end')
-        self.port1.insert(0, useports[-1])
-        self.port2.insert(0, useports[-2])
+    def update_port_boxes(self):
+        """Update the device port Comboboxes."""
+        self.ports = self.find_coms()
+        self.port1.configure(values=self.ports)
+        self.port2.configure(values=self.ports)
 
+        # update the list, each can be selected only once
         if "?" in self.port1.get() or "?" in self.port2.get():
             print("Disabling start button")
-            self.strt_btn['state'] = ['disable']
+            self.strt_btn.configure(state='disabled')
         else:
-            self.data_out['state'] = 'normal'
+            self.data_out.configure(state='normal')
             self.data_out.delete(1.0, 'end')
-            self.data_out['state'] = 'disabled'
-            print(f"Successfully connected to devices {useports}")
+            self.data_out.configure(state='normal')
             print("Enabling start button")
-            self.strt_btn['state'] = 'enable'
+            self.strt_btn.configure(state='normal')
+
+    def check_unique_port1(self, *args):
+        """Make sure each selected port value is unique."""
+        if self.port1_val.get() == self.port2_val.get():
+            self.port2_val.set(self.ports[self.port2.current() - 1])
+
+    def check_unique_port2(self, *args):
+        """Make sure each selected port value is unique."""
+        if self.port2_val.get() == self.port1_val.get():
+            self.port1_val.set(self.ports[self.port1.current() - 1])
 
     def init_test(self) -> None:
         """Scrape form for user input, then init an Experiment object."""
