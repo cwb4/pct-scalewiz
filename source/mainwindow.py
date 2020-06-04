@@ -139,7 +139,7 @@ class MainWindow(tk.Frame):
         self.out_frm = tk.LabelFrame(
             self.tst_frm,
             # this spacing is to avoid using multiple labels
-            text="Elapsed,            Pump1,             Pump2",
+            text="Elapsed,            PSI 1,             PSI 2",
             font=bold_font
         )
         self.data_out = ScrolledText(
