@@ -47,10 +47,9 @@ class ConfigManager(tk.Toplevel):
         """Make all the widgets."""
         # setup
         vcmd = (self.register(self.is_numeric))
-        def_font = font.nametofont("TkDefaultFont")
-        bold_font = font.Font(font=def_font)
+        bold_font = font.Font(font=font.nametofont("TkDefaultFont"))
         bold_font.config(weight='bold')
-        underline_font = font.Font(font=def_font)
+        underline_font = font.Font(font=font.nametofont("TkDefaultFont"))
         underline_font.config(underline=1)
         # frame for test settings
         test_frm = tk.LabelFrame(self, text="Test Settings", font=bold_font)
@@ -117,6 +116,8 @@ class ConfigManager(tk.Toplevel):
         self.def_pump.grid(row=4, column=1, pady=2, padx=2, sticky='w')
         dir_lbl.grid(row=5, column=0, sticky='e')
         self.proj_dir.grid(row=5, column=1, pady=2, padx=2, sticky='w')
+        for col in (0, 1):
+            test_frm.grid_columnconfigure(col, weight=1)
 
         # frame for report settings
         rep_frm = tk.LabelFrame(self, text="Report Settings", font=bold_font)
@@ -130,10 +131,12 @@ class ConfigManager(tk.Toplevel):
         self.color_cycle = tk.Text(rep_frm, wrap='word', width=32, height=10, font=font.nametofont("TkDefaultFont"))
 
         # grid everything
-        temp_lbl.grid(row=0, column=0, padx=(77, 0), sticky='e')
+        temp_lbl.grid(row=0, column=0, padx=(83, 0), sticky='e')
         self.temp_path.grid(row=0, column=1, pady=2, padx=2, sticky='w')
         color_lbl.grid(row=1, column=0, sticky='ne')
         self.color_cycle.grid(row=1, column=1, pady=2, padx=2, sticky='w')
+        for col in (0, 1):
+            rep_frm.grid_columnconfigure(col, weight=1)
 
         # frame for buttons
         btn_frm = tk.Frame(self)
@@ -143,8 +146,8 @@ class ConfigManager(tk.Toplevel):
         reset_btn = ttk.Button(btn_frm, text="Restore Defaults", command=lambda: self.restore_defaults())
 
         # grid the buttons
-        reset_btn.grid(row=0, column=0, padx=5, sticky='ew')
-        save_btn.grid(row=0, column=1, padx=5, sticky='ew')
+        reset_btn.grid(row=0, column=0, padx=2, sticky='ew')
+        save_btn.grid(row=0, column=1, padx=2, sticky='ew')
         for col in (0, 1):
             btn_frm.grid_columnconfigure(col, weight=1)
 
@@ -154,6 +157,7 @@ class ConfigManager(tk.Toplevel):
         btn_frm.grid(row=2, column=0, sticky='nsew', pady=2, padx=2)
 
         # widget bindings
+        self.def_pump.bind("<FocusIn>", lambda _: test_frm.focus_set())
         self.proj_dir.bind('<Button-1>', self.ask_dir)
         self.temp_path.bind('<Button-1>', self.ask_fil)
         color_lbl.bind('<Button-1>', lambda e: webbrowser.open_new(r'https://htmlcolorcodes.com/color-names/'))
@@ -216,6 +220,7 @@ class ConfigManager(tk.Toplevel):
             title="Select project folder:",
         )
         if folder != "":
+            folder = os.path.normpath(folder)
             event.widget.delete(0, 'end')
             event.widget.insert(0, folder)
             event.widget.after(75, event.widget.xview_moveto, 1)
@@ -232,8 +237,8 @@ class ConfigManager(tk.Toplevel):
             title="Select report template:",
             filetypes=[("Excel files", "*.xlsx")]
         )
-
-        if not fil == "":
+        if fil != "":
+            fil = os.path.normpath(fil)
             event.widget.delete(0, 'end')
             event.widget.insert(0, fil)
             event.widget.after(75, event.widget.xview_moveto, 1)
