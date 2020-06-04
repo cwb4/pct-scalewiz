@@ -499,8 +499,8 @@ class Reporter(tk.Toplevel):
         # note: may need to move contents up before deleting hide_rows
 
         rows_with_data = [16, 17, *range(19, 27)]
-        hide_rows = []
-        resize_rows = []
+        hide_rows = []  # rows we want to hide
+        resize_rows = []  # rows we want to resize
 
         for i in rows_with_data:
             if ws[f'A{i}'].value is None:
@@ -508,11 +508,11 @@ class Reporter(tk.Toplevel):
             else:
                 resize_rows.append(i)
 
-        row_width = 200 / len(resize_rows)
-        if row_width >= 30:
-            row_width = 30
+        row_height = 200 / len(resize_rows)  # we have ~200px to work with total
+        if row_height >= 30:
+            row_height = 30  # we don't want any rows bigger than this
         for row in resize_rows:
-            ws.row_dimensions[row].height = row_width
+            ws.row_dimensions[row].height = row_height
         for row in hide_rows:
             ws.row_dimensions[row].hidden = True
 
