@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.3]
+## [0.7.3] - 2020-6-5
 ### Changed
  - the device manager is now better equipped to handle more than 2 devices at a given time, and won't allow attempting to connect to the same pump twice
  - device port options are now offered through a dropdown box so the user doesn't have to type them, and has no opportunity to type them incorrectly
- - minor improvements to UI layout (text spacing, etc.) and calculations log
+ - improvements to UI layout (text spacing, etc.)
+ - improved calculations log title to be more meaningful, and only keep one log per project
  - improved UI consistency across Windows and Linux environments
  - ensured file paths are handled consistently across operating systems
  - improvements to code quality and organization
