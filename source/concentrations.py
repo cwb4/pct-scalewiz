@@ -3,7 +3,7 @@
 import tkinter as tk
 from tkinter import ttk, font  # type: ignore
 
-import core
+from iconer import set_window_icon
 
 
 class ConcCalc(tk.Toplevel):
@@ -12,7 +12,7 @@ class ConcCalc(tk.Toplevel):
     def __init__(self, parent, *args, **kwargs):
         """Init the calculator."""
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
-        core.set_window_icon(self)
+        set_window_icon(self)
         self.winfo_toplevel().title('Concentration Calculator')
         self.conc = tk.IntVar()
         self.conc.trace('w', self.calc)

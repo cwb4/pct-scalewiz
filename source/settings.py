@@ -7,7 +7,7 @@ from tkinter import ttk, filedialog
 from tkinter import font  # type: ignore
 import webbrowser
 
-import core
+from iconer import set_window_icon
 
 DEFAULT_DICT = {
     'test settings': {
@@ -40,7 +40,7 @@ class ConfigManager(tk.Toplevel):
         tk.Toplevel.__init__(self, parent)
         self.parser = parser
         self.title('Settings')
-        core.set_window_icon(self)
+        set_window_icon(self)
 
         self.build()
         self.fill_form()

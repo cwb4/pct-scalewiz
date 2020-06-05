@@ -10,7 +10,7 @@ import serial.tools.list_ports
 from serial import SerialException
 import webbrowser
 
-import core
+from iconer import set_window_icon
 
 COMMANDS = ['run', 'stop', 'info', 'pressure', ' ']
 
@@ -22,7 +22,7 @@ class PumpManager(tk.Toplevel):
         """Init with another Tk as parent."""
         tk.Toplevel.__init__(self, parent)
         self.title("Pump Controller")
-        core.set_window_icon(self)
+        set_window_icon(self)
         self.build()
 
     def build(self):

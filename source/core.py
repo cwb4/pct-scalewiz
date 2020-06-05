@@ -11,17 +11,7 @@ import tkinter as tk  # GUI
 from tkinter import font  # type: ignore
 import settings
 from mainwindow import MainWindow
-
-
-def set_window_icon(window):
-    """Check what OS we're on, and set the window icon if on Windows."""
-    try:
-        if os.name == 'nt':
-            window.iconbitmap('assets/chem.ico')
-    except FileNotFoundError:
-        print("The icon file at assets/chem.ico could not be found.")
-    except Exception as error:
-        print(error)
+from iconer import set_window_icon
 
 
 class ScaleWiz(tk.Frame):
