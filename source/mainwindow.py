@@ -47,6 +47,8 @@ class MainWindow(tk.Frame):
         self.port1_val.trace('w', self.check_unique_port1)
         self.port2_val.trace('w', self.check_unique_port2)
 
+        self.param_widgets = []
+        self.control_widgets = []
         self.build_window()
         self.update_port_boxes()
         self.port1.set(self.ports[0])
@@ -104,6 +106,9 @@ class MainWindow(tk.Frame):
             text="Start",
             command=lambda: self.init_test()
         )
+        # add to convenience list
+        for widget in (self.port1, self.port2, self.chem, self.conc, self.strt_btn):
+            self.param_widgets.append(widget)
         # make entry labels for self.ent_frm
         com_lbl = ttk.Label(
             self.ent_frm,
@@ -139,7 +144,7 @@ class MainWindow(tk.Frame):
         self.out_frm = tk.LabelFrame(
             self.tst_frm,
             # this spacing is to avoid using multiple labels
-            text="Elapsed,            PSI 1,             PSI 2",
+            text="Elapsed,  PSI 1,  PSI 2",
             font=bold_font
         )
         self.data_out = ScrolledText(
@@ -192,6 +197,8 @@ class MainWindow(tk.Frame):
 
         self.def_pump.grid(row=0, column=1, padx=5, sticky='w')
 
+        for widget in (self.run_btn, self.end_btn, self.def_pump):
+            self.control_widgets.append(widget)
         # set up the plot area
         self.plt_frm = tk.Frame(master=self.tst_frm)
 
@@ -218,12 +225,13 @@ class MainWindow(tk.Frame):
         self.port2.bind("<Button-1>", lambda _: self.update_port_boxes())
         self.port1.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
         self.port2.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
+        self.def_pump.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
         self.run_btn.bind('<Return>', lambda _: self.test.run_test())
         self.end_btn.bind('<Return>', lambda _: self.test.end_test())
         # move the cursor here for convenience
         self.chem.focus_set()
         # disable the controls to prevent starting test w/o parameters
-        for widget in (self.run_btn, self.end_btn, self.def_pump):
+        for widget in (self.control_widgets):
             widget.configure(state="disabled")
 
     def find_coms(self) -> list:
@@ -304,9 +312,9 @@ class MainWindow(tk.Frame):
     def to_log(self, *msgs) -> None:
         """Log a message to the Text widget in MainWindow's outfrm."""
         for msg in msgs:
-            self.data_out['state'] = 'normal'
+            self.data_out.configure(state='normal')
             self.data_out.insert('end', f"{msg}" + "\n")
-            self.data_out['state'] = 'disabled'
+            self.data_out.configure(state='disabled')
             self.data_out.see('end')
 
     def animate(self, interval) -> None:
