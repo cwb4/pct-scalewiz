@@ -40,7 +40,7 @@ class ScaleWiz(tk.Frame):
         self.parser.path = os.path.abspath('assets/scalewiz.ini')
         self.parser.read(self.parser.path)
         self.mainwin = MainWindow(self)
-        self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
+        self.thread_pool_executor = ThreadPoolExecutor(max_workers=2)
 
 
 if __name__ == "__main__":
