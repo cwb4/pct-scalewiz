@@ -255,9 +255,9 @@ class MainWindow(tk.Frame):
                     self.to_log(f"Could not connect to port {port}")
                     print(error)
                     open_ports.append("??")
+                print(f"Successfully connected to devices {open_ports}")
             else:
                 open_ports.append("??")
-        print(f"Successfully connected to devices {open_ports}")
         return open_ports
 
     def update_port_boxes(self):
