@@ -495,22 +495,22 @@ class Reporter(tk.Toplevel):
 
         # note: may need to move contents up before deleting hide_rows
 
-        rows_with_data = [16, 17, *range(19, 27)]
+        rows_with_data = [16, 17, *range(19, 27)]  # where the data is
         hide_rows = []  # rows we want to hide
         resize_rows = []  # rows we want to resize
 
         for i in rows_with_data:
-            if ws[f'A{i}'].value is None:
-                hide_rows.append(i)
+            if ws[f'A{i}'].value is None:  # if the cell is empty
+                hide_rows.append(i)  # add it to the list of rows to hide
             else:
-                resize_rows.append(i)
+                resize_rows.append(i)  # add it to the list of rows to reszie
 
         row_height = 200 / len(resize_rows)  # we have ~200px to work with total
-        if row_height >= 30:
-            row_height = 30  # we don't want any rows bigger than this
-        for row in resize_rows:
+        if row_height >= 30:  # we don't want any rows bigger than this
+            row_height = 30
+        for row in resize_rows:  # this does the resizing
             ws.row_dimensions[row].height = row_height
-        for row in hide_rows:
+        for row in hide_rows:  # this hides the empty rows
             ws.row_dimensions[row].hidden = True
 
         print(f"Saving report to\n{report_path}")
