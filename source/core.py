@@ -27,7 +27,7 @@ def set_window_icon(window):
 class ScaleWiz(tk.Frame):
     """Core class for the application."""
 
-    VERSION = '[0.7.2]'
+    VERSION = '[0.7.3]'
 
     def __init__(self, parent):
         """Instantiate the core."""
