@@ -16,6 +16,7 @@ from matplotlib.ticker import MultipleLocator
 import openpyxl
 from pandas import Series, DataFrame, read_csv  # reading the data
 
+import core
 from seriesentry import SeriesEntry
 from evaluator import evaluate
 
@@ -26,8 +27,7 @@ class Reporter(tk.Toplevel):
     def __init__(self, parent, *args, **kwargs):
         """Init the reporter."""
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
-        if os.name == 'nt':
-            self.iconbitmap('chem.ico')
+        core.set_window_icon(self)
         self.core = parent
         self.mainwin = self.core.mainwin
         self.parser = self.core.parser
@@ -370,8 +370,8 @@ class Reporter(tk.Toplevel):
         result_window = tk.Toplevel(self)
         result_window.attributes('-topmost', 'true')
         result_window.title("Results")
-        if os.name == 'nt':
-            result_window.iconbitmap('chem.ico')
+        core.set_window_icon(result_window)
+
         def_bg = result_window.cget('bg')
         tk.Label(
             master=result_window,

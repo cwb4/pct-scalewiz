@@ -1,8 +1,9 @@
 """A simple calculator for determining treating volumes."""
 
-import os
 import tkinter as tk
 from tkinter import ttk, font  # type: ignore
+
+import core
 
 
 class ConcCalc(tk.Toplevel):
@@ -11,8 +12,7 @@ class ConcCalc(tk.Toplevel):
     def __init__(self, parent, *args, **kwargs):
         """Init the calculator."""
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
-        if os.name == 'nt':
-            self.iconbitmap('chem.ico')
+        core.set_window_icon(self)
         self.winfo_toplevel().title('Concentration Calculator')
         self.conc = tk.IntVar()
         self.conc.trace('w', self.calc)

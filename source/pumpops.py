@@ -1,6 +1,5 @@
 """Module for controlling the pumps directly."""
 
-import os
 from time import sleep
 import tkinter as tk
 from tkinter import ttk
@@ -11,6 +10,7 @@ import serial.tools.list_ports
 from serial import SerialException
 import webbrowser
 
+import core
 
 COMMANDS = ['run', 'stop', 'info', 'pressure', ' ']
 
@@ -22,8 +22,7 @@ class PumpManager(tk.Toplevel):
         """Init with another Tk as parent."""
         tk.Toplevel.__init__(self, parent)
         self.title("Pump Controller")
-        if os.name == 'nt':
-            self.iconbitmap('chem.ico')
+        core.set_window_icon(self)
         self.build()
 
     def build(self):

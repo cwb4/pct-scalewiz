@@ -7,6 +7,8 @@ from tkinter import ttk, filedialog
 from tkinter import font  # type: ignore
 import webbrowser
 
+import core
+
 DEFAULT_DICT = {
     'test settings': {
         'fail psi': '1500',
@@ -38,8 +40,8 @@ class ConfigManager(tk.Toplevel):
         tk.Toplevel.__init__(self, parent)
         self.parser = parser
         self.title('Settings')
-        if os.name == 'nt':
-            self.iconbitmap('chem.ico')
+        core.set_window_icon(self)
+
         self.build()
         self.fill_form()
 
