@@ -361,8 +361,8 @@ class Reporter(tk.Toplevel):
             proj, blanks, trials, baseline, xlim, ylim, interval
         )
 
-        stamp = round(time.time())
-        log_file = os.path.join(self.mainwin.project, f"calc_log_{stamp}.txt")
+        project = self.mainwin.project.split('\\')[-1].strip()
+        log_file = os.path.join(self.mainwin.project, f"{project} log.txt")
         with open(log_file, 'w') as file:
             file.write('\n'.join(self.log))
         print(f"Wrote calculations log to \n{log_file}\n")
@@ -424,9 +424,6 @@ class Reporter(tk.Toplevel):
 
         file = f"#-# {short_proj} Calcium Carbonate Scale Block Analysis.xlsx"
         report_path = os.path.join(self.mainwin.project, file)
-        while os.path.isfile(report_path):
-            report_path = report_path[:-5]
-            report_path += ' - copy.xlsx'
 
         print(f"Copying report template to\n{report_path}")
         shutil.copyfile(template_path, report_path)
