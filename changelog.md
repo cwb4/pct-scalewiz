@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.3]
 ### Changed
- - the device manager is now better equipped to handle more than 2 devices at a given time
- - device manager won't allow attempting to connect to the same pump twice
- - device options are now offered through a dropdown box so the user doesn't have to type them
- - misc minor improvements to UI layout (text spacing, etc.)
+ - the device manager is now better equipped to handle more than 2 devices at a given time, and won't allow attempting to connect to the same pump twice
+ - device port options are now offered through a dropdown box so the user doesn't have to type them, and has no opportunity to type them incorrectly
+ - minor improvements to UI layout (text spacing, etc.) and calculations log
+ - ensured file paths are handled consistently across operating systems
+ - improvements to code quality and organization
 
 ## [0.7.2]  2020-6-2
 ### Added
