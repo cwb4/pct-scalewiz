@@ -35,9 +35,9 @@ class ScaleWiz(tk.Frame):
         self.root = parent
         self.parser = ConfigParser()
         self.parser.DEFAULT_DICT = settings.DEFAULT_DICT
-        if not os.path.isfile('scalewiz.ini'):
+        if not os.path.isfile('assets/scalewiz.ini'):
             settings.make_config(self.parser)
-        self.parser.path = os.path.abspath('scalewiz.ini')
+        self.parser.path = os.path.abspath('assets/scalewiz.ini')
         self.parser.read(self.parser.path)
         self.mainwin = MainWindow(self)
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
