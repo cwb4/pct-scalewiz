@@ -405,7 +405,6 @@ class Reporter(tk.Toplevel):
             )
             return
         template_path = self.parser.get('report settings', 'template path')
-        template_path = os.path.normpath(template_path)
         if not os.path.isfile(template_path):
             showerror(
                 parent=self,
@@ -493,7 +492,6 @@ class Reporter(tk.Toplevel):
             score = score[:-1]
             ws[cell] = float(score) / 100  # cell format in template set to %
 
-        # note: may need to move contents up before deleting hide_rows
 
         rows_with_data = [16, 17, *range(19, 27)]  # where the data is
         hide_rows = []  # rows we want to hide
