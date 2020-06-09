@@ -54,6 +54,11 @@ class MainWindow(tk.Frame):
         self.port1.set(self.ports[0])
         self.port2.set(self.ports[1])
 
+        style = ttk.Style()
+        style.map('TCombobox', fieldbackground=[('readonly','white')])
+        style.map('TCombobox', selectbackground=[('readonly', 'white')])
+        style.map('TCombobox', selectforeground=[('readonly', 'black')])
+        
     def build_window(self) -> None:
         """Make all the tkinter widgets."""
         MenuBar(self)

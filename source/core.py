@@ -33,11 +33,6 @@ class ScaleWiz(tk.Frame):
         self.mainwin = MainWindow(self)
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=2)
 
-        style = ttk.Style()
-        style.map('TCombobox', fieldbackground=[('readonly','white')])
-        style.map('TCombobox', selectbackground=[('readonly', 'white')])
-        style.map('TCombobox', selectforeground=[('readonly', 'black')])
-
 
 if __name__ == "__main__":
     root = tk.Tk()
