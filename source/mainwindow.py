@@ -67,12 +67,14 @@ class MainWindow(tk.Frame):
             self.tst_frm,
             text="Test parameters",
             font=bold_font,
+            bg='#F0F0F0'
         )
         # a frame for test controls
         self.cmd_frm = tk.LabelFrame(
             self.tst_frm,
             text="Test controls",
             font=bold_font,
+            bg='#F0F0F0'
         )
         # define the self.ent_frm entries
         self.port1 = ttk.Combobox(
@@ -146,6 +148,7 @@ class MainWindow(tk.Frame):
             # this spacing is to avoid using multiple labels
             text="Elapsed,  PSI 1,  PSI 2",
             font=bold_font,
+            bg='#F0F0F0'
         )
         self.data_out = ScrolledText(
             master=self.out_frm,
