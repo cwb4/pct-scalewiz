@@ -9,6 +9,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor  # handling the test
 import tkinter as tk  # GUI
 from tkinter import font  # type: ignore
+from tkinter import ttk
 import settings
 from mainwindow import MainWindow
 from iconer import set_window_icon
@@ -31,6 +32,11 @@ class ScaleWiz(tk.Frame):
         self.parser.read(self.parser.path)
         self.mainwin = MainWindow(self)
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=2)
+
+        style = ttk.Style()
+        style.map('TCombobox', fieldbackground=[('readonly','white')])
+        style.map('TCombobox', selectbackground=[('readonly', 'white')])
+        style.map('TCombobox', selectforeground=[('readonly', 'black')])
 
 
 if __name__ == "__main__":

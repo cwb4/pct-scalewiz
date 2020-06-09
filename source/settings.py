@@ -97,7 +97,6 @@ class ConfigManager(tk.Toplevel):
             test_frm,
             values=["PSI 1", "PSI 2"],
             state='readonly',
-            readonlybackground='white',
             width=29
         )
         self.proj_dir = ttk.Entry(

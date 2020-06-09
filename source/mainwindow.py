@@ -82,7 +82,6 @@ class MainWindow(tk.Frame):
             width=9,
             justify='center',
             state='readonly',
-            readonlybackground='white'
         )
         self.port2 = ttk.Combobox(
             self.ent_frm,
@@ -91,7 +90,6 @@ class MainWindow(tk.Frame):
             width=9,
             justify='center',
             state='readonly',
-            readonlybackground='white'
         )
         self.chem = ttk.Entry(
             self.ent_frm,
@@ -193,7 +191,6 @@ class MainWindow(tk.Frame):
             values=["PSI 1", "PSI 2"],
             state='readonly',
             justify='center',
-            readonlybackground='white',
             width=13,
         )
         self.def_pump.set(self.parser.get('test settings', 'default pump'))
