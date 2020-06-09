@@ -38,7 +38,7 @@ if __name__ == "__main__":
     default_font = font.nametofont("TkDefaultFont")
     default_font.configure(family="Arial")
     root.option_add("*Font", "TkDefaultFont")
-    root.configure(background='#F0F0F0')
+    root.tk_setPalette(background='#F0F0F0')
     root.title("Scale Block Wizard")
     root.resizable(0, 0)
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
