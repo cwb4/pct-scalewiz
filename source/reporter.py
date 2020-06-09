@@ -492,7 +492,6 @@ class Reporter(tk.Toplevel):
             score = score[:-1]
             ws[cell] = float(score) / 100  # cell format in template set to %
 
-
         rows_with_data = [16, 17, *range(19, 27)]  # where the data is
         hide_rows = []  # rows we want to hide
         resize_rows = []  # rows we want to resize
