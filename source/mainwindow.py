@@ -32,14 +32,6 @@ class MainWindow(tk.Frame):
         self.core.root.protocol("WM_DELETE_WINDOW", self.close_app)
         self.parser = self.core.parser
 
-        self.project = os.path.normpath(
-            self.parser.get(
-                'test settings',
-                'project folder',
-                fallback=os.getcwd()
-            )
-        )
-
         self.update_title()
         self.ports = []
         self.port1_val = tk.StringVar()
@@ -359,6 +351,13 @@ class MainWindow(tk.Frame):
 
     def update_title(self) -> None:
         """Determine OS path format, then title the main window accordingly."""
+        self.project = os.path.normpath(
+            self.parser.get(
+                'test settings',
+                'project folder',
+                fallback=os.getcwd()
+            )
+        )
         try:
             if os.name == 'nt':
                 project = self.project.split('\\')
