@@ -39,6 +39,7 @@ class PumpManager(tk.Toplevel):
             state='readonly',
             width=10,
             justify='center',
+            readonlybackground='white'
         )
         cmd_lbl = tk.Label(
             container,
