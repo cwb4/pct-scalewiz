@@ -9,7 +9,6 @@ import os
 from concurrent.futures import ThreadPoolExecutor  # handling the test
 import tkinter as tk  # GUI
 from tkinter import font  # type: ignore
-from tkinter import ttk
 import settings
 from mainwindow import MainWindow
 from iconer import set_window_icon
