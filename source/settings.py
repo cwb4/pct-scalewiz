@@ -166,6 +166,7 @@ class ConfigManager(tk.Toplevel):
 
     def fill_form(self):
         """Fill the form with values from the ConfigParser."""
+        self.parser.read(self.parser.path)
         fail_psi = self.parser.getint('test settings', 'fail psi')
         time_limit = self.parser.getint('test settings', 'time limit minutes')
         interval = self.parser.getint('test settings', 'interval seconds')

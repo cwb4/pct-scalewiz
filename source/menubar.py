@@ -80,7 +80,6 @@ class MenuBar(tk.Frame):
     def manage_config(self):
         """Re-reads the config, then opens a ConfigManager Toplevel"""
         print("Opening ConfigManager")
-        self.parser.read(self.parser.path)
         ConfigManager(self.mainwin, self.parser)
 
     def show_help(self):
