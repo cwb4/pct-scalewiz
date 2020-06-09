@@ -56,24 +56,25 @@ class MainWindow(tk.Frame):
 
     def build_window(self) -> None:
         """Make all the tkinter widgets."""
-        self.configure(bg='#F0F0F0')
         MenuBar(self)
         bold_font = font.Font(font=font.nametofont("TkDefaultFont"))
         bold_font.config(weight='bold')
 
         # build the main frame
-        self.tst_frm = tk.Frame(self.core)  # top level container
+        self.tst_frm = tk.Frame(self.core, bg='#F0F0F0')  # top level container
         # frame for parameter entries
         self.ent_frm = tk.LabelFrame(
             self.tst_frm,
             text="Test parameters",
-            font=bold_font
+            font=bold_font,
+            bg='#F0F0F0'
         )
         # a frame for test controls
         self.cmd_frm = tk.LabelFrame(
             self.tst_frm,
             text="Test controls",
-            font=bold_font
+            font=bold_font,
+            bg='#F0F0F0'
         )
         # define the self.ent_frm entries
         self.port1 = ttk.Combobox(
@@ -146,7 +147,8 @@ class MainWindow(tk.Frame):
             self.tst_frm,
             # this spacing is to avoid using multiple labels
             text="Elapsed,  PSI 1,  PSI 2",
-            font=bold_font
+            font=bold_font,
+            bg='#F0F0F0'
         )
         self.data_out = ScrolledText(
             master=self.out_frm,
@@ -201,7 +203,7 @@ class MainWindow(tk.Frame):
         for widget in (self.run_btn, self.end_btn, self.def_pump):
             self.control_widgets.append(widget)
         # set up the plot area
-        self.plt_frm = tk.Frame(master=self.tst_frm)
+        self.plt_frm = tk.Frame(master=self.tst_frm, bg='#F0F0F0')
 
         # matplotlib objects
         self.fig, self.axis = plt.subplots(figsize=(7.5, 4), dpi=100)
