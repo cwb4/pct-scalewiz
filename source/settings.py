@@ -28,7 +28,7 @@ DEFAULT_DICT = {
 def make_config(parser: ConfigParser):
     """Create a default scalewiz.ini in the current working directory."""
     parser.read_dict(DEFAULT_DICT)  # type: ignore
-    with open('scalewiz.ini', 'w') as configfile:
+    with open('assets\scalewiz.ini', 'w') as configfile:
         parser.write(configfile)
 
 
@@ -39,6 +39,7 @@ class ConfigManager(tk.Toplevel):
         """Init with another Tk as parent."""
         tk.Toplevel.__init__(self, parent)
         self.parser = parser
+        self.mainwin = parent
         self.title('Settings')
         set_window_icon(self)
         self.resizable(0, 0)
@@ -201,15 +202,17 @@ class ConfigManager(tk.Toplevel):
         self.parser['test settings']['project folder'] = self.proj_dir.get()
         self.parser['report settings']['template path'] = self.temp_path.get()
         self.parser['report settings']['color cycle'] = self.color_cycle.get(1.0, 'end')
-        with open('scalewiz.ini', 'w') as configfile:
+        with open(self.parser.path, 'w') as configfile:
             self.parser.write(configfile)
         print("Settings updated successfully")
+        self.mainwin.update_title()
 
     def restore_defaults(self):
         """Fill the form with the DEFAULT_DICT."""
         self.parser.read_dict(DEFAULT_DICT)  # type: ignore
         self.fill_form()
         print("Settings restored to defaults")
+        self.mainwin.update_title()
 
     def ask_dir(self, event):
         """Create a prompt asking the user for a directory.
