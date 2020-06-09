@@ -61,7 +61,7 @@ class MainWindow(tk.Frame):
         bold_font.config(weight='bold')
 
         # build the main frame
-        self.tst_frm = tk.Frame(self.core)  # top level container
+        self.tst_frm = tk.Frame(self.core, bg='#F0F0F0')  # top level container
         # frame for parameter entries
         self.ent_frm = tk.LabelFrame(
             self.tst_frm,
