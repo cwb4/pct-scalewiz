@@ -130,7 +130,7 @@ class ConfigManager(tk.Toplevel):
 
         # the entries
         self.temp_path = ttk.Entry(rep_frm, width=32)
-        self.color_cycle = tk.Text(rep_frm, wrap='word', width=32, height=10, font=font.nametofont("TkDefaultFont"))
+        self.color_cycle = tk.Text(rep_frm, wrap='word', width=32, height=10, font=font.nametofont("TkDefaultFont"), bg='white')
 
         # grid everything
         temp_lbl.grid(row=0, column=0, padx=(83, 0), sticky='e')

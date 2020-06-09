@@ -67,7 +67,8 @@ class PumpManager(tk.Toplevel):
             wrap='word',
             width=30,
             height=9,
-            state='disabled'
+            state='disabled',
+            bg='white'
         )
 
         device_lbl.grid(row=0, column=0, sticky='e')
