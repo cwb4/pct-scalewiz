@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.4] - 2020-6-9
+### Changed
+ - improved UI and consistency across OS environments 
+
 ## [0.7.3] - 2020-6-5
 ### Changed
  - the device manager is now better equipped to handle more than 2 devices at a given time, and won't allow attempting to connect to the same pump twice
