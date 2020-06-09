@@ -205,7 +205,9 @@ class MainWindow(tk.Frame):
 
         # matplotlib objects
         self.fig, self.axis = plt.subplots(figsize=(7.5, 4), dpi=100)
-        self.fig.patch.set_facecolor('#F0F0F0')
+        rgb = self.winfo_rgb(self.plt_frm.cget('bg'))
+        rgb = (rgb[0]/100000, rgb[1]/100000, rgb[2]/100000, 0.15)
+        self.fig.patch.set_facecolor(rgb)
         plt.subplots_adjust(left=0.10, bottom=0.12, right=0.97, top=0.95)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.plt_frm)
         self.canvas.get_tk_widget().pack(side="top", fill="both", expand=True)

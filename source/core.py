@@ -40,7 +40,6 @@ if __name__ == "__main__":
     root.option_add("*Font", "TkDefaultFont")
     root.title("Scale Block Wizard")
     root.resizable(0, 0)
-    root.tk_setPalette(background='#F0F0F0')
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
     set_window_icon(root)
     root.mainloop()
