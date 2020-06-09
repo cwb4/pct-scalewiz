@@ -98,7 +98,7 @@ class Experiment():
         self.readings = 0
         starttime = time.time()
         reading_start = -1 * self.interval  # so that the first if doesnt fail
-        snooze = self.interval * 0.9
+        snooze = self.interval * 0.95
         while (
                 (psi1 < self.failpsi or psi2 < self.failpsi)
                 and (
