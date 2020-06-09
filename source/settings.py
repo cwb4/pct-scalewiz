@@ -203,11 +203,13 @@ class ConfigManager(tk.Toplevel):
         self.parser['report settings']['color cycle'] = self.color_cycle.get(1.0, 'end')
         with open('scalewiz.ini', 'w') as configfile:
             self.parser.write(configfile)
+        print("Settings updated successfully")
 
     def restore_defaults(self):
         """Fill the form with the DEFAULT_DICT."""
         self.parser.read_dict(DEFAULT_DICT)  # type: ignore
         self.fill_form()
+        print("Settings restored to defaults")
 
     def ask_dir(self, event):
         """Create a prompt asking the user for a directory.
