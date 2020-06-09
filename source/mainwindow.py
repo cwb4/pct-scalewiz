@@ -56,6 +56,7 @@ class MainWindow(tk.Frame):
 
     def build_window(self) -> None:
         """Make all the tkinter widgets."""
+        self.configure(bg='#F0F0F0')
         MenuBar(self)
         bold_font = font.Font(font=font.nametofont("TkDefaultFont"))
         bold_font.config(weight='bold')
