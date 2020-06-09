@@ -57,12 +57,12 @@ class ConfigManager(tk.Toplevel):
         test_frm = tk.LabelFrame(self, text="Test Settings", font=bold_font)
 
         # the labels
-        psi_lbl = ttk.Label(test_frm, text="Failure threshold (psi):", anchor='w')
-        time_lbl = ttk.Label(test_frm, text="Time limit (min):", anchor='w')
-        int_lbl = ttk.Label(test_frm, text="Reading interval (s per reading):", anchor='w')
-        base_lbl = ttk.Label(test_frm, text="Default baseline (psi):", anchor='w')
-        pump_lbl = ttk.Label(test_frm, text="Default pump:", anchor='w')
-        dir_lbl = ttk.Label(test_frm, text="Project folder:", anchor='w')
+        psi_lbl = tk.Label(test_frm, text="Failure threshold (psi):", anchor='w')
+        time_lbl = tk.Label(test_frm, text="Time limit (min):", anchor='w')
+        int_lbl = tk.Label(test_frm, text="Reading interval (s per reading):", anchor='w')
+        base_lbl = tk.Label(test_frm, text="Default baseline (psi):", anchor='w')
+        pump_lbl = tk.Label(test_frm, text="Default pump:", anchor='w')
+        dir_lbl = tk.Label(test_frm, text="Project folder:", anchor='w')
 
         # the entries
         self.fail_psi = ttk.Spinbox(
@@ -124,7 +124,7 @@ class ConfigManager(tk.Toplevel):
         rep_frm = tk.LabelFrame(self, text="Report Settings", font=bold_font)
 
         # the labels
-        temp_lbl = ttk.Label(rep_frm, text="Report template:", anchor='w')
+        temp_lbl = tk.Label(rep_frm, text="Report template:", anchor='w')
         color_lbl = tk.Label(rep_frm, text="Color cycle:", anchor='w', font=underline_font, fg='#0000EE')
 
         # the entries

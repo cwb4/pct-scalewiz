@@ -115,16 +115,16 @@ class MainWindow(tk.Frame):
         for widget in (self.port1, self.port2, self.chem, self.conc, self.strt_btn):
             self.param_widgets.append(widget)
         # make entry labels for self.ent_frm
-        com_lbl = ttk.Label(
+        com_lbl = tk.Label(
             self.ent_frm,
             text="Device ports:",
         )
-        chem_lbl = ttk.Label(
+        chem_lbl = tk.Label(
             self.ent_frm,
             text="Chemical:",
             anchor='e'
         )
-        conc_lbl = ttk.Label(
+        conc_lbl = tk.Label(
             self.ent_frm,
             text="Concentration:",
             anchor='e'
