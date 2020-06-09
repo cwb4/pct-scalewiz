@@ -14,6 +14,7 @@ class ConcCalc(tk.Toplevel):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
         set_window_icon(self)
         self.winfo_toplevel().title('Concentration Calculator')
+        self.resizable(0, 0)
         self.conc = tk.IntVar()
         self.conc.trace('w', self.calc)
 

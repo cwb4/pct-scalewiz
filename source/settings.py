@@ -41,7 +41,7 @@ class ConfigManager(tk.Toplevel):
         self.parser = parser
         self.title('Settings')
         set_window_icon(self)
-
+        self.resizable(0, 0)
         self.build()
         self.fill_form()
 

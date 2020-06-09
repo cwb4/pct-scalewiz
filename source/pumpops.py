@@ -23,6 +23,7 @@ class PumpManager(tk.Toplevel):
         tk.Toplevel.__init__(self, parent)
         self.title("Pump Controller")
         set_window_icon(self)
+        self.resizable(0, 0)
         self.build()
 
     def build(self):
