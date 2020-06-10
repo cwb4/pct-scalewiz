@@ -16,6 +16,7 @@ from matplotlib.ticker import MultipleLocator
 import openpyxl
 from pandas import Series, DataFrame, read_csv  # reading the data
 
+import settings
 from iconer import set_window_icon
 from seriesentry import SeriesEntry
 from evaluator import evaluate
@@ -221,7 +222,16 @@ class Reporter(tk.Toplevel):
         with plt.style.context(style):
             colors = self.parser.get('report settings', 'color cycle').split(',')
             colors = [i.strip() for i in colors]
-            mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
+            try:
+                mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
+            except ValueError:
+                showwarning(
+                    self,
+                    title="Invalid Color Cycle",
+                    message="Tried to use invalid colors, reverting to defaults"
+                )
+                colors = settings.DEFAULT_DICT['report settings']['color cycle']
+                mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
             fig, ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             ax.set_xlabel("Time (min)")
             ax.set_xlim(left=0, right=xlim)
