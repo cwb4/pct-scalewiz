@@ -230,7 +230,7 @@ class Reporter(tk.Toplevel):
                     title="Invalid Color Cycle",
                     message="Tried to use invalid colors, reverting to defaults"
                 )
-                colors = settings.DEFAULT_DICT['report settings']['color cycle']
+                colors = settings.DEFAULT_DICT['report settings']['color cycle']  # type: ignore
                 mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
             fig, ax = plt.subplots(figsize=(12.5, 5), dpi=100)
             ax.set_xlabel("Time (min)")
