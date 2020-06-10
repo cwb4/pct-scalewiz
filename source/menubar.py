@@ -50,7 +50,7 @@ class MenuBar(tk.Frame):
         )
 
         self.menubar.add_command(
-            label='Help',
+            label='About',
             command=lambda: self.show_help()
         )
 
@@ -86,14 +86,8 @@ class MenuBar(tk.Frame):
         """Show a help dialog."""
         tk.messagebox.showinfo(
             parent=self,
-            title="Help: Using ScaleWiz",
+            title="About",
             message=f"""
-Set project folder: Sets the folder to put data files in.
-
-Make new report: Opens a new Report Generator window.
-
-Settings: Opens a menu to modify the current settings file ('scalewiz.ini') in the directory the program runs out of.
-
 Version: {self.core.VERSION}
 Website: https://github.com/teauxfu/pct-scalewiz
 """
