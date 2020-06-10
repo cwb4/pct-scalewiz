@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.7.4] - 2020-6-9
 ### Changed
  - improved UI theme and its consistency across OS environments
+### Fixed
+ - trying to make a plot using invalid color names reverts to the default colors instead of crashing
 
 ## [0.7.3] - 2020-6-5
 ### Changed
