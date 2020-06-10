@@ -226,7 +226,7 @@ class Reporter(tk.Toplevel):
                 mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)
             except ValueError:
                 showwarning(
-                    self,
+                    parent=self,
                     title="Invalid Color Cycle",
                     message="Tried to use invalid colors, reverting to defaults"
                 )
