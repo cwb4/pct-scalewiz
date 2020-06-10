@@ -424,12 +424,17 @@ class Reporter(tk.Toplevel):
 
         print("Preparing export")
         start = time.time()
-
         project = self.mainwin.project.split('\\')
-        company = project[-1].split('-')[0].strip()
-        sample_point = project[-1].split('-')[1].strip()
-        customer = project[-2].strip()
-        short_proj = project[-1].strip()
+        try:
+            company = project[-1].split('-')[0].strip()
+            sample_point = project[-1].split('-')[1].strip()
+            customer = project[-2].strip()
+            short_proj = project[-1].strip()
+        except IndexError:
+            company = " "
+            sample_point = company
+            customer = company
+            short_proj = company
 
         file = f"#-# {short_proj} Calcium Carbonate Scale Block Analysis.xlsx"
         report_path = os.path.join(self.mainwin.project, file)
@@ -493,11 +498,11 @@ class Reporter(tk.Toplevel):
         for (cell, name) in zip(chem_name_cells, chem_names):
             ws[cell] = f"{name}"
         for (cell, conc) in zip(chem_conc_cells, chem_concs):
-            ws[cell] = int(conc)
+            ws[cell] = round(float(conc))
         for (cell, duration) in zip(duration_cells, durations):
             ws[cell] = float(round(duration, 2))
         for (cell, psi) in zip(max_psi_cells, max_psis):
-            ws[cell] = int(psi)
+            ws[cell] = round(psi)
         for (cell, score) in zip(protection_cells, result_values):
             score = score[:-1]
             ws[cell] = float(score) / 100  # cell format in template set to %
