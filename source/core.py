@@ -35,6 +35,7 @@ class ScaleWiz(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
+    set_window_icon(root)
     default_font = font.nametofont("TkDefaultFont")
     default_font.configure(family="Arial")
     root.option_add("*Font", "TkDefaultFont")
@@ -42,5 +43,4 @@ if __name__ == "__main__":
     root.title("Scale Block Wizard")
     root.resizable(0, 0)
     ScaleWiz(root).pack(side="top", fill="both", expand=True)
-    set_window_icon(root)
     root.mainloop()
