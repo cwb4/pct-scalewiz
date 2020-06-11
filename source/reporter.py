@@ -431,7 +431,7 @@ class Reporter(tk.Toplevel):
             customer = project[-2].strip()
             short_proj = project[-1].strip()
         except IndexError:
-            company = " "
+            company = project[-1]
             sample_point = company
             customer = company
             short_proj = company
@@ -475,9 +475,10 @@ class Reporter(tk.Toplevel):
         ws['C4'] = customer
         ws['C6'] = company
         ws['C7'] = sample_point
-        ws['I7'] = f"{date.today()}"
+        today = date.today().strftime("%B %d, %Y")
+        ws['I7'] = f"{today}"
         ws['D11'] = f"{baseline} psi"
-        ws['G16'] = int(ylim)
+        ws['G16'] = round(ylim)
 
         print(f"customer: {customer}")
         print(f"company: {company}")
@@ -494,18 +495,20 @@ class Reporter(tk.Toplevel):
         chem_concs = [" ".join(title.split(' ')[-2:-1]) for title in result_titles]
 
         for (cell, blank_time) in zip(blank_time_cells, blank_times):
-            ws[cell] = float(round(blank_time / 60, 2))
+            ws[cell] = round(blank_time / 60, 2)
         for (cell, name) in zip(chem_name_cells, chem_names):
             ws[cell] = f"{name}"
         for (cell, conc) in zip(chem_conc_cells, chem_concs):
-            ws[cell] = round(float(conc))
+            ws[cell] = round(float(conc), 1)
         for (cell, duration) in zip(duration_cells, durations):
-            ws[cell] = float(round(duration, 2))
+            ws[cell] = round(float(duration), 2)
         for (cell, psi) in zip(max_psi_cells, max_psis):
             ws[cell] = round(psi)
         for (cell, score) in zip(protection_cells, result_values):
-            score = score[:-1]
-            ws[cell] = float(score) / 100  # cell format in template set to %
+            score = float(score[:-1])
+            if score >= 100:
+                score = 100
+            ws[cell] = score / 100  # the template has conditional % formatting
 
         rows_with_data = [16, 17, *range(19, 27)]  # where the data is
         hide_rows = []  # rows we want to hide
