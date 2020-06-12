@@ -193,6 +193,9 @@ class ConfigManager(tk.Toplevel):
         self.temp_path.insert(0, temp_path)
         self.color_cycle.insert(1.0, color_cycle)
 
+        for widget in (self.proj_dir, self.temp_path):
+            widget.after(75, widget.xview_moveto, 1)
+
     def save_settings(self):
         """Save the form contents to file."""
         self.parser['test settings']['fail psi'] = self.fail_psi.get()
