@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.5] 2020-6-12
 ### Changed
- - saving/loading a project from file now also remembers/populates the xlim, ylim, and baseline psi
+ - saving/loading a project from file now also remembers/populates the time limit, max psi, and baseline psi
 
 ## [0.7.4] 2020-6-10
 ### Changed
