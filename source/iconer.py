@@ -4,10 +4,7 @@ import os
 
 def set_window_icon(window):
     """Check what OS we're on, and set the window icon if on Windows."""
-    try:
+    if os.path.isfile('assets/chem.ico'):
+        icon_path = os.path.abspath('assets/chem.ico')
         if os.name == 'nt':
-            window.iconbitmap('assets/chem.ico')
-    except FileNotFoundError:
-        print("The icon file at assets/chem.ico could not be found.")
-    except Exception as error:
-        print(error)
+            window.wm_iconbitmap(icon_path)
