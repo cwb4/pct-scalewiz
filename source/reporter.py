@@ -329,16 +329,16 @@ class Reporter(tk.Toplevel):
 
     def unpickle_plot(self) -> None:
         """Unpickle a list of string 3-tuples into SeriesEntry widgets."""
-        fil = filedialog.askopenfilename(
+        file = filedialog.askopenfilename(
             initialdir="C:\"",
             title="Select data to plot:",
             filetypes=[("ScaleWiz project files", "*.pct")]
         )
 
         # this puts data paths into their original entries
-        if fil != '':
-            print(f"Unpickling project file\n{fil}")
-            with open(fil, 'rb') as file:
+        if file != '':
+            print(f"Unpickling project file\n{file}")
+            with open(file, 'rb') as file:
                 _plt = pickle.load(file)
             into_widgets = zip(
                 _plt['paths'],
@@ -347,7 +347,15 @@ class Reporter(tk.Toplevel):
                 self.entfrm.winfo_children()
             )
 
-            print("Populating Reporter fields")
+            print("Populating plot parameters")
+            # plot_params == ('bmh', xlim, ylim, baseline)
+            plot_params = (_plt['plot_params'][1:])
+            param_widgets = (self.time_limit, self.fail_psi, self.baseline)
+            for widget, parameter in zip(param_widgets, plot_params):
+                widget.delete(0, 'end')
+                widget.insert(0, parameter)
+
+            print("Populating series entry fields")
             for path, title, plotpump, widget in into_widgets:
                 widget.path.delete(0, 'end')
                 widget.path.insert(0, path)
@@ -358,6 +366,11 @@ class Reporter(tk.Toplevel):
                 widget.plotpump.set(plotpump)
                 #  NOTE: on use of after
                 #  https://stackoverflow.com/questions/29334544/
+
+
+
+
+
 
         # raise the settings window
         self.lift()
