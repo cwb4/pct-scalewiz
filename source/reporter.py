@@ -50,7 +50,7 @@ class Reporter(tk.Toplevel):
             command=lambda: self.pickle_plot()
         )
         self.pltbar.add_command(
-            label="Load from project",
+            label="Load project",
             command=lambda: self.unpickle_plot()
         )
         self.pltbar.add_command(
@@ -366,11 +366,6 @@ class Reporter(tk.Toplevel):
                 widget.plotpump.set(plotpump)
                 #  NOTE: on use of after
                 #  https://stackoverflow.com/questions/29334544/
-
-
-
-
-
 
         # raise the settings window
         self.lift()
