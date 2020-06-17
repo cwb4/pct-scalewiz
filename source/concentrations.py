@@ -1,14 +1,23 @@
 """A simple calculator for determining treating volumes."""
 
 import tkinter as tk
-from tkinter import ttk, font  # type: ignore
+from tkinter import ttk, font, TclError  # type: ignore
 
 from iconer import set_window_icon
 
 
-def is_numeric(char):
+def is_numeric(val):
     """Validate that user input is numeric."""
-    return bool(str.isdigit(char) or char == "")
+    print(val)
+    parts = val.split('.')
+    print(parts)
+    results = []
+    for chars in parts:
+        print(chars)
+        print(str.isdigit(chars))
+        results.append(chars == "" or str.isdigit(chars))
+    print(bool(results))
+    return all(results)
 
 
 class ConcCalc(tk.Toplevel):
@@ -20,10 +29,10 @@ class ConcCalc(tk.Toplevel):
         set_window_icon(self)
         self.winfo_toplevel().title('Concentration Calculator')
         self.resizable(0, 0)
-        self.conc = tk.IntVar()
+        self.conc = tk.DoubleVar()
         self.conc.trace('w', self.calc)
 
-        self.vol = tk.IntVar()
+        self.vol = tk.DoubleVar()
         self.vol.trace('w', self.calc)
 
         self.mL = tk.StringVar()
@@ -80,11 +89,15 @@ class ConcCalc(tk.Toplevel):
     def calc(self, *args):
         """Calculate the treating volume."""
         try:
-            conc = int(self.conc_ent.get())
-            vol = int(self.vol_ent.get())
+            conc = self.conc.get()
+            vol = self.vol.get()
             self.mL.set(f"{conc*vol/1000/1000:.4f} mL, or")
             self.uL.set(f"{conc*vol/1000:.1f} μL")
         except ValueError:
+            pass
+        except ZeroDivisionError:
+            pass
+        except TclError:
             pass
 
 
