@@ -6,6 +6,11 @@ from tkinter import ttk, font  # type: ignore
 from iconer import set_window_icon
 
 
+def is_numeric(char):
+    """Validate that user input is numeric."""
+    return bool(str.isdigit(char) or char == "")
+
+
 class ConcCalc(tk.Toplevel):
     """Simple Toplevel for calculating treating volumes."""
 
@@ -28,7 +33,7 @@ class ConcCalc(tk.Toplevel):
 
     def build(self):
         """Make the widgets."""
-        vcmd = (self.register(self.is_numeric))
+        vcmd = (self.register(is_numeric))
         tk.Label(
             self,
             text="Treating conc. (ppm): ",
@@ -81,13 +86,6 @@ class ConcCalc(tk.Toplevel):
             self.uL.set(f"{conc*vol/1000:.1f} μL")
         except ValueError:
             pass
-
-    def is_numeric(self, P):
-        """Validate that user input is numeric."""
-        if str.isdigit(P) or P == "":
-            return True
-        else:
-            return False
 
 
 if __name__ == '__main__':
