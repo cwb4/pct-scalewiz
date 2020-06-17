@@ -219,10 +219,9 @@ class MainWindow(tk.Frame):
         self.chem.bind("<Return>", lambda _: self.conc.focus_set())
         self.conc.bind("<Return>", lambda _: self.init_test())
         com_lbl.bind("<Button-1>", lambda _: self.update_port_boxes())
-        self.port1.bind("<Button-1>", lambda _: self.update_port_boxes())
-        self.port2.bind("<Button-1>", lambda _: self.update_port_boxes())
-        self.port1.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
-        self.port2.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
+        for port in (self.port1, self.port2):
+            port.bind("<Button-1>", lambda _: self.update_port_boxes())
+            port.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
         self.def_pump.bind("<FocusIn>", lambda _: self.tst_frm.focus_set())
         self.run_btn.bind('<Return>', lambda _: self.test.run_test())
         self.end_btn.bind('<Return>', lambda _: self.test.end_test())
@@ -261,8 +260,8 @@ class MainWindow(tk.Frame):
     def update_port_boxes(self):
         """Update the device port Comboboxes."""
         self.ports = self.find_coms()
-        self.port1.configure(values=self.ports)
-        self.port2.configure(values=self.ports)
+        for port in (self.port1, self.port2):
+            port.configure(values=self.ports)
 
         # update the list, each can be selected only once
         if "?" in self.port1.get() or "?" in self.port2.get():
