@@ -6,6 +6,7 @@ import os  # handling file paths
 
 from reporter import Reporter
 from concentrations import ConcCalc
+from chlorides import ClCalc
 from settings import ConfigManager
 from pumpops import PumpManager
 
@@ -33,6 +34,11 @@ class MenuBar(tk.Frame):
         self.menubar.add_command(
             label="Calculate treating volume",
             command=lambda: ConcCalc(self.core)
+        )
+
+        self.menubar.add_command(
+            label="Calculate chloride concentration",
+            command=lambda: ClCalc(self.core)
         )
 
         self.menubar.add_command(
