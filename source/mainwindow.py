@@ -31,6 +31,7 @@ class MainWindow(tk.Frame):
         self.core = parent
         self.core.root.protocol("WM_DELETE_WINDOW", self.close_app)
         self.parser = self.core.parser
+        MenuBar(self)
 
         self.update_title()
         self.ports = []
@@ -53,7 +54,6 @@ class MainWindow(tk.Frame):
 
     def build_window(self) -> None:
         """Make all the tkinter widgets."""
-        MenuBar(self)
         bold_font = font.Font(font=font.nametofont("TkDefaultFont"))
         bold_font.config(weight='bold')
 
@@ -302,7 +302,7 @@ class MainWindow(tk.Frame):
         self.run_btn.focus_set()
 
     def end_test(self):
-        """Sets the test.running variable to False."""
+        """Sets the test.running variable to False if it exists."""
         if hasattr(self, 'test'):
             self.test.running = False
 
