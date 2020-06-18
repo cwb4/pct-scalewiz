@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.7] 2020-6-18
+### Changed
+ - combined concentrations and chlorides calculators into one widget
+ - code review / cleanup
+
 ## [0.7.6] 2020-6-17
 ### Added
  - chloride titration calculator
 ### Changed
  - concentration calculator now accepts decimal concentrations (eg 2.5 ppm)
- - code review / cleanup 
+ - code review / cleanup
 
 ## [0.7.5] 2020-6-12
 ### Changed
