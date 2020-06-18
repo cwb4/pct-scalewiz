@@ -5,8 +5,7 @@ from tkinter import filedialog
 import os  # handling file paths
 
 from reporter import Reporter
-from concentrations import ConcCalc
-from chlorides import ClCalc
+from chlor_conc import ChlorConc
 from settings import ConfigManager
 from pumpops import PumpManager
 
@@ -32,13 +31,8 @@ class MenuBar(tk.Frame):
         )
 
         self.menubar.add_command(
-            label="Calculate treating volume",
-            command=lambda: ConcCalc(self.core)
-        )
-
-        self.menubar.add_command(
-            label="Calculate chloride concentration",
-            command=lambda: ClCalc(self.core)
+            label="Concentration/Titration Calculator",
+            command=lambda: ChlorConc(self.core)
         )
 
         self.menubar.add_command(
@@ -63,12 +57,12 @@ class MenuBar(tk.Frame):
         self.mainwin.winfo_toplevel().config(menu=self.menubar)
 
     def askdir(self):
-        """Creates a prompt to ask user for a project folder
-        Then sets that as the window title.
+        """Create a prompt to ask user for a project folder
+
+        Then set it as the window title.
         The project variable is a string used to make output file paths later
 
          """
-
         out = filedialog.askdirectory(
             initialdir="C:\"",
             title="Select data output directory:"
