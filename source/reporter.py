@@ -65,7 +65,7 @@ class Reporter(tk.Toplevel):
         self.winfo_toplevel().configure(menu=self.pltbar)
 
         # a LabelFrame to hold the SeriesEntry widgets
-        self.entfrm = tk.LabelFrame(
+        self.ent_frm = tk.LabelFrame(
             master=self,
             # NOTE: this is a dirty way of avoiding using many labels
             text=(
@@ -73,10 +73,10 @@ class Reporter(tk.Toplevel):
             ),
             font=bold_font
         )
-        defpsi = self.parser.get('test settings', 'default pump')
+        default_pump = self.parser.get('test settings', 'default pump')
         for _ in range(10):
-            SeriesEntry(self.entfrm, defpsi).grid(padx=2)
-        self.entfrm.grid(row=0, padx=3, pady=2)
+            SeriesEntry(self.ent_frm, default_pump).grid(padx=2)
+        self.ent_frm.grid(row=0, padx=3, pady=2)
 
         # to hold the settings entries
         self.set_frm = tk.LabelFrame(master=self, text="Plot parameters", font=bold_font)
@@ -155,7 +155,7 @@ class Reporter(tk.Toplevel):
                     last arg optional
         """
         print("Preparing plot from Reporter fields")
-        entry_widgets = self.entfrm.winfo_children()
+        entry_widgets = self.ent_frm.winfo_children()
         paths = [child.path.get() for child in entry_widgets]
         titles = [child.title.get() for child in entry_widgets]
         plotpumps = [child.plotpump.get() for child in entry_widgets]
@@ -326,7 +326,7 @@ class Reporter(tk.Toplevel):
                 _plt['paths'],
                 _plt['titles'],
                 _plt['plotpumps'],
-                self.entfrm.winfo_children()
+                self.ent_frm.winfo_children()
             )
 
             print("Populating plot parameters")
