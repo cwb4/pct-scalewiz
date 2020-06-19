@@ -10,10 +10,7 @@ def is_numeric(val):
     parts = val.split('.')
     results = []
     for chars in parts:
-        print(chars)
-        print(str.isdigit(chars))
         results.append(chars == "" or str.isdigit(chars))
-    print(bool(results))
     return all(results)
 
 
