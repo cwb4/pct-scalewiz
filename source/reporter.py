@@ -146,7 +146,7 @@ class Reporter(tk.Toplevel):
         self.set_frm.grid(row=1, pady=2)
 
     def prep_plot(self) -> dict:
-        """Return a dict of tuples.
+        """Return a dict of lists.
 
         paths - str paths of original datafiles
         titles - str tuple of original series titles
@@ -155,26 +155,10 @@ class Reporter(tk.Toplevel):
                     last arg optional
         """
         print("Preparing plot from Reporter fields")
-        paths = tuple(
-            [
-                child.path.get()
-                for child in self.entfrm.winfo_children()
-            ]
-        )
-
-        titles = tuple(
-            [
-                child.title.get()
-                for child in self.entfrm.winfo_children()
-            ]
-        )
-
-        plotpumps = tuple(
-            [
-                child.plotpump.get()
-                for child in self.entfrm.winfo_children()
-            ]
-        )
+        entry_widgets = self.entfrm.winfo_children()
+        paths = [child.path.get() for child in entry_widgets]
+        titles = [child.title.get() for child in entry_widgets]
+        plotpumps = [child.plotpump.get() for child in entry_widgets]
 
         # look for empty entries in the form
         if self.time_limit.get() != '':
@@ -245,9 +229,7 @@ class Reporter(tk.Toplevel):
 
             blanks = []
             trials = []
-            # NOTE: to_plot = [(0: path, 1: title, 2: plotpump)]
             for path, title, plotpump in zip(paths, titles, plotpumps):
-                # print(path, title, plotpump)
                 if os.path.isfile(path):
                     df = DataFrame(read_csv(path))
                 else:
@@ -310,7 +292,7 @@ class Reporter(tk.Toplevel):
                 image_path = os.path.join(self.mainwin.project, image)
                 fig.savefig(image_path)
                 print(f"Saved plot image to\n{image_path}")
-                print(f"Finished plotting in {round(time.time()-start, 2)} s")
+                print(f"Finished plotting in {round(time.time() - start, 2)} s")
 
     def pickle_plot(self) -> None:
         """Pickle a list to a file in the project directory."""
@@ -348,7 +330,7 @@ class Reporter(tk.Toplevel):
             )
 
             print("Populating plot parameters")
-            # plot_params == ('bmh', xlim, ylim, baseline)
+            # plot_params are ('bmh', xlim, ylim, baseline)
             plot_params = (_plt['plot_params'][1:])
             param_widgets = (self.time_limit, self.fail_psi, self.baseline)
             for widget, parameter in zip(param_widgets, plot_params):
@@ -364,7 +346,7 @@ class Reporter(tk.Toplevel):
                 widget.title.insert(0, title)
                 self.after(150, widget.title.xview_moveto, 1)
                 widget.plotpump.set(plotpump)
-                #  NOTE: on use of after
+                #  NOTE: after for race condition
                 #  https://stackoverflow.com/questions/29334544/
 
         # raise the settings window
