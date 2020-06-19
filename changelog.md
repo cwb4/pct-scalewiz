@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.8] 2020-6-19
+### Changed
+ - renamed all instances of 'PSI 1' or 'PSI 2' to 'Pump 1' and 'Pump 2' 
+
 ## [0.7.7] 2020-6-18
 ### Changed
  - combined concentrations and chlorides calculators into one widget
