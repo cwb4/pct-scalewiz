@@ -56,7 +56,7 @@ class Experiment():
         self.to_log(f"Creating output file at \n{self.outpath}")
         print(f"Creating output file at \n{self.outpath}")
 
-        header_row = ["Timestamp", "Seconds", "Minutes", "PSI 1", "PSI 2"]
+        header_row = ["Timestamp", "Seconds", "Minutes", "Pump 1", "Pump 2"]
         with open(self.outpath, "w") as file:
             csv.writer(file, delimiter=',').writerow(header_row)
 
