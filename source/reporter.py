@@ -45,22 +45,10 @@ class Reporter(tk.Toplevel):
         vcmd = (self.register(self.is_numeric))
 
         self.pltbar = tk.Menu(self)
-        self.pltbar.add_command(
-            label="Save project",
-            command=lambda: self.pickle_plot()
-        )
-        self.pltbar.add_command(
-            label="Load project",
-            command=lambda: self.unpickle_plot()
-        )
-        self.pltbar.add_command(
-            label='Export report',
-            command=lambda: self.export_report()
-        )
-        self.pltbar.add_command(
-            label='Help',
-            command=lambda: self.show_help()
-        )
+        self.pltbar.add_command(label="Save project", command=lambda: self.pickle_plot())
+        self.pltbar.add_command(label="Load project", command=lambda: self.unpickle_plot())
+        self.pltbar.add_command(label='Export report', command=lambda: self.export_report())
+        self.pltbar.add_command(label='Help', command=lambda: self.show_help())
 
         self.winfo_toplevel().configure(menu=self.pltbar)
 
@@ -80,17 +68,14 @@ class Reporter(tk.Toplevel):
 
         # to hold the settings entries
         self.set_frm = tk.LabelFrame(master=self, text="Plot parameters", font=bold_font)
-
         # settings labels
         time_lbl = tk.Label(master=self.set_frm, text="Time limit (min):")
         fail_lbl = tk.Label(master=self.set_frm, text="Max pressure (psi):")
         base_lbl = tk.Label(master=self.set_frm, text="Baseline pressure (psi):")
-
         # grid the labels
         time_lbl.grid(row=0, column=0, sticky='w', padx=5)
         fail_lbl.grid(row=0, column=1, sticky='w', padx=5)
         base_lbl.grid(row=0, column=2, sticky='w', padx=5)
-
         # settings entries
         self.time_limit = ttk.Spinbox(
             self.set_frm,
@@ -113,25 +98,15 @@ class Reporter(tk.Toplevel):
             justify='center',
             validate='all', validatecommand=(vcmd, '%P')
         )
-
         # grid settings entries
         self.time_limit.grid(row=1, column=0, sticky='w', padx=5, pady=2)
         self.fail_psi.grid(row=1, column=1, sticky='w', padx=5, pady=2)
         self.baseline.grid(row=1, column=2, sticky='w', padx=5, pady=2)
 
         # insert default plot parameters
-        self.time_limit.insert(
-            0,
-            self.parser.getint('test settings', 'time limit minutes')
-        )
-        self.fail_psi.insert(
-            0,
-            self.parser.getint('test settings', 'fail psi')
-        )
-        self.baseline.insert(
-            0,
-            self.parser.getint('test settings', 'default baseline')
-        )
+        self.time_limit.insert(0, self.parser.getint('test settings', 'time limit minutes'))
+        self.fail_psi.insert(0, self.parser.getint('test settings', 'fail psi'))
+        self.baseline.insert(0, self.parser.getint('test settings', 'default baseline'))
 
         # make a button to plot, then grid it
         self.pltbtn = ttk.Button(
@@ -141,7 +116,6 @@ class Reporter(tk.Toplevel):
             command=lambda: self.make_plot(**self.prep_plot())
         )
         self.pltbtn.grid(row=2, columnspan=4, pady=2)
-
         # grid the settings frame
         self.set_frm.grid(row=1, pady=2)
 
@@ -159,35 +133,31 @@ class Reporter(tk.Toplevel):
         paths = [child.path.get() for child in entry_widgets]
         titles = [child.title.get() for child in entry_widgets]
         plotpumps = [child.plotpump.get() for child in entry_widgets]
-
         # look for empty entries in the form
         if self.time_limit.get() != '':
             xlim = int(self.time_limit.get())
         else:
             xlim = self.parser.getint('test settings', 'time limit minutes')
-
         if self.fail_psi.get() != '':
             ylim = int(self.fail_psi.get())
         else:
             ylim = self.parser.getint('test settings', 'fail psi')
-
         if self.baseline.get() != '':
             baseline = int(self.baseline.get())
         else:
             baseline = self.parser.getint('test settings', 'default baseline')
 
         plot_params = ('bmh', xlim, ylim, baseline)
-
-        _plt = {
+        plot_data = {
             'paths': paths,
             'titles': titles,
             'plotpumps': plotpumps,
             'plot_params': plot_params
         }
-        return _plt
+        return plot_data
 
     def make_plot(self, paths, titles, plotpumps, plot_params) -> None:
-        """Make a new plot from some tuples."""
+        """Make a new plot of the data, then evaluate it."""
         print("Spawning a new plot \n")
         start = time.time()
 
@@ -234,12 +204,7 @@ class Reporter(tk.Toplevel):
                     df = DataFrame(read_csv(path))
                 else:
                     df = DataFrame(
-                        data={
-                            'Minutes': [0],
-                            'Pump 1': [0],
-                            'Pump 2': [0]
-                        }
-                    )
+                        data={'Minutes': [0], 'Pump 1': [0], 'Pump 2': [0]})
                 try:
                     df[plotpump]  # make sure the column exists
                 except KeyError:  # backwards compat w/ old data file headers
@@ -248,24 +213,13 @@ class Reporter(tk.Toplevel):
                 if title == "":
                     pass
                 elif "blank" in str(title).lower():
-                    ax.plot(
-                        df['Minutes'],
-                        df[plotpump],
-                        label=title,
-                        linestyle=('-.')
-                    )
+                    ax.plot(df['Minutes'], df[plotpump], label=title, linestyle=('-.'))
                     blanks.append(Series(df[plotpump], name=title))
-
                 else:  # plot using default line style
-                    ax.plot(
-                        df['Minutes'],
-                        df[plotpump],
-                        label=title
-                    )
+                    ax.plot(df['Minutes'], df[plotpump], label=title)
                     trials.append(Series(df[plotpump], name=title))
 
             ax.legend(loc='best')
-
             baseline = plot_params[3]
 
             # some tests to validate user input
@@ -289,7 +243,6 @@ class Reporter(tk.Toplevel):
             else:
                 self.get_results(blanks, trials, baseline, xlim, ylim)
                 fig.show()
-
                 project = self.mainwin.project.split('\\')
                 short_proj = project[-1]
                 image = f"{short_proj}.png"
