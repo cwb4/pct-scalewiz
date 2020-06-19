@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.7.8] 2020-6-19
 ### Changed
  - renamed all instances of 'PSI 1' or 'PSI 2' to 'Pump 1' and 'Pump 2
+ - code review / cleanup 
 
 ## [0.7.7] 2020-6-18
 ### Changed
