@@ -15,7 +15,7 @@ DEFAULT_DICT = {
         'default baseline': 75,
         'time limit minutes': '90',
         'interval seconds': '3',
-        'default pump': 'PSI 2',
+        'default pump': 'Pump 2',
         'project folder': '',
     },
     'report settings': {
@@ -97,7 +97,7 @@ class ConfigManager(tk.Toplevel):
         )
         self.def_pump = ttk.Combobox(
             test_frm,
-            values=["PSI 1", "PSI 2"],
+            values=["Pump 1", "Pump 2"],
             state='readonly',
             width=29
         )

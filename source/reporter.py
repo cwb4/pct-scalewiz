@@ -236,10 +236,14 @@ class Reporter(tk.Toplevel):
                     df = DataFrame(
                         data={
                             'Minutes': [0],
-                            'PSI 1': [0],
-                            'PSI 2': [0]
+                            'Pump 1': [0],
+                            'Pump 2': [0]
                         }
                     )
+                try:
+                    df[plotpump]  # make sure the column exists
+                except KeyError:  # backwards compat w/ old data file headers
+                    plotpump = plotpump.replace("Pump", "PSI")
                 # if the trial is a blank run change the line style
                 if title == "":
                     pass

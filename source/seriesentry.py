@@ -25,16 +25,16 @@ class SeriesEntry(tk.Frame):
 
         tk.Radiobutton(
             master=self,
-            text="PSI 1",
+            text="Pump 1",
             variable=self.plotpump,
-            value='PSI 1'
+            value='Pump 1'
         ).grid(row=0, column=2, padx=2, pady=1)
 
         tk.Radiobutton(
             master=self,
-            text="PSI 2",
+            text="Pump 2",
             variable=self.plotpump,
-            value='PSI 2'
+            value='Pump 2'
         ).grid(row=0, column=3, padx=2, pady=1)
 
         ttk.Button(

@@ -141,7 +141,7 @@ class MainWindow(tk.Frame):
         self.out_frm = tk.LabelFrame(
             self.tst_frm,
             # this spacing is to avoid using multiple labels
-            text="Elapsed,   PSI 1,   PSI 2",
+            text="Elapsed,   Pump 1,   Pump 2",
             font=bold_font,
         )
         self.data_out = ScrolledText(
@@ -185,7 +185,7 @@ class MainWindow(tk.Frame):
         # combobox to choose which set of data to plot
         self.def_pump = ttk.Combobox(
             master=self.cmd_frm,
-            values=["PSI 1", "PSI 2"],
+            values=["Pump 1", "Pump 2"],
             state='readonly',
             justify='center',
             width=13,
@@ -320,7 +320,7 @@ class MainWindow(tk.Frame):
             data = read_csv(self.test.outpath)
         # maybe we didn't start running a test yet
         except (FileNotFoundError, AttributeError):
-            data = DataFrame(data={'Minutes': [0], 'PSI 1': [0], 'PSI 2': [0]})
+            data = DataFrame(data={'Minutes': [0], 'Pump 1': [0], 'Pump 2': [0]})
 
         with plt.style.context('bmh'):
             self.axis.clear()
@@ -335,8 +335,11 @@ class MainWindow(tk.Frame):
             self.axis.yaxis.set_major_locator(MultipleLocator(100))
             self.axis.set_xlim((0, None), auto=True)
             self.axis.margins(0)
-
-            y_data = data[self.def_pump.get()]
+            try:
+                y_data = data[self.def_pump.get()]
+            except KeyError:  # backwards compat w/ old data file header rows
+                pump = self.def_pump.get().replace("Pump", "PSI")
+                y_data = data[pump]
             x_data = data['Minutes']
             if self.chem.get() == "" and self.conc.get() == "":
                 label = " "
