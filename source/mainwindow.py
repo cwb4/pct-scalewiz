@@ -326,12 +326,7 @@ class MainWindow(tk.Frame):
             self.axis.clear()
             self.axis.set_xlabel("Time (min)")
             self.axis.set_ylabel("Pressure (psi)")
-            self.axis.set_ylim(
-                top=self.parser.getint(
-                    'test settings',
-                    'fail psi'
-                )
-            )
+            self.axis.set_ylim(top=self.parser.getint('test settings', 'fail psi'))
             self.axis.yaxis.set_major_locator(MultipleLocator(100))
             self.axis.set_xlim((0, None), auto=True)
             self.axis.margins(0)
@@ -346,7 +341,6 @@ class MainWindow(tk.Frame):
             else:
                 label = f"{self.chem.get().strip()} {self.conc.get().strip()}"
             self.axis.plot(x_data, y_data, label=label)
-
             self.axis.grid(color='darkgrey', alpha=0.65, linestyle='-')
             self.axis.set_facecolor('w')
             self.axis.legend(loc=0)
@@ -354,11 +348,7 @@ class MainWindow(tk.Frame):
     def update_title(self) -> None:
         """Determine OS path format, then title the main window accordingly."""
         self.project = os.path.normpath(
-            self.parser.get(
-                'test settings',
-                'project folder',
-                fallback=os.getcwd()
-            )
+            self.parser.get('test settings', 'project folder', fallback=os.getcwd())
         )
         try:
             if os.name == 'nt':
