@@ -101,19 +101,18 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         _log("new scale area = " + new_scale_text)
         _log(f"new scale area = {scale_area} psi")
         scale_ratio = float(scale_area / protectable)
-        _log(f"scale ratio = scale area / protectable area: {scale_ratio}")
-        score = (1 - scale_ratio) * 100
-        if score > 100:
-            _log("Negative scale ratio detected; reducing score to 100%")
+        _log(f"scale ratio = scale area / protectable area = {scale_ratio}")
+        score = round((1 - scale_ratio) * 100, 1)
+        if score >= 100:
             score = 100
-        _log(f"score = (1 - scale ratio)*100: {score:.2f}%" + line)
+        _log(f"score = (1 - scale ratio)*100 = {score}%" + line)
         scores[trial.name] = score
 
     result_titles = [f"{i}" for i in scores]
     result_values = [
-        f"{scores[i]:.1f}%"
-        if scores[i] < 100  # say 100% not 100.0%
-        else f"{scores[i]}%"
+        f"{scores[i]}%"
+        if scores[i] <= 100  # say 100% not 100.0%
+        else "100%"
         for i in scores
     ]
     max_psis = [
