@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.7.9] 2020-6-25
-FFF Fixed
- - Setting project folder from the menu bar now properly updates settings file, not just window title
+### Changed
+ - no longer need to select project files manually - if one exists in the current project folder it is automatically loaded when opening the reporter
+ - perfect scores are reported as 100% instead of 100.0%
+### Fixed
+ - Setting project folder from the menu bar updates settings file, not just window title
 
 ## [0.7.8] 2020-6-19
 ### Changed
