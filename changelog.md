@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - no longer need to select project files manually - if one exists in the current project folder it is automatically loaded when opening the reporter
  - perfect scores are reported as 100% instead of 100.0%
+ - minor improvements to calculation log formatting
 ### Fixed
  - Setting project folder from the menu bar updates settings file, not just window title
 
