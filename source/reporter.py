@@ -35,6 +35,13 @@ class Reporter(tk.Toplevel):
         self.loc = tk.StringVar()
         self.resizable(0, 0)
         self.build()
+        # if there's a project file in the dir go ahead and open it
+        project = self.mainwin.project.split('\\')
+        short_proj = project[-1]
+        pickle_project_file = f"{short_proj}.pct"
+        file = os.path.join(self.mainwin.project, pickle_project_file)
+        if os.path.isfile(file):
+            self.unpickle_plot(file)
 
     def build(self) -> None:
         """Make the widgets."""
@@ -266,29 +273,31 @@ class Reporter(tk.Toplevel):
             message=f"Project data saved to\n{_path}"
         )
 
-    def unpickle_plot(self) -> None:
+    def unpickle_plot(self, pickle_file = None) -> None:
         """Unpickle a list of string 3-tuples into SeriesEntry widgets."""
-        file = filedialog.askopenfilename(
-            initialdir="C:\"",
-            title="Select data to plot:",
-            filetypes=[("ScaleWiz project files", "*.pct")]
-        )
-
+        if not pickle_file:  # if one isn't passed in
+            file = filedialog.askopenfilename(
+                initialdir="C:\"",
+                title="Select data to plot:",
+                filetypes=[("ScaleWiz project files", "*.pct")]
+            )
+        else:
+            file = pickle_file
         # this puts data paths into their original entries
         if file != '':
             print(f"Unpickling project file\n{file}")
             with open(file, 'rb') as file:
-                _plt = pickle.load(file)
+                plot = pickle.load(file)
             into_widgets = zip(
-                _plt['paths'],
-                _plt['titles'],
-                _plt['plotpumps'],
+                plot['paths'],
+                plot['titles'],
+                plot['plotpumps'],
                 self.ent_frm.winfo_children()
             )
 
             print("Populating plot parameters")
             # plot_params are ('bmh', xlim, ylim, baseline)
-            plot_params = (_plt['plot_params'][1:])
+            plot_params = (plot['plot_params'][1:])
             param_widgets = (self.time_limit, self.fail_psi, self.baseline)
             for widget, parameter in zip(param_widgets, plot_params):
                 widget.delete(0, 'end')
@@ -317,6 +326,7 @@ class Reporter(tk.Toplevel):
         self.results_queue, self.log = evaluate(
             proj, blanks, trials, baseline, xlim, ylim, interval
         )
+        # results_queue is (blank_times, result_titles, result_values, durations, baseline, ylim, max_psis)
 
         project = self.mainwin.project.split('\\')[-1].strip()
         log_file = os.path.join(self.mainwin.project, f"{project} log.txt")
