@@ -24,13 +24,13 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
     avail_area = total_area - baseline_area
 
     _log(f"baseline = {round(baseline)} psi")
-    _log(f"time limit = {round(xlim*60)} s")
+    _log(f"time limit = {round(xlim * 60)} s")
     _log(f"failing pressure threshold: {round(ylim)} psi")
     _log(f"reading interval = {interval} s/reading")
-    _log(f"max measures = {round(xlim*60)} / {interval} = {max_measures}")
-    _log(f"total area =  {ylim}*{max_measures} = {total_area} psi")
+    _log(f"max measures = {round(xlim * 60)} / {interval} = {max_measures}")
+    _log(f"total area =  {ylim} * {max_measures} = {total_area} psi")
     _log("baseline area = baseline pressure * max measures")
-    _log(f"baseline area = {baseline}*{max_measures} = {baseline_area} psi")
+    _log(f"baseline area = {baseline} * {max_measures} = {baseline_area} psi")
     _log("avail area = total area - baseline area")
     _log(f"avail area =  {total_area} - {baseline_area} = {avail_area} psi")
     _log(line)
@@ -43,11 +43,11 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         blank_times.append(round(len(blank) * interval, 2))
         _log(blank.name)
         measures = len(blank)
-        _log(f"blank duration = {round(measures*interval/60, 3)} min")
+        _log(f"blank duration = {round(measures * interval / 60, 3)} min")
         _log(f"number of measurements = {measures}")
         _log(f"max psi = {int(round(blank.max()))}")
         scale_area = round(blank.sum())
-        _log(f"scale area = sum of all pressure readings: {scale_area} psi")
+        _log(f"scale area = sum of all pressure readings = {scale_area} psi")
         over_blank = ylim * measures - scale_area
         _log("area over blank = fail psi * measures - scale area")
         _log(f"area over blank = {ylim} * {measures} - {scale_area}")
@@ -59,7 +59,7 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         blank_scores.append(protectable)
 
     protectable = int(round(DataFrame(blank_scores).mean()))
-    _log(f"average protectable area: {protectable} psi" + line)
+    _log(f"average protectable area = {protectable} psi" + line)
 
     scores = {}
     durations = []
