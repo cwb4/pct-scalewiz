@@ -71,7 +71,7 @@ class MenuBar(tk.Frame):
         if out != "":
             self.mainwin.project = os.path.normpath(out)
             self.parser['test settings']['project folder'] = self.mainwin.project
-            with open('scalewiz.ini', 'w') as configfile:
+            with open('assets/scalewiz.ini', 'w') as configfile:
                 self.parser.write(configfile)
             print("Updated 'project folder' in config file")
             print(f"Set project directory to\n{self.mainwin.project}")
