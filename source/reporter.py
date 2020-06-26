@@ -1,26 +1,22 @@
 """Evaluates data and makes a plot."""
 
-from datetime import date
 import os  # handling file paths
 import pickle  # storing plotter settings
 import tkinter as tk  # GUI
 from tkinter import ttk, filedialog, font  # type: ignore
-from tkinter.messagebox import showinfo, showwarning, showerror
-import shutil
+from tkinter.messagebox import showinfo, showwarning
 import time
-import PIL
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt  # plotting the data
 from matplotlib.ticker import MultipleLocator
-import openpyxl
 from pandas import Series, DataFrame, read_csv  # reading the data
 
 import settings
 from iconer import set_window_icon
 from seriesentry import SeriesEntry
 from evaluator import evaluate
-from exporter import export_report
+from exporter import ReportExporter
 
 
 class Reporter(tk.Toplevel):
@@ -44,6 +40,8 @@ class Reporter(tk.Toplevel):
         if os.path.isfile(file):
             self.unpickle_plot(file)
 
+        self.results_queue = None
+
     def build(self) -> None:
         """Make the widgets."""
         def_font = font.nametofont("TkDefaultFont")
@@ -55,7 +53,7 @@ class Reporter(tk.Toplevel):
         self.pltbar = tk.Menu(self)
         self.pltbar.add_command(label="Save project", command=lambda: self.pickle_plot())
         self.pltbar.add_command(label="Load project", command=lambda: self.unpickle_plot())
-        self.pltbar.add_command(label='Export report', command=lambda: export_report(self))
+        self.pltbar.add_command(label='Export report', command=lambda: ReportExporter(self, self.mainwin.project, self.results_queue))
         self.pltbar.add_command(label='Help', command=lambda: self.show_help())
 
         self.winfo_toplevel().configure(menu=self.pltbar)
@@ -274,7 +272,7 @@ class Reporter(tk.Toplevel):
             message=f"Project data saved to\n{_path}"
         )
 
-    def unpickle_plot(self, pickle_file = None) -> None:
+    def unpickle_plot(self, pickle_file=None) -> None:
         """Unpickle a list of string 3-tuples into SeriesEntry widgets."""
         if not pickle_file:  # if one isn't passed in
             file = filedialog.askopenfilename(
@@ -363,7 +361,6 @@ class Reporter(tk.Toplevel):
             entry.insert(0, value)
             entry.configure(state='readonly', relief='flat')
             entry.grid(row=i + 1, column=1, sticky='W', padx=35, pady=3)
-
 
     def is_numeric(self, P):
         """Validate that user input is numeric."""
