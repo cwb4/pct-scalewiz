@@ -81,7 +81,7 @@ class ReportExporter(tk.Toplevel):
             water_qual_ents.append(ent)
         water_quals.pack(pady=2, padx=2)
 
-        submit_btn = tk.Button(container, text="Confirm", command=lambda widgets=widgets: self.get_details(widgets, water_qual_ents))
+        submit_btn = ttk.Button(container, text="Confirm", command=lambda widgets=widgets: self.get_details(widgets, water_qual_ents), width=25)
 
 
 
