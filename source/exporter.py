@@ -40,22 +40,21 @@ class ReportExporter(tk.Toplevel):
     def build(self, project):
         """Build all the widgets."""
         container = tk.Frame(self)
-        anal_lbl = tk.Label(container, text="Analysis number:", anchor='w')
-        comp_lbl = tk.Label(container, text="Company:", anchor='w')
-        sample_lbl = tk.Label(container, text="Sample point:", anchor='w')
-        cust_lbl = tk.Label(container, text="Customer:", anchor='w')
-        client_lbl = tk.Label(container, text="Submitted by:", anchor='w')
-        date_lbl = tk.Label(container, text="Date submitted:", anchor='w')
+        details_container = tk.LabelFrame(container, text="Report header")
+        anal_lbl = tk.Label(details_container, text="Analysis number:", anchor='w')
+        comp_lbl = tk.Label(details_container, text="Company:", anchor='w')
+        sample_lbl = tk.Label(details_container, text="Sample point:", anchor='w')
+        cust_lbl = tk.Label(details_container, text="Customer:", anchor='w')
+        client_lbl = tk.Label(details_container, text="Submitted by:", anchor='w')
+        date_lbl = tk.Label(details_container, text="Date submitted:", anchor='w')
 
-        anal_ent = ttk.Entry(container, width=25)
-        comp_ent = ttk.Entry(container, width=25)
-        sample_ent = ttk.Entry(container, width=25)
-        cust_ent = ttk.Entry(container, width=25)
-        client_ent = ttk.Entry(container, width=25)
-        date_ent = ttk.Entry(container, width=25)
+        anal_ent = ttk.Entry(details_container, width=25)
+        comp_ent = ttk.Entry(details_container, width=25)
+        sample_ent = ttk.Entry(details_container, width=25)
+        cust_ent = ttk.Entry(details_container, width=25)
+        client_ent = ttk.Entry(details_container, width=25)
+        date_ent = ttk.Entry(details_container, width=25)
         widgets = (anal_ent, comp_ent, sample_ent, cust_ent, client_ent, date_ent)
-
-        submit_btn = tk.Button(container, text="Confirm", command=lambda widgets=widgets: self.get_details(widgets))
 
         anal_lbl.grid(row=0, column=0, sticky='e', pady=2, padx=2)
         comp_lbl.grid(row=1, column=0, sticky='e', pady=2, padx=2)
@@ -69,8 +68,24 @@ class ReportExporter(tk.Toplevel):
         cust_ent.grid(row=3, column=1, sticky='e', pady=2, padx=2)
         client_ent.grid(row=4, column=1, sticky='e', pady=2, padx=2)
         date_ent.grid(row=5, column=1, sticky='e', pady=2, padx=2)
+        details_container.pack(pady=2, padx=2)
 
-        submit_btn.grid(row=6, columnspan=2, pady=2)
+        water_quals = tk.LabelFrame(container, text="Water quality")
+        water_qual_ents = []
+        clarities = ["Clear", "Slightly Hazy", "Hazy", "Other"]
+        for i, trial in enumerate(self.results_queue[1]):
+            tk.Label(water_quals, text=trial).grid(row=i, column=0, sticky='w')
+            ent = ttk.Combobox(water_quals, values=clarities, justify='center')
+            ent.grid(row=i, column=1)
+            ent.set(clarities[0])
+            water_qual_ents.append(ent)
+        water_quals.pack(pady=2, padx=2)
+
+        submit_btn = tk.Button(container, text="Confirm", command=lambda widgets=widgets: self.get_details(widgets, water_qual_ents))
+
+
+
+        submit_btn.pack(pady=2, padx=2)
         container.pack()
 
         self.project = project.split('\\')
@@ -79,11 +94,14 @@ class ReportExporter(tk.Toplevel):
             sample_ent.insert(0, self.project[-1].split('-')[1].strip())
             cust_ent.insert(0, self.project[-2].strip())
 
-    def get_details(self, widgets):
+    def get_details(self, widgets, water_qual_ents):
         """Docstring"""
         details = [widget.get() for widget in widgets]
         details = [value.strip() for value in details]
+        trial_clarities = [widget.get() for widget in water_qual_ents]
+        trial_clarities = [value.strip() for value in trial_clarities]
         self.header_details = details
+        self.results_queue.append(trial_clarities)
         self.export_report()
 
     def export_report(self):
@@ -138,6 +156,7 @@ class ReportExporter(tk.Toplevel):
         baseline = self.results_queue[4]
         ylim = self.results_queue[5]
         max_psis = self.results_queue[6]
+        trial_clarities = self.results_queue[7]
 
         ws['C4'] = customer
         ws['C5'] = client
@@ -160,6 +179,7 @@ class ReportExporter(tk.Toplevel):
         duration_cells = [f"E{i}" for i in range(19, 27)]
         max_psi_cells = [f"G{i}" for i in range(19, 27)]
         protection_cells = [f"H{i}" for i in range(19, 27)]
+        clarity_cells = [f"J{i}" for i in range(19, 27)]
 
         chem_names = [" ".join(title.split(' ')[:-2]) for title in result_titles]
         chem_concs = [" ".join(title.split(' ')[-2:-1]) for title in result_titles]
@@ -179,6 +199,8 @@ class ReportExporter(tk.Toplevel):
             if score >= 100:
                 score = 100
             ws[cell] = score / 100  # the template has conditional % formatting
+        for(cell, clarity) in zip(clarity_cells, trial_clarities):
+            ws[cell] = clarity
 
         rows_with_data = [16, 17, *range(19, 27)]  # where the data is
         hide_rows = []  # rows we want to hide
