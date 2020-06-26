@@ -17,7 +17,7 @@ from iconer import set_window_icon
 class ScaleWiz(tk.Frame):
     """Core class for the application."""
 
-    VERSION = '[0.7.9]'
+    VERSION = '[0.8.0]'
 
     def __init__(self, parent):
         """Instantiate the core."""
