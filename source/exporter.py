@@ -83,11 +83,11 @@ class ReportExporter(tk.Toplevel):
 
         submit_btn = ttk.Button(container, text="Confirm", command=lambda widgets=widgets: self.get_details(widgets, water_qual_ents), width=25)
 
-
-
         submit_btn.pack(pady=2, padx=2)
         container.pack()
 
+        # insert defaults
+        anal_ent.insert(0, "#-#")
         self.project = project.split('\\')
         if len(self.project) >= 3:
             comp_ent.insert(0, self.project[-1].split('-')[0].strip())
@@ -122,7 +122,7 @@ class ReportExporter(tk.Toplevel):
         client = self.header_details[4]
         sub_date = self.header_details[5]
 
-        file = f"#-# {self.project[-1]} Calcium Carbonate Scale Block Analysis.xlsx"
+        file = f"{analysis_no} {self.project[-1]} Calcium Carbonate Scale Block Analysis.xlsx"
         report_path = os.path.join(self.parent.mainwin.project, file)
 
         print(f"Copying report template to\n{report_path}")
