@@ -152,7 +152,7 @@ class ReportExporter(tk.Toplevel):
         bicarbs = ret_num(self.header_details[8])
         bicarb_adj = ret_num(self.header_details[9])
 
-        file = f"{analysis_no.replace(" ", "")} {self.project[-1]} CaCO3 Scale Block Analysis.xlsx"
+        file = f"{analysis_no.replace(' ', '')} {self.project[-1]} CaCO3 Scale Block Analysis.xlsx"
         report_path = os.path.join(self.parent.mainwin.project, file)
 
         print(f"Copying report template to\n{report_path}")
