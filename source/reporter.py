@@ -40,7 +40,7 @@ class Reporter(tk.Toplevel):
         if os.path.isfile(file):
             self.unpickle_plot(file)
 
-        self.results_queue = None
+        self.results_queue = {}
 
     def build(self) -> None:
         """Make the widgets."""
@@ -350,13 +350,13 @@ class Reporter(tk.Toplevel):
             anchor='w'
         ).grid(row=0, column=1, sticky='w', padx=35, pady=3)
 
-        for i, title in enumerate(self.results_queue[1]):
+        for i, title in enumerate(self.results_queue['result_titles']):
             entry = tk.Entry(result_window, bg=def_bg, width=len(title))
             entry.insert(0, title)
             entry.configure(state='readonly', relief='flat')
             entry.grid(row=i + 1, column=0, sticky='W', padx=35, pady=3)
 
-        for i, value in enumerate(self.results_queue[2]):
+        for i, value in enumerate(self.results_queue['result_values']):
             entry = tk.Entry(result_window, bg=def_bg, width=10)
             entry.insert(0, value)
             entry.configure(state='readonly', relief='flat')

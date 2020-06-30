@@ -19,12 +19,9 @@ class ReportExporter(tk.Toplevel):
         """Instantiate the core."""
         tk.Toplevel.__init__(self, parent)
         self.results_queue = results_queue
-        if self.results_queue is None:
+        if len(self.results_queue) == 0:
             self.withdraw()
-            showinfo(
-                parent=self,
-                message="You must evaulate a set of data before exporting a report."
-            )
+            showinfo(parent=self, message="You must evaulate a set of data before exporting a report.")
             self.destroy()
             return
         self.attributes('-topmost', 'true')
@@ -34,11 +31,13 @@ class ReportExporter(tk.Toplevel):
         self.results_queue = results_queue
 
         self.header_details = None
-        self.project = None
+        self.project = project
         self.build(project)
 
     def build(self, project):
         """Build all the widgets."""
+        vcmd = (self.register(self.is_numeric))
+
         container = tk.Frame(self)
         details_container = tk.LabelFrame(container, text="Report header")
         anal_lbl = tk.Label(details_container, text="Analysis number:", anchor='w')
@@ -47,6 +46,10 @@ class ReportExporter(tk.Toplevel):
         cust_lbl = tk.Label(details_container, text="Customer:", anchor='w')
         client_lbl = tk.Label(details_container, text="Submitted by:", anchor='w')
         date_lbl = tk.Label(details_container, text="Date submitted:", anchor='w')
+        temp_lbl = tk.Label(details_container, text="Test temperature (°F):", anchor='w')
+        cl_lbl = tk.Label(details_container, text="Chlorides (mg/L):", anchor='w')
+        bicarb_lbl = tk.Label(details_container, text="Bicarbonates (mg/L):", anchor='w')
+        bicarb_adj_lbl = tk.Label(details_container, text="Bicarbonate adjustment (mg/L):", anchor='w')
 
         anal_ent = ttk.Entry(details_container, width=25)
         comp_ent = ttk.Entry(details_container, width=25)
@@ -54,40 +57,56 @@ class ReportExporter(tk.Toplevel):
         cust_ent = ttk.Entry(details_container, width=25)
         client_ent = ttk.Entry(details_container, width=25)
         date_ent = ttk.Entry(details_container, width=25)
-        widgets = (anal_ent, comp_ent, sample_ent, cust_ent, client_ent, date_ent)
+        temp_ent = ttk.Spinbox(details_container, width=23, from_=150, to=220, validate='all', validatecommand=(vcmd, '%P'))
+        cl_ent = ttk.Spinbox(details_container, width=23, from_=0, to=999999, validate='all', validatecommand=(vcmd, '%P'))
+        bicarb_ent = ttk.Spinbox(details_container, width=23, from_=0, to=999999, validate='all', validatecommand=(vcmd, '%P'))
+        bicarb_adj_ent = ttk.Spinbox(details_container, width=23, from_=0, to=999999, validate='all', validatecommand=(vcmd, '%P'))
 
-        anal_lbl.grid(row=0, column=0, sticky='e', pady=2, padx=2)
-        comp_lbl.grid(row=1, column=0, sticky='e', pady=2, padx=2)
-        sample_lbl.grid(row=2, column=0, sticky='e', pady=2, padx=2)
-        cust_lbl.grid(row=3, column=0, sticky='e', pady=2, padx=2)
-        client_lbl.grid(row=4, column=0, sticky='e', pady=2, padx=2)
-        date_lbl.grid(row=5, column=0, sticky='e', pady=2, padx=2)
-        anal_ent.grid(row=0, column=1, sticky='e', pady=2, padx=2)
-        comp_ent.grid(row=1, column=1, sticky='e', pady=2, padx=2)
-        sample_ent.grid(row=2, column=1, sticky='e', pady=2, padx=2)
-        cust_ent.grid(row=3, column=1, sticky='e', pady=2, padx=2)
-        client_ent.grid(row=4, column=1, sticky='e', pady=2, padx=2)
-        date_ent.grid(row=5, column=1, sticky='e', pady=2, padx=2)
-        details_container.pack(pady=2, padx=2)
+        header_widgets = (anal_ent, comp_ent, sample_ent, cust_ent, client_ent, date_ent, temp_ent, cl_ent, bicarb_ent, bicarb_adj_ent)
+
+        anal_lbl.grid(row=0, column=0, sticky='e', pady=1, padx=2)
+        comp_lbl.grid(row=1, column=0, sticky='e', pady=1, padx=2)
+        sample_lbl.grid(row=2, column=0, sticky='e', pady=1, padx=2)
+        cust_lbl.grid(row=3, column=0, sticky='e', pady=1, padx=2)
+        client_lbl.grid(row=4, column=0, sticky='e', pady=1, padx=2)
+        date_lbl.grid(row=5, column=0, sticky='e', pady=1, padx=2)
+        temp_lbl.grid(row=6, column=0, sticky='e', pady=1, padx=2)
+        cl_lbl.grid(row=7, column=0, sticky='e', pady=1, padx=2)
+        bicarb_lbl.grid(row=8, column=0, sticky='e', pady=1, padx=2)
+        bicarb_adj_lbl.grid(row=9, column=0, sticky='e', pady=1, padx=2)
+
+        anal_ent.grid(row=0, column=1, sticky='e', pady=1, padx=2)
+        comp_ent.grid(row=1, column=1, sticky='e', pady=1, padx=2)
+        sample_ent.grid(row=2, column=1, sticky='e', pady=1, padx=2)
+        cust_ent.grid(row=3, column=1, sticky='e', pady=1, padx=2)
+        client_ent.grid(row=4, column=1, sticky='e', pady=1, padx=2)
+        date_ent.grid(row=5, column=1, sticky='e', pady=1, padx=2)
+        temp_ent.grid(row=6, column=1, sticky='e', pady=1, padx=2)
+        cl_ent.grid(row=7, column=1, sticky='e', pady=1, padx=2)
+        bicarb_ent.grid(row=8, column=1, sticky='e', pady=1, padx=2)
+        bicarb_adj_ent.grid(row=9, column=1, sticky='e', pady=1, padx=2)
+
+        details_container.pack(pady=2, padx=2, fill='both')
 
         water_quals = tk.LabelFrame(container, text="Water quality")
         water_qual_ents = []
         clarities = ["Clear", "Slightly Hazy", "Hazy", "Other"]
-        for i, trial in enumerate(self.results_queue[1]):
-            tk.Label(water_quals, text=trial).grid(row=i, column=0, sticky='w')
+        for i, trial in enumerate(self.results_queue['result_titles']):
+            tk.Label(water_quals, text=trial).grid(row=i, column=0, sticky='e')
             ent = ttk.Combobox(water_quals, values=clarities, justify='center')
             ent.grid(row=i, column=1)
             ent.set(clarities[0])
             water_qual_ents.append(ent)
         water_quals.pack(pady=2, padx=2)
 
-        submit_btn = ttk.Button(container, text="Confirm", command=lambda widgets=widgets: self.get_details(widgets, water_qual_ents), width=25)
+        submit_btn = ttk.Button(container, text="Confirm", command=lambda: self.get_details(header_widgets, water_qual_ents), width=25)
 
         submit_btn.pack(pady=2, padx=2)
         container.pack()
 
         # insert defaults
         anal_ent.insert(0, "#-#")
+        temp_ent.insert(0, 200)
         self.project = project.split('\\')
         if len(self.project) >= 3:
             comp_ent.insert(0, self.project[-1].split('-')[0].strip())
@@ -95,13 +114,13 @@ class ReportExporter(tk.Toplevel):
             cust_ent.insert(0, self.project[-2].strip())
 
     def get_details(self, widgets, water_qual_ents):
-        """Docstring"""
+        """Docstring."""
         details = [widget.get() for widget in widgets]
         details = [value.strip() for value in details]
         trial_clarities = [widget.get() for widget in water_qual_ents]
         trial_clarities = [value.strip() for value in trial_clarities]
         self.header_details = details
-        self.results_queue.append(trial_clarities)
+        self.results_queue['trial_clarities'] = trial_clarities
         self.export_report()
 
     def export_report(self):
@@ -122,7 +141,17 @@ class ReportExporter(tk.Toplevel):
         client = self.header_details[4]
         sub_date = self.header_details[5]
 
-        file = f"{analysis_no} {self.project[-1]} Calcium Carbonate Scale Block Analysis.xlsx"
+        def ret_num(str) -> int:
+            if str == "":
+                str = 0
+            return round(float(str))
+
+        temp = ret_num(self.header_details[6])
+        cl = ret_num(self.header_details[7])
+        bicarbs = ret_num(self.header_details[8])
+        bicarb_adj = ret_num(self.header_details[9])
+
+        file = f"{analysis_no} {self.project[-1]} CaCO3 Scale Block Analysis.xlsx"
         report_path = os.path.join(self.parent.mainwin.project, file)
 
         print(f"Copying report template to\n{report_path}")
@@ -137,7 +166,6 @@ class ReportExporter(tk.Toplevel):
         print("Making temp resized plot image")
         try:
             img = PIL.Image.open(img_path)
-            # img = img.resize((700, 265))
         except FileNotFoundError:
             print("Couldn't find the plot image file, aborting export")
             return
@@ -149,14 +177,22 @@ class ReportExporter(tk.Toplevel):
         img.anchor = 'A28'
         ws._images[1] = img
 
-        blank_times = self.results_queue[0]
-        result_titles = self.results_queue[1]
-        result_values = self.results_queue[2]
-        durations = self.results_queue[3]
-        baseline = self.results_queue[4]
-        ylim = self.results_queue[5]
-        max_psis = self.results_queue[6]
-        trial_clarities = self.results_queue[7]
+        blank_times = self.results_queue['blank_times']
+        result_titles = self.results_queue['result_titles']
+        result_values = self.results_queue['result_values']
+        durations = self.results_queue['durations']
+        baseline = self.results_queue['baseline']
+        ylim = self.results_queue['ylim']
+        max_psis = self.results_queue['max_psis']
+        trial_clarities = self.results_queue['trial_clarities']
+
+        brine_comp = f"Synthetic Field Brine, Chlorides = {cl:,} mg/L"
+        if bicarb_adj != 0:
+            brine_comp += f" (Bicarbs adjusted to {bicarbs:,} mg/L)"
+        ws['D12'] = brine_comp
+
+        ws['D10'] = f"{temp} °F"
+
 
         ws['C4'] = customer
         ws['C5'] = client
@@ -230,3 +266,11 @@ class ReportExporter(tk.Toplevel):
             message=f"Report exported to\n{report_path}"
         )
         self.destroy()
+
+    def is_numeric(self, val):
+        """Validate that user input is numeric."""
+        parts = val.split(',')
+        results = []
+        for chars in parts:
+            results.append(chars == "" or str.isdigit(chars))
+        return all(results)

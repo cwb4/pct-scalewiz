@@ -122,15 +122,15 @@ def evaluate(proj, blanks, trials, baseline, xlim, ylim, interval):
         for trial in trials
     ]
 
-    results_queue = [
-        blank_times,
-        result_titles,
-        result_values,
-        durations,
-        baseline,
-        ylim,
-        max_psis
-    ]
+    results_queue = {}
+    results_queue['blank_times'] = blank_times
+    results_queue['result_titles'] = result_titles
+    results_queue['result_values'] = result_values
+    results_queue['durations'] = durations
+    results_queue['baseline'] = baseline
+    results_queue['ylim'] = ylim
+    results_queue['max_psis'] = max_psis
+
     _log(line * 2)
     _log(f"Finished evaluation in {round(time.time() - start, 3)} s\n")
     return results_queue, log
