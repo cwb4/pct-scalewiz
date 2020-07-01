@@ -21,9 +21,7 @@ class ReportExporter(tk.Toplevel):
         self.parent = parent
         self.results_queue = results_queue
         if len(self.results_queue) == 0:
-            self.withdraw()
             self.parent.make_plot(**self.parent.prep_plot())
-            self.destroy()
 
         self.title('Project details')
         set_window_icon(self)
