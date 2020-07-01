@@ -5,6 +5,7 @@ import os
 import time
 import tkinter as tk
 from tkinter import ttk
+from tkinter import font  # type: ignore
 from tkinter.messagebox import showinfo, showerror
 import shutil
 import openpyxl
@@ -15,13 +16,14 @@ from iconer import set_window_icon
 
 class ReportExporter(tk.Toplevel):
     """Docstring"""
-    def __init__(self, parent, project, results_queue=None):
+    def __init__(self, parent, project, results_queue):
         """Instantiate the core."""
         tk.Toplevel.__init__(self, parent)
         self.parent = parent
         self.results_queue = results_queue
         if len(self.results_queue) == 0:
             self.parent.make_plot(**self.parent.prep_plot())
+            self.results_queue = self.parent.results_queue
 
         self.title('Project details')
         set_window_icon(self)
@@ -32,9 +34,11 @@ class ReportExporter(tk.Toplevel):
     def build(self, project):
         """Build all the widgets."""
         vcmd = (self.register(self.is_numeric))
+        bold_font = font.Font(font=font.nametofont("TkDefaultFont"))
+        bold_font.config(weight='bold')
 
         container = tk.Frame(self)
-        details_container = tk.LabelFrame(container, text="Report header")
+        details_container = tk.LabelFrame(container, text="Report header", font=bold_font)
         anal_lbl = tk.Label(details_container, text="Analysis number:", anchor='w')
         comp_lbl = tk.Label(details_container, text="Company:", anchor='w')
         sample_lbl = tk.Label(details_container, text="Sample point:", anchor='w')
@@ -83,7 +87,7 @@ class ReportExporter(tk.Toplevel):
 
         details_container.pack(pady=2, padx=2, fill='both')
 
-        water_quals = tk.LabelFrame(container, text="Water quality")
+        water_quals = tk.LabelFrame(container, text="Water quality", font=bold_font)
         water_qual_ents = []
         clarities = ["Clear", "Slightly Hazy", "Hazy", "Other"]
         for i, trial in enumerate(self.results_queue['result_titles']):

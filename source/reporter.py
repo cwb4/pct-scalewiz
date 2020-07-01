@@ -337,17 +337,21 @@ class Reporter(tk.Toplevel):
         result_window.attributes('-topmost', 'true')
         result_window.title("Results")
         set_window_icon(result_window)
-
+        def_font = font.nametofont("TkDefaultFont")
+        bold_font = font.Font(font=def_font)
+        bold_font.config(weight='bold')
         def_bg = result_window.cget('bg')
         tk.Label(
             master=result_window,
             text="Trial",
-            anchor='w'
+            anchor='w',
+            font=bold_font
         ).grid(row=0, column=0, sticky='w', padx=35, pady=3)
         tk.Label(
             master=result_window,
             text="% protection",
-            anchor='w'
+            anchor='w',
+            font=bold_font
         ).grid(row=0, column=1, sticky='w', padx=35, pady=3)
 
         for i, title in enumerate(self.results_queue['result_titles']):
