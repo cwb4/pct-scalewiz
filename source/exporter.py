@@ -18,20 +18,16 @@ class ReportExporter(tk.Toplevel):
     def __init__(self, parent, project, results_queue=None):
         """Instantiate the core."""
         tk.Toplevel.__init__(self, parent)
-        self.reporter = parent
+        self.parent = parent
         self.results_queue = results_queue
         if len(self.results_queue) == 0:
             self.withdraw()
-            self.reporter.make_plot(**self.reporter.prep_plot())
+            self.parent.make_plot(**self.parent.prep_plot())
             self.destroy()
 
-        self.attributes('-topmost', 'true')
         self.title('Project details')
         set_window_icon(self)
-        self.parent = parent
-        self.results_queue = results_queue
 
-        self.header_details = None
         self.project = project
         self.build(project)
 
@@ -120,11 +116,10 @@ class ReportExporter(tk.Toplevel):
         details = [value.strip() for value in details]
         trial_clarities = [widget.get() for widget in water_qual_ents]
         trial_clarities = [value.strip() for value in trial_clarities]
-        self.header_details = details
         self.results_queue['trial_clarities'] = trial_clarities
-        self.export_report()
+        self.export_report(details)
 
-    def export_report(self):
+    def export_report(self, details):
         """Export the reporter's results_queue to an .xlsx file."""
         template_path = self.parent.parser.get('report settings', 'template path')
         if not os.path.isfile(template_path):
@@ -135,12 +130,12 @@ class ReportExporter(tk.Toplevel):
             return
         print("Preparing export")
         start = time.time()
-        analysis_no = self.header_details[0]
-        company = self.header_details[1]
-        sample = self.header_details[2]
-        customer = self.header_details[3]
-        client = self.header_details[4]
-        sub_date = self.header_details[5]
+        analysis_no = details[0]
+        company = details[1]
+        sample = details[2]
+        customer = details[3]
+        client = details[4]
+        sub_date = details[5]
 
         def ret_num(str) -> int:
             str = str.replace(",", "")
@@ -148,10 +143,10 @@ class ReportExporter(tk.Toplevel):
                 str = 0
             return round(float(str))
 
-        temp = ret_num(self.header_details[6])
-        cl = ret_num(self.header_details[7])
-        bicarbs = ret_num(self.header_details[8])
-        bicarb_adj = ret_num(self.header_details[9])
+        temp = ret_num(details[6])
+        cl = ret_num(details[7])
+        bicarbs = ret_num(details[8])
+        bicarb_adj = ret_num(details[9])
 
         file = f"{analysis_no.replace(' ', '')} {self.project[-1]} CaCO3 Scale Block Analysis.xlsx"
         report_path = os.path.join(self.parent.mainwin.project, file)
@@ -194,7 +189,6 @@ class ReportExporter(tk.Toplevel):
         ws['D12'] = brine_comp
 
         ws['D10'] = f"{temp} °F"
-
 
         ws['C4'] = customer
         ws['C5'] = client
