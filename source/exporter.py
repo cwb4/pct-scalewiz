@@ -18,12 +18,13 @@ class ReportExporter(tk.Toplevel):
     def __init__(self, parent, project, results_queue=None):
         """Instantiate the core."""
         tk.Toplevel.__init__(self, parent)
+        self.reporter = parent
         self.results_queue = results_queue
         if len(self.results_queue) == 0:
             self.withdraw()
-            showinfo(parent=self, message="You must evaulate a set of data before exporting a report.")
+            self.reporter.make_plot(**self.reporter.prep_plot())
             self.destroy()
-            return
+
         self.attributes('-topmost', 'true')
         self.title('Project details')
         set_window_icon(self)
