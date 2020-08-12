@@ -103,7 +103,7 @@ class Experiment():
                 (psi1 < self.failpsi or psi2 < self.failpsi)
                 and (
                     self.elapsed <= self.time_limit * 60
-                    or self.readings <= self.time_limit * 60 / self.interval
+                    or self.readings <= (self.time_limit * 60 / self.interval) - 1
                 )
         ):
             if time.time() - reading_start >= self.interval:

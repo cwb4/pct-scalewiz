@@ -40,15 +40,14 @@ class ReportExporter(tk.Toplevel):
         container = tk.Frame(self)
         details_container = tk.LabelFrame(container, text="Report header", font=bold_font)
         anal_lbl = tk.Label(details_container, text="Analysis number:", anchor='w')
-        comp_lbl = tk.Label(details_container, text="Company:", anchor='w')
+        comp_lbl = tk.Label(details_container, text="Chemical Company:", anchor='w')
         sample_lbl = tk.Label(details_container, text="Sample point:", anchor='w')
         cust_lbl = tk.Label(details_container, text="Customer:", anchor='w')
         client_lbl = tk.Label(details_container, text="Submitted by:", anchor='w')
         date_lbl = tk.Label(details_container, text="Date submitted:", anchor='w')
         temp_lbl = tk.Label(details_container, text="Test temperature (°F):", anchor='w')
         cl_lbl = tk.Label(details_container, text="Chlorides (mg/L):", anchor='w')
-        bicarb_lbl = tk.Label(details_container, text="Bicarbonates (mg/L):", anchor='w')
-        bicarb_adj_lbl = tk.Label(details_container, text="Bicarbonate adjustment (mg/L):", anchor='w')
+        bicarb_adj_lbl = tk.Label(details_container, text="Bicarbonates (mg/L):", anchor='w')
 
         anal_ent = ttk.Entry(details_container, width=25)
         comp_ent = ttk.Entry(details_container, width=25)
@@ -58,10 +57,9 @@ class ReportExporter(tk.Toplevel):
         date_ent = ttk.Entry(details_container, width=25)
         temp_ent = ttk.Spinbox(details_container, width=23, from_=150, to=220, validate='all', validatecommand=(vcmd, '%P'))
         cl_ent = ttk.Spinbox(details_container, width=23, from_=0, to=999999, validate='all', validatecommand=(vcmd, '%P'))
-        bicarb_ent = ttk.Spinbox(details_container, width=23, from_=0, to=999999, validate='all', validatecommand=(vcmd, '%P'))
         bicarb_adj_ent = ttk.Spinbox(details_container, width=23, from_=0, to=999999, validate='all', validatecommand=(vcmd, '%P'))
 
-        header_widgets = (anal_ent, comp_ent, sample_ent, cust_ent, client_ent, date_ent, temp_ent, cl_ent, bicarb_ent, bicarb_adj_ent)
+        header_widgets = (anal_ent, comp_ent, sample_ent, cust_ent, client_ent, date_ent, temp_ent, cl_ent, bicarb_adj_ent)
 
         anal_lbl.grid(row=0, column=0, sticky='e', pady=1, padx=2)
         comp_lbl.grid(row=1, column=0, sticky='e', pady=1, padx=2)
@@ -71,8 +69,7 @@ class ReportExporter(tk.Toplevel):
         date_lbl.grid(row=5, column=0, sticky='e', pady=1, padx=2)
         temp_lbl.grid(row=6, column=0, sticky='e', pady=1, padx=2)
         cl_lbl.grid(row=7, column=0, sticky='e', pady=1, padx=2)
-        bicarb_lbl.grid(row=8, column=0, sticky='e', pady=1, padx=2)
-        bicarb_adj_lbl.grid(row=9, column=0, sticky='e', pady=1, padx=2)
+        bicarb_adj_lbl.grid(row=8, column=0, sticky='e', pady=1, padx=2)
 
         anal_ent.grid(row=0, column=1, sticky='e', pady=1, padx=2)
         comp_ent.grid(row=1, column=1, sticky='e', pady=1, padx=2)
@@ -82,8 +79,7 @@ class ReportExporter(tk.Toplevel):
         date_ent.grid(row=5, column=1, sticky='e', pady=1, padx=2)
         temp_ent.grid(row=6, column=1, sticky='e', pady=1, padx=2)
         cl_ent.grid(row=7, column=1, sticky='e', pady=1, padx=2)
-        bicarb_ent.grid(row=8, column=1, sticky='e', pady=1, padx=2)
-        bicarb_adj_ent.grid(row=9, column=1, sticky='e', pady=1, padx=2)
+        bicarb_adj_ent.grid(row=8, column=1, sticky='e', pady=1, padx=2)
 
         details_container.pack(pady=2, padx=2, fill='both')
 
@@ -147,8 +143,7 @@ class ReportExporter(tk.Toplevel):
 
         temp = ret_num(details[6])
         cl = ret_num(details[7])
-        bicarbs = ret_num(details[8])
-        bicarb_adj = ret_num(details[9])
+        bicarb_adj = ret_num(details[8])
 
         file = f"{analysis_no.replace(' ', '')} {self.project[-1]} CaCO3 Scale Block Analysis.xlsx"
         report_path = os.path.join(self.parent.mainwin.project, file)
@@ -187,7 +182,7 @@ class ReportExporter(tk.Toplevel):
 
         brine_comp = f"Synthetic Field Brine, Chlorides = {cl:,} mg/L"
         if bicarb_adj != 0:
-            brine_comp += f" (Bicarbs adjusted to {bicarbs:,} mg/L)"
+            brine_comp += f" (Bicarbs increased to {bicarb_adj:,} mg/L)"
         ws['D12'] = brine_comp
 
         ws['D10'] = f"{temp} °F"
