@@ -104,8 +104,8 @@ class ReportExporter(tk.Toplevel):
         temp_ent.insert(0, 200)
         self.project = project.split('\\')
         if len(self.project) >= 3:
-            comp_ent.insert(0, self.project[-1].split('-')[0].strip())
-            sample_ent.insert(0, self.project[-1].split('-')[1].strip())
+            comp_ent.insert(0, self.project[-1].split(' - ')[0].strip())
+            sample_ent.insert(0, self.project[-1].split(' - ')[1].strip())
             cust_ent.insert(0, self.project[-2].strip())
 
     def get_details(self, widgets, water_qual_ents):
