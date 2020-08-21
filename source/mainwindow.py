@@ -234,7 +234,7 @@ class MainWindow(tk.Frame):
     def find_coms(self) -> list:
         """Look for devices and returns a list of open ports."""
         print("Finding connected devices")
-        ports = [i.device for i in serial.tools.list_ports.comports()]
+        ports = sorted([i.device for i in serial.tools.list_ports.comports()])
         print(f"Found these devices: {ports}")
         if len(ports) < 2:
             self.to_log("Not enough devices found...",
