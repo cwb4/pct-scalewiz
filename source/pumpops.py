@@ -33,7 +33,7 @@ class PumpManager(tk.Toplevel):
 
         container = tk.Frame(self)
         device_lbl = tk.Label(container, text="Device:", anchor='w')
-        devices = [i.device for i in serial.tools.list_ports.comports()]
+        devices = sorted([i.device for i in serial.tools.list_ports.comports()])
         self.device_box = ttk.Combobox(
             container,
             values=devices,
