@@ -141,7 +141,7 @@ class ChlorConc(tk.Toplevel):
         result.grid(row=3, column=1, padx=15, pady=3, sticky='w')
 
         self.titrated.set(1)
-        self.sample.set(10)
+        self.sample.set(1)
         self.titrant.set(0.282)
 
         notebook.add(chlor_tab, text="Chlorides")
